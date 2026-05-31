@@ -4,6 +4,7 @@
 - Entity: Bacotti Inc. (private family office / stewardship company)
 - Purpose: Institutional private family office website — not a consumer brand
 - Repo: github.com/michaelbacotti/bacotti-rebuild
+- Live URL: bacotti.com (Cloudflare Pages)
 - Architecture: Flat HTML — see skills/website-flat-html.md
 
 ## Design System
