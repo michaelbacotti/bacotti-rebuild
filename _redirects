@@ -12,3 +12,18 @@
 /services.html /services/ 301
 /legacy.html /legacy/ 301
 /shop.html /shop/ 301
+
+# ── No-slash → slash redirects (301 permanent)
+# Auto-generated 2026-07-03.
+
+# Top-level pages
+/about /about/ 301
+/contact /contact/ 301
+/disclaimer /disclaimer/ 301
+/entities /entities/ 301
+/legacy /legacy/ 301
+/privacy /privacy/ 301
+/services /services/ 301
+/shop /shop/ 301
+/team /team/ 301
+/terms /terms/ 301
