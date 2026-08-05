@@ -5,7 +5,15 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://bacotti.com/404/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://bacotti.com/contact/</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bacotti.com/shop/</loc>
     <priority>0.8</priority>
   </url>
   <url>
