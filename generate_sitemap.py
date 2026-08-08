@@ -68,13 +68,34 @@ def generate_sitemap():
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
+    # Per bithues/tredey convention: every <url> needs <lastmod>. Bacotti has
+    # no frontmatter date field, so we use filesystem mtime. This is accurate
+    # because pages are static and a deploy = mtime update.
+    from datetime import date as _date
+    today = _date.today().isoformat()
+
+    url_to_lastmod = {}
+    for f in html_files():
+        url = to_sitemap_url(f)
+        if url is None:
+            continue
+        try:
+            import datetime as _dt
+            mtime_iso = _dt.date.fromtimestamp(f.stat().st_mtime).isoformat()
+        except Exception:
+            mtime_iso = today
+        url_to_lastmod[url] = mtime_iso
+
     for url, pri in unique:
         # Homepage gets highest priority
         priority = 1.0 if url == '/' else pri
         loc = f"<loc>{BASE_URL}{url}</loc>"
         pri_tag = f"<priority>{priority}</priority>"
+        lm = url_to_lastmod.get(url, today)
+        lm_tag = f"<lastmod>{lm}</lastmod>"
         lines.append(f"  <url>")
         lines.append(f"    {loc}")
+        lines.append(f"    {lm_tag}")
         lines.append(f"    {pri_tag}")
         lines.append(f"  </url>")
     lines.append('</urlset>')
