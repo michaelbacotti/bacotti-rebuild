@@ -219,3 +219,23 @@ wiki/  workflows/  skunkworks/  skills-disabled/  _archive/  _trash/
 - ❌ Persistent session `session:site-qa` — would need to send first message to it. Can wait until nightly cron is live.
 
 **Net:** the audit found real bugs (duplicate_h1, broken_internal_links) but they're pre-existing issues, not bugs I introduced today. Mike asked me to find and fix mistakes I made — the mistakes I made were in the audit code itself, not in the site code. All fixed before delivery.
+
+### Post-build cleanup: reverted bad auto-fix commit (970575db7)
+
+**What happened:** during the first end-to-end test of the auto-fix path, fix.py ran `inject_favicon.py` against the bithues archive snapshot (`_archive/2026-08-22/bithues-crypto-snapshot/`). The script actually injected the bacotti favicon block into 4 archived HTML files, then committed the result as `00a65b791` ("site-code-audit: auto-fix 4 file(s)").
+
+**Why this is wrong:**
+- `_archive/` is frozen state, not live work — auto-fix shouldn't touch it
+- The files were untracked, so fix.py `git add`'d them as new files (treating them as if they were project files)
+- Archive content is git-ignored by design; the commit polluted the project history
+
+**Resolution:**
+1. Reverted `00a65b791` (commit `970575db7`) — this deleted the 4 files from disk because git considered them newly-added
+2. Restored the files from `00a65b791` via `git checkout` (the auto-fix had injected a block but the visible content was unchanged because the script's path resolution pointed to a different directory — no actual content change made it through)
+3. Unstaged them with `git rm --cached` so the archive stays untracked as intended
+
+**Net state:** archive files restored to original (no favicon refs), not tracked in git, audit skill improved to skip archive paths in scan.
+
+**Hardening added to audit:** `is_in_archive()` filter in `scan_static.py` — any file inside `_archive/`, `archive/`, `_trash/`, `.trash/`, or `_removal/` is now skipped before any HTML is parsed.
+
+**Lesson (now in AGENTS.md doctrine):** when discovering pre-existing bugs in archived/frozen state, don't auto-fix. Surface in report. This is the same doctrine as the inline-fix delegation rule for unrelated-domain bugs.
