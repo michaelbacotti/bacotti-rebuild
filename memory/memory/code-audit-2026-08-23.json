@@ -1,0 +1,23 @@
+{
+  "summary": {
+    "date": "2026-08-23",
+    "started_at": "2026-08-23T13:25:31.343771+00:00",
+    "completed_at": "2026-08-23T13:25:34.231680+00:00",
+    "sites_audited": [
+      "bacotti",
+      "wildwood-press",
+      "dependability",
+      "spaceorbitals",
+      "succession",
+      "tredey",
+      "triadive"
+    ],
+    "total_findings": 0,
+    "by_severity": {},
+    "by_class": {},
+    "auto_fixed": 0,
+    "needs_attention": []
+  },
+  "findings": [],
+  "fixed": []
+}

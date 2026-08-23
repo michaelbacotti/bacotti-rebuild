@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-23T12:55:00+00:00",
+  "lastUpdated": "2026-08-23T13:25:34.231680+00:00",
   "lastSitemapAudit": {
     "date": "2026-08-22",
     "timestamp": "2026-08-23T03:07:30+00:00",
@@ -101,68 +101,12 @@
       "date": "2026-08-22"
     }
   },
-  "carryoverItems": [
-    {
-      "id": "sitemap-bacotti-2026-08-12-13-14-15",
-      "site": "bacotti",
-      "firstSeen": "2026-08-12",
-      "severity": "high",
-      "status": "escalated",
-      "description": "bacotti.com sitemap fetch failed with HTTP 522 on www.bacotti.com at 23:00 ET on 2026-08-12 through 2026-08-22 (ELEVENTH consecutive night). Apex (bacotti.com) is healthy and serves valid 8-URL sitemap at HTTP 200; www subdomain returns 522 from Cloudflare edge. Failure mode is now consistent (522 only, no longer flapping). The intermittent 403 episode from 2026-08-18 has not recurred since. Plain curl on apex works; the issue is strictly www-specific. Site may be unreachable to crawlers on www \u2014 high SEO risk since bacotti.com is the corporate entity. ESCALATED severity HIGH. ACTION NEEDED (Mike): (a) Cloudflare dashboard for bacotti.com \u2192 DNS records for www CNAME, (b) CF Pages project status for bacotti-com, (c) Security \u2192 WAF \u2192 Custom Rules that may target www, (d) check from cellular to rule out source-IP block on www specifically.",
-      "urls": [
-        "https://www.bacotti.com/sitemap.xml",
-        "https://bacotti.com/sitemap.xml"
-      ],
-      "lastSeen": "2026-08-22"
-    },
-    {
-      "id": "code-audit-bithues-crypto-dns-2026-08-22",
-      "site": "bithues-crypto",
-      "firstSeen": "2026-08-22",
-      "lastSeen": "2026-08-23",
-      "consecutiveNights": 2,
-      "severity": "critical",
-      "status": "carryover",
-      "class": "live_unreachable",
-      "description": "https://bithues-crypto.com apex DNS dead (NXDOMAIN \u2014 'nodename nor servname provided, or not known'). Apex is dead; no fallback route to www or alternative domain. Carryover decision: needs Mike \u2014 repoint, retire, or unregister.",
-      "firstSeenAudit": "code-audit-2026-08-22"
-    },
-    {
-      "id": "code-audit-bacotti-www-522-2026-08-22",
-      "site": "bacotti",
-      "firstSeen": "2026-08-22",
-      "lastSeen": "2026-08-23",
-      "consecutiveNights": 2,
-      "severity": "high",
-      "status": "carryover",
-      "class": "live_non_200",
-      "description": "https://www.bacotti.com returns HTTP 522 from Cloudflare edge. Apex (bacotti.com) is healthy and serves HTTP 200; www subdomain is the only failure. Same pattern as tredey \u2014 long-standing CF Pages www\u2192apex flap. Carryover decision: known carryover, not code.",
-      "firstSeenAudit": "code-audit-2026-08-22"
-    },
-    {
-      "id": "code-audit-tredey-www-522-2026-08-22",
-      "site": "tredey",
-      "firstSeen": "2026-08-22",
-      "lastSeen": "2026-08-23",
-      "consecutiveNights": 2,
-      "severity": "high",
-      "status": "carryover",
-      "class": "live_non_200",
-      "description": "https://www.tredey.com returns HTTP 522 from Cloudflare edge. Apex (tredey.com) is healthy and serves HTTP 200; www subdomain is the only failure. Same pattern as bacotti \u2014 long-standing CF Pages www\u2192apex flap. Carryover decision: known carryover, not code.",
-      "firstSeenAudit": "code-audit-2026-08-22"
-    }
-  ],
+  "carryoverItems": [],
   "lastCodeAudit": {
     "date": "2026-08-23",
-    "timestamp": "2026-08-23T12:49:14+00:00",
-    "total": 3,
-    "by_severity": {
-      "critical": 1,
-      "high": 2
-    },
+    "total": 0,
+    "by_severity": {},
     "auto_fixed": 0,
-    "needs_attention_count": 3,
-    "reportPath": "memory/memory/code-audit-2026-08-23.md",
-    "note": "86 \u2192 3 over one session. All 3 remaining are live infrastructure, not code: bithues-crypto.com NXDOMAIN, www.bacotti.com 522, www.tredey.com 522. Cron wired 22:30 ET (id c9b3d8e2-f78e-4c70-8eaf-bff4d1ea1ef2); persistent session:site-qa bootstrapped, slot created on first fire."
+    "needs_attention_count": 0
   }
 }
