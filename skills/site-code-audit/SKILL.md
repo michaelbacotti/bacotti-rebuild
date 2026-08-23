@@ -1,11 +1,12 @@
 ---
 name: "site-code-audit"
-description: "Nightly audit of all site source code + live fetches across 8 websites, with safe auto-fix. Catches GA4 tag typos, missing favicons, dead internal links, broken redirects, build script errors, cron failures. Runs as a Lobster pipeline on session:site-qa."
+description: "Site audit + auto-fix + verify_published post-build gate. E-E-A-T recipe, word count, AdSense, canonical, anti-pattern #89 wipe detection. Edit-at-source doctrine."
 ---
 
 # Site Code Audit
 
 **Created:** 2026-08-22
+**Last upgraded:** 2026-08-23 (cron-quality upgrade — E-E-A-T gate + verify_published.py)
 **Status:** Live (nightly 22:30 ET, after sitemap audit)
 
 ## What it does
@@ -15,6 +16,8 @@ Three layers of coverage, all in one nightly run:
 1. **Static source scan** — every Python file in `_build/` and `skills/*/scripts/`, every HTML page on all 8 sites, `_redirects`, `manifest.json`, `wrangler.toml`, sitemap files, `.well-known/*`.
 2. **Live HTTP probe** — fetches each site's apex + key URLs with a real browser UA, verifies HTTP 200 / favicon serves / GA4 tag format.
 3. **Cron health check** — pulls all cron job statuses, surfaces anything errored >2 days.
+
+Plus a **post-build gate** (`verify_published.py`) that runs after every cron build and aborts on E-E-A-T / word-count / AdSense / canonical / anti-pattern #89 failures.
 
 Auto-fix policy is conservative: only patches where the fix is mechanical and reversible (no semantic judgment). Anything ambiguous goes to a workboard card.
 
@@ -38,28 +41,31 @@ Auto-fix policy is conservative: only patches where the fix is mechanical and re
 - Sitemap URLs return non-200
 - Any HTML content change (paragraphs, headings)
 
-## Anti-Pattern #92: edit-at-source doctrine
+## Anti-Pattern #92: edit-at-source doctrine (standing rule)
 
-**Rule:** for sites with a `build.py` (spaceorbitals, triadive, succession newsletters), fix the MD source or `build.py` itself — NOT the rendered HTML.
+**Rule hierarchy (locked in 2026-08-23):**
+
+1. **NEW content** → MD source files (in `content/articles/`, `content/newsletters/`, etc.)
+2. **NEW templates** → `build.py` constants (e.g. `EEAT_BLOCK`, site-wide header)
+3. **NEVER edit rendered HTML** — it gets wiped on next cron rebuild
 
 **Why this matters:** the HTML gets regenerated on every build, so any direct HTML edit will be wiped. This has caused at least 3 round-trips in past sessions (the playbook page ad-slot dup, the dup H1 on /reading-maps/, the duplicate `<ins>` blocks). The audit-and-fix workflow MUST classify each file before touching it.
 
-**Tooling (added 2026-08-23):**
+**Anti-pattern #89 specifically:** Hand-edited HTML E-E-A-T gets wiped on cron rebuild. Mitigation: E-E-A-T MUST be wrapped in `<section class="eeat-block">` AND defined as a Python string constant in `build.py`. See `references/anti-patterns.md` for full anti-pattern catalog.
 
-| Tool | Purpose |
-|---|---|
-| `scripts/check_source.py <path>` | Classify any HTML as hand_crafted / md_source / inline_static / orphan |
-| `scripts/fix_thin.py` | Auto-fix thin pages at the SOURCE (MD file for md_source, HTML for hand_crafted) |
-
-**Workflow:**
+**Pre-flight checklist (going forward):**
 
 ```bash
-# Before any HTML edit, run:
-python3 skills/site-code-audit/scripts/check_source.py <file>
+# Step 1 — Before any HTML/MD edit: classify the file
+python3 skills/site-code-audit/scripts/check_source.py <path>
 
-# Output: "Source type: md_source / MD source exists. EDIT MD, not HTML."
-# OR:    "Source type: inline_static / Built from inline string in build.py. EDIT build.py."
-# OR:    "Source type: hand_crafted / orphan / No build.py touches it. Safe to edit HTML."
+# Step 2 — Edit at the SOURCE (MD for content, build.py for templates, HTML for hand_crafted only)
+
+# Step 3 — Rebuild (if edit was at MD or build.py)
+python3 <site>/build.py  # full rebuild
+
+# Step 4 — Verify (after build, before deploy)
+python3 skills/site-code-audit/scripts/verify_published.py --site <key> --quiet
 ```
 
 **Sites with active build.py + MD sources:**
@@ -69,11 +75,43 @@ python3 skills/site-code-audit/scripts/check_source.py <file>
 | spaceorbitals | `projects/spaceorbitals/spaceorbitals/build.py` | `projects/spaceorbitals/content/{articles,news,reviews,gear,newsletters}/*.md` |
 | triadive | `projects/triadive/triadive-build/build.py` | `projects/triadive/content/{articles,pages}/*.md` |
 | succession newsletters | `entities/succession/website/build.py` | `entities/succession/website/content/newsletters/*.md` |
-| dependability | (no build.py — hand-crafted) | n/a |
-| bithues | `projects/bithues/bithues-may24/build.py` (LEGACY, old) | n/a |
-| tredey | `projects/tredey/trading-journal-build/build.py` (trading journal, not website) | n/a |
+| dependability | `entities/dependability/dependability-may26/build.py` | n/a (hand-crafted article templates in build.py) |
+| bithues | `projects/bithues-crypto/bithues-build/build.py` | n/a (newsletter templates in build.py) |
+| tredey | `projects/tredey/trading-journal-build/build.py` | n/a (article/forecast templates in build.py) |
 
 **When fix_thin.py skips:** pages with `source_type=inline_static` (defined as string literals in build.py) are skipped because they require a more invasive build.py edit. Do them manually or extend fix_thin.py to handle that case.
+
+## Post-build gate: verify_published.py (2026-08-23)
+
+After every cron build, `verify_published.py` runs as a quality gate. Aborts deploy on:
+
+| Check | Threshold | Source |
+|---|---|---|
+| Word count | FAIL <400, WARN <800, prefer 1200 | `references/quality-standards.md` |
+| E-E-A-T recipe | FAIL if any of 6 sections missing | `EEAT_RECIPE` constant |
+| E-E-A-T wrapper | FAIL if not in `<section class="eeat-block">` | anti-pattern #89 |
+| AdSense `<ins>` | FAIL if missing on 800w+ pages | Google AdSense policy |
+| Canonical URL | FAIL if missing or non-absolute | CF Pages best practice |
+
+**Usage:**
+
+```bash
+# Single site
+python3 skills/site-code-audit/scripts/verify_published.py --site bithues --quiet
+
+# All sites
+python3 skills/site-code-audit/scripts/verify_published.py
+
+# Just check E-E-A-T recipe coverage
+python3 skills/site-code-audit/scripts/verify_published.py --site triadive --check eeat
+```
+
+**Integration points:**
+
+- `skills/autonomous-content-publishing/scripts/publish.py` — calls verify_published after build, aborts on FAIL
+- `skills/autonomous-content-publishing/scripts/verify.py` — enforces word count + 5-section E-E-A-T at draft stage
+
+**Per-site EEAT_BLOCK mapping:** see `references/quality-standards.md`.
 
 ## Architecture
 
@@ -84,7 +122,12 @@ cron (22:30 ET daily, session:site-qa)
         ├── scan_live.py        (HTTP probes)
         ├── scan_crons.py       (checks cron statuses)
         ├── fix.py              (applies safe auto-fixes)
-        └── notify.py           (writes JSON + MD reports + workboard cards)
+        ├── notify.py           (writes JSON + MD reports + workboard cards)
+        └── verify_published.py (post-build E-E-A-T / word-count / AdSense gate)
+
+after every cron build (per-site):
+    verify_published.py --site <key>
+        └── aborts publish.py on FAIL
 ```
 
 The persistent session (`session:site-qa`) lets the audit reference **yesterday's findings** — "this has been broken for 3 days now, escalate" — instead of starting cold each night.
@@ -107,7 +150,18 @@ python3 skills/site-code-audit/scripts/run.py --scan-only
 
 # Just one site
 python3 skills/site-code-audit/scripts/run.py --site bacotti
+
+# Post-build gate (single site)
+python3 skills/site-code-audit/scripts/verify_published.py --site bithues --quiet
+
+# Pre-flight before HTML edit
+python3 skills/site-code-audit/scripts/check_source.py <file>
 ```
+
+## References
+
+- `references/quality-standards.md` — Mike's E-E-A-T recipe, word-count policy, per-site EEAT_BLOCK mapping
+- `references/anti-patterns.md` — anti-pattern #89 (HTML wipe), #92 (edit-at-source), #91 (deploy method), #93 (verify live)
 
 ## Reversal / safety
 
@@ -115,3 +169,4 @@ python3 skills/site-code-audit/scripts/run.py --site bacotti
 - `--scan-only` mode skips `fix.py` entirely.
 - `--dry-run` shows what would be fixed without applying.
 - Pipeline checkpoints in `.openclaw/tmp/code-audit-checkpoint.json` allow resume.
+- `verify_published.py` never modifies files — it only reports. Pass/fail drives downstream decisions.

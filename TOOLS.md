@@ -109,3 +109,28 @@ python3 skills/site-code-audit/scripts/check_source.py <file>
 
 If it returns `md_source` or `inline_static`, edit the source (MD or build.py), not the HTML.
 
+
+---
+
+## Quality gate for cron-generated content
+
+After 2026-08-23 upgrades, every cron pipeline that renders HTML from MD source bakes an E-E-A-T block into the build template (anti-pattern #89 wipe fix). Five sites covered:
+
+| Site | Constant | Injection point |
+|---|---|---|
+| bithues.com | `EEAT_BLOCK` in `projects/bithues-crypto/bithues-build/build.py` | `render_newsletter_article()` |
+| dependability.us | `DEPENDABILITY_EEAT_BLOCK` | `article_page_html()` |
+| successionholdingllc.com | `SUCCESSION_EEAT_BLOCK` | `render_issue_page()` |
+| tredey.com | `TREDEY_EEAT_BLOCK` | `build_article_page()` |
+| spaceorbitals.com | `SPACEORBITALS_EEAT_BLOCK` | `render_page()` |
+
+**Verify after rebuild:** `python3 skills/site-code-audit/scripts/verify_published.py --site <key>`
+
+The verifier checks:
+- Word count ≥ 400 (FAIL) / ≥ 800 (WARN) / prefer 1200
+- 5-section E-E-A-T recipe present (named_editor, credentials, launch_date, editorial_process, corrections_policy, disclosure)
+- AdSense `<ins>` tag present
+- canonical URL present
+- anti-pattern #89: hand-edited E-E-A-T (not in `.eeat-block` wrapper) gets flagged so it doesn't get wiped on next cron
+
+**For autonomous-content pipeline** (`autonomous-content-daily` cron): `publish.py` now calls `verify_built_html()` after build and aborts on failure. So a thin / non-compliant article never reaches production.
