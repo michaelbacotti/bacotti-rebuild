@@ -46,6 +46,16 @@ MIN_MATCH_SCORE = 0.25  # very lenient — claims are often paraphrased
 TIER_MIN_SCORES = {1: 0.15, 2: 0.20, 3: 0.30, 4: 0.45}  # higher tier = more lenient
 PASS_RATIO = 0.85  # 85% of claims must verify for the article to pass
 
+# Quality thresholds (Mike's standard, 2026-08-23)
+MIN_TOTAL_WORDS_FAIL = 400
+MIN_TOTAL_WORDS_WARN = 800
+PREFERRED_TOTAL_WORDS = 1200
+MIN_SECTION_WORDS = 120  # each of the 5 sections must be at least this long
+REQUIRED_SECTIONS = [
+    "intro", "worked_example", "common_mistakes",
+    "decision_checklist", "when_doesnt_apply",
+]
+
 
 def fetch_snippet(url: str, max_chars: int = 4000) -> str | None:
     """Re-fetch a URL and return cleaned text, or None on error."""
@@ -162,11 +172,63 @@ def verify_claims(claims: list, sources: list) -> list:
     return results
 
 
+def check_draft_quality(draft: dict) -> dict:
+    """Pre-claim quality gate for a draft. Enforces Mike's word-count and
+    5-section E-E-A-T recipe at the draft stage so a thin/incomplete draft
+    never makes it to the slow re-fetch stage.
+
+    Returns dict with ok, total_words, section_word_counts, missing_sections,
+    short_sections, failures, warnings.
+    """
+    section_word_counts = {}
+    missing = []
+    short = []
+
+    for key in REQUIRED_SECTIONS:
+        text = draft.get(key, "")
+        if not text or not text.strip():
+            missing.append(key)
+            section_word_counts[key] = 0
+            continue
+        words = len(re.findall(r"\b\w+(?:[-']\w+)*\b", text))
+        section_word_counts[key] = words
+        if words < MIN_SECTION_WORDS:
+            short.append({"section": key, "words": words, "min": MIN_SECTION_WORDS})
+
+    total_words = sum(section_word_counts.values())
+
+    failures = []
+    warnings = []
+    if missing:
+        failures.append(f"missing required sections: {', '.join(missing)}")
+    if short:
+        names = ", ".join(f"{s['section']} ({s['words']}/{s['min']}w)" for s in short)
+        failures.append(f"section(s) below minimum: {names}")
+    if total_words < MIN_TOTAL_WORDS_FAIL:
+        failures.append(f"total word count {total_words} < {MIN_TOTAL_WORDS_FAIL} (FAIL)")
+    elif total_words < MIN_TOTAL_WORDS_WARN:
+        warnings.append(f"total word count {total_words} < {MIN_TOTAL_WORDS_WARN} (prefer {PREFERRED_TOTAL_WORDS})")
+    elif total_words < PREFERRED_TOTAL_WORDS:
+        warnings.append(f"total word count {total_words} below preferred {PREFERRED_TOTAL_WORDS}")
+
+    return {
+        "ok": len(failures) == 0,
+        "total_words": total_words,
+        "section_word_counts": section_word_counts,
+        "missing_sections": missing,
+        "short_sections": short,
+        "warnings": warnings,
+        "failures": failures,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description="Verify draft claims against sources")
     ap.add_argument("--draft", required=True, help="Path to draft JSON")
     ap.add_argument("--dossier", required=True, help="Path to research dossier JSON")
     ap.add_argument("--date", help="Override date stamp")
+    ap.add_argument("--word-target", type=int, default=PREFERRED_TOTAL_WORDS,
+                    help="Preferred total word count (default: 1200)")
     args = ap.parse_args()
 
     draft = json.loads(Path(args.draft).read_text())
@@ -174,11 +236,22 @@ def main():
     claims = draft.get("claims", [])
     sources = dossier.get("sources", [])
 
+    # Quality gate (P1-2): word count + 5-section recipe at draft stage.
+    # Runs BEFORE claim verification so a thin/incomplete draft never makes
+    # it to the slow re-fetch stage.
+    quality = check_draft_quality(draft)
+    print(json.dumps({
+        "quality": quality,
+        "word_target": args.word_target,
+    }, indent=2))
+
     results = verify_claims(claims, sources)
     n_total = len(results)
     n_verified = sum(1 for r in results if r["verified"])
     ratio = n_verified / n_total if n_total > 0 else 0.0
-    if ratio >= PASS_RATIO:
+    if not quality["ok"]:
+        decision = "reject"
+    elif ratio >= PASS_RATIO:
         decision = "pass"
     elif ratio >= 0.5:
         decision = "needs_revision"
@@ -192,6 +265,7 @@ def main():
         "claims_verified": n_verified,
         "claims_rejected": n_total - n_verified,
         "verification_ratio": round(ratio, 3),
+        "quality": quality,
         "decision": decision,
         "results": results,
     }
@@ -205,6 +279,7 @@ def main():
         "claims_total": n_total,
         "claims_verified": n_verified,
         "ratio": round(ratio, 3),
+        "quality_ok": quality["ok"],
         "decision": decision,
     }, indent=2))
 

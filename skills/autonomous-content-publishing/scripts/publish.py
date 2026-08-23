@@ -104,6 +104,51 @@ def get_target_dir(site: str, section: str) -> Path:
     return WORKSPACE / cfg["source_dir"] / section_subdir
 
 
+def verify_built_html(site: str, target_file: Path) -> dict:
+    """Run verify_published.py against the rendered HTML for the article.
+
+    Quality gate per Mike's standard (2026-08-23):
+    - Word count ≥ 400 (FAIL), ≥ 800 (WARN), prefer 1200
+    - AdSense <ins> tag present
+    - 5-section E-E-A-T recipe baked into a build template (NOT hand-edited)
+    - canonical URL present
+    Returns a dict with ok status + details. Caller decides whether to abort.
+    """
+    verifier = WORKSPACE / "skills" / "site-code-audit" / "scripts" / "verify_published.py"
+    if not verifier.exists():
+        return {"ok": True, "skipped": f"verify_published.py not found at {verifier}"}
+    try:
+        result = subprocess.run(
+            ["python3", str(verifier), "--file", str(target_file), "--json"],
+            cwd=str(WORKSPACE),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if result.returncode not in (0, 1):
+            return {"ok": True, "skipped": f"verify_published returned {result.returncode}",
+                    "stderr_tail": result.stderr[-300:]}
+        try:
+            data = json.loads(result.stdout)
+        except json.JSONDecodeError:
+            return {"ok": True, "skipped": "verify_published JSON parse failed",
+                    "stdout_tail": result.stdout[-300:]}
+        # Pull per-file result out of the aggregate
+        per_file = next((r for r in data.get("results", []) if r.get("file")), None)
+        ok = data.get("exit_code", 1) == 0 and (per_file is None or per_file.get("ok", False))
+        return {
+            "ok": ok,
+            "exit_code": data.get("exit_code"),
+            "files_pass": data.get("pass"),
+            "files_total": data.get("files"),
+            "per_file": per_file,
+        }
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error": "verify_published timed out"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 def publish_article(site: str, draft_path: Path, section: str, commit: bool = False,
                     build: bool = True, deploy: bool = False, dry_run: bool = True) -> dict:
     """Publish an article: move to source dir, optionally build, deploy, commit."""
@@ -139,6 +184,18 @@ def publish_article(site: str, draft_path: Path, section: str, commit: bool = Fa
         except Exception as e:
             log["actions"].append({"step": "build", "error": str(e)})
 
+        # Step 2b: quality gate — verify_published.py
+        # Renders the article, then scans the rendered HTML against Mike's
+        # quality standards (word count, AdSense, E-E-A-T baked in, canonical).
+        # On failure, abort the publish so a thin/non-compliant article never
+        # reaches production.
+        verify = verify_built_html(site, target_file)
+        log["actions"].append({"step": "verify", "result": verify})
+        if build and not verify.get("ok", False) and not verify.get("skipped"):
+            log["ok"] = False
+            log["error"] = "verify_published failed; publish aborted"
+            return log
+
     # Step 3: deploy (only if explicit)
     if deploy:
         cfg = SITE_CONFIG[site]
@@ -171,6 +228,7 @@ def publish_article(site: str, draft_path: Path, section: str, commit: bool = Fa
         except Exception as e:
             log["actions"].append({"step": "git commit", "error": str(e)})
 
+    log["ok"] = log.get("ok", True)
     return log
 
 
