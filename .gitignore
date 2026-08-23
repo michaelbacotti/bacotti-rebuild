@@ -1,0 +1,13 @@
+# Long-term memory file - contains API tokens, OAuth secrets, dev app credentials
+# (CF Pages OAuth, Pinterest dev, etc.). NEVER commit; only exists locally.
+MEMORY.md
+
+# Local credentials
+.openclaw/credentials/
+.openclaw/tmp/cf-token.env
+
+# OS / editor noise
+.DS_Store
+*.swp
+*.swo
+*~
