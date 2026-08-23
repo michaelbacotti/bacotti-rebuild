@@ -1,0 +1,750 @@
+{
+  "summary": {
+    "date": "2026-08-22",
+    "started_at": "2026-08-23T02:32:27.438796+00:00",
+    "completed_at": "2026-08-23T02:32:31.677488+00:00",
+    "sites_audited": [
+      "bacotti",
+      "wildwood-press",
+      "bithues",
+      "bithues-crypto",
+      "dependability",
+      "spaceorbitals",
+      "succession",
+      "tredey",
+      "triadive"
+    ],
+    "total_findings": 86,
+    "by_severity": {
+      "medium": 49,
+      "low": 34,
+      "critical": 1,
+      "high": 2
+    },
+    "by_class": {
+      "broken_internal_link": 47,
+      "duplicate_h1": 34,
+      "missing_canonical": 2,
+      "live_unreachable": 1,
+      "live_non_200": 2
+    },
+    "auto_fixed": 0,
+    "needs_attention": [
+      {
+        "site": "bithues-crypto",
+        "class": "live_unreachable",
+        "severity": "critical",
+        "file": "https://bithues-crypto.com",
+        "details": "apex fetch failed: error: URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>",
+        "auto_fixable": false
+      },
+      {
+        "site": "bacotti",
+        "class": "live_non_200",
+        "severity": "high",
+        "file": "https://www.bacotti.com",
+        "details": "www returned HTTP 522",
+        "auto_fixable": false
+      },
+      {
+        "site": "tredey",
+        "class": "live_non_200",
+        "severity": "high",
+        "file": "https://www.tredey.com",
+        "details": "www returned HTTP 522",
+        "auto_fixable": false
+      }
+    ]
+  },
+  "findings": [
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/articles/2026-05-23-bond-yields-equity-options/index.html",
+      "details": "internal href '/education/rates-options/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/articles/2026-05-23-bond-yields-equity-options/index.html",
+      "details": "internal href '/articles/tlt-new-bond-regime/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/articles/calendar-spread-exit-timing/index.html",
+      "details": "internal href '/articles/calendar-spreads-and-theta-collection/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/articles/calendar-spread-near-term-expiration-guide/index.html",
+      "details": "internal href '/articles/calendar-spreads-and-theta-collection/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/articles/calendar-spread-second-event-risk/index.html",
+      "details": "internal href '/articles/calendar-spreads-and-theta-collection/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/articles/calendar-spread-strike-selection-atm-vs-otm/index.html",
+      "details": "internal href '/articles/calendar-spreads-and-theta-collection/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-13/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-14/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-15/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-16/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-17/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-20/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-21/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-22/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-23/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-24/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-27/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-28/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-29/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-30/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-07-31/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-03/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-04/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-05/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-06/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-07/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-10/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-11/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-12/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-13/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-14/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-15/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-17/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-18/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-19/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-20/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/2026-08-21/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "entities/dependability/website/commentary/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/education/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/education/market-structure/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/education/options-foundations/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/education/rates-and-options/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/education/volatility/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/gold-as-a-store-of-value/index.html",
+      "details": "internal href '/education/macro-rates/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/macro/fed-policy/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/macro/fx-and-dollar/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/macro/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/macro/inflation/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/macro/rates-and-bonds/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/methodology/index.html",
+      "details": "internal href '/trade-log/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/sectors/ai-infrastructure/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/sectors/energy/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/sectors/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/sectors/precious-metals/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/sectors/space-economy/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/bull-call-spreads/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/calendar-spreads/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/cash-secured-puts/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/covered-calls/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/income-strategies/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "dependability",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "entities/dependability/website/strategies/iron-condors/index.html",
+      "details": "internal href '/terms/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "missing_canonical",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/googlea3cb21e8d74bf905.html",
+      "details": "page missing <link rel=canonical>",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-best-sky-events-july-delta-aquariids-venus-iss/index.html",
+      "details": "internal href '/articles/meteor-shower-photography-guide/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-milky-way-core-deep-sky-moonlight/index.html",
+      "details": "internal href '/articles/astrophotography-basics/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-three-signals-from-the-last-48-hours/index.html",
+      "details": "internal href '/articles/iss/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-three-signals-from-the-last-48-hours/index.html",
+      "details": "internal href '/articles/spacex-reusability-2026/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-zhuque3-recovery-100-launches-eclipse/index.html",
+      "details": "internal href '/newsletters/2026-08-17-orbital-daily-tracker-four-launches-seven-days-august-17/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-zhuque3-recovery-100-launches-eclipse/index.html",
+      "details": "internal href '/newsletters/2026-08-20-orbital-daily-tracker-saturn-venus-four-planets-tonight/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/starlink-v3-marks-the-week-amid-14-missions/index.html",
+      "details": "internal href '/articles/starlink/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/starlink-v3-marks-the-week-amid-14-missions/index.html",
+      "details": "internal href '/articles/spacex-starship-2026/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/three-signals-end-of-august/index.html",
+      "details": "internal href '/newsletters/2026-08-16-weekly-read-when-operations-outrun-policy/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/three-signals-end-of-august/index.html",
+      "details": "internal href '/newsletters/2026-08-16-weekly-read-when-operations-outrun-policy/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/three-signals-end-of-august/index.html",
+      "details": "internal href '/newsletters/2026-08-16-weekly-read-when-operations-outrun-policy/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/three-signals-end-of-august/index.html",
+      "details": "internal href '/newsletters/falcon9-moon-crash-lessons-lunar-orbit-august-14/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/spaceorbitals/spaceorbitals/newsletters/three-signals-end-of-august/index.html",
+      "details": "internal href '/newsletters/four-launches-seven-days-august-17/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "tredey",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "projects/tredey/website/forecasts/2026-07-27-fomc-day-1-skip/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "tredey",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "projects/tredey/website/playbook/2026-07-19-lessons-from-five-months-of-trades/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "tredey",
+      "class": "missing_canonical",
+      "severity": "medium",
+      "file": "projects/tredey/website/tools/market-gauge-widget.html",
+      "details": "page missing <link rel=canonical>",
+      "auto_fixable": false
+    },
+    {
+      "site": "triadive",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/triadive/website/dispatches/2026-08-09-issue-2-the-second-dispatch/index.html",
+      "details": "internal href '/articles/concepts/what-is-llm/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "triadive",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/triadive/website/glossary/cron/index.html",
+      "details": "internal href '/articles/concepts/cron-skills-loops-lobsters-workboard/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "triadive",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/triadive/website/glossary/cron-vs-heartbeat/index.html",
+      "details": "internal href '/articles/concepts/cron-vs-heartbeat/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "triadive",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/triadive/website/glossary/sandbox/index.html",
+      "details": "internal href '/articles/concepts/evaluation-safety-governance/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues-crypto",
+      "class": "live_unreachable",
+      "severity": "critical",
+      "file": "https://bithues-crypto.com",
+      "details": "apex fetch failed: error: URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>",
+      "auto_fixable": false
+    },
+    {
+      "site": "bacotti",
+      "class": "live_non_200",
+      "severity": "high",
+      "file": "https://www.bacotti.com",
+      "details": "www returned HTTP 522",
+      "auto_fixable": false
+    },
+    {
+      "site": "tredey",
+      "class": "live_non_200",
+      "severity": "high",
+      "file": "https://www.tredey.com",
+      "details": "www returned HTTP 522",
+      "auto_fixable": false
+    }
+  ],
+  "fixed": []
+}
