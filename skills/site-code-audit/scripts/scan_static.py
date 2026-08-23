@@ -267,6 +267,10 @@ def _scan_html_for_site(site) -> list:
             target = m.group(1)
             if target.startswith("//") or target.startswith("/_"):
                 continue
+            # Skip JS template-literal hrefs (e.g. '/reviews/' + b.slug + '.html')
+            # These are concatenated at runtime, not real broken links.
+            if any(tok in target for tok in ("' +", "+ '", '${', "{{", "}}")):
+                continue
             # Strip query/hash
             target = target.split("#")[0].split("?")[0]
             if not target:
@@ -294,7 +298,9 @@ def _scan_html_for_site(site) -> list:
                     "severity": "medium",
                     "file": rel,
                     "details": f"internal href '{target}' does not resolve to a known page or asset",
-                    "auto_fixable": False,
+                    "auto_fixable": True,
+                    "fix_class": "broken_internal_link",
+                    "broken_href": target,
                 }
             )
 
@@ -458,7 +464,8 @@ def _scan_html_for_site(site) -> list:
                     "severity": "medium",
                     "file": rel,
                     "details": f"{word_count}w of content but no AdSense ins tag (lost revenue opportunity)",
-                    "auto_fixable": False,
+                    "auto_fixable": True,
+                    "fix_class": "missing_ad_unit",
                     "word_count": word_count,
                 }
             )
