@@ -44,9 +44,15 @@ AD_INSLOT_RE = re.compile(r'<ins\s+class="adsbygoogle"', re.IGNORECASE)
 AD_DATA_SLOT_RE = re.compile(r'data-ad-slot="(\d+)"')
 
 # Page-type word-count thresholds (AdSense)
+# Per memory/archive/2026-07-monthly-highlights.md:
+# - 297-385w = clearly flagged by AdSense
+# - 460-685w = flagged
+# - 800w+ = passes (target for /about/, /authors/, /legal/, /methodology/)
+# - 1200w+ = strongly passes (target for /articles/, /reviews/, substantive content)
+# - Listing/archives/product pages (no ads): word count irrelevant
 WORDCOUNT_THRESHOLDS = {
     "legal_umbrella": 800,   # /about/, /authors/, /editorial/, /legal/, /methodology/, /disclaimer/, /privacy/, /terms/, /contact/
-    "content_article": 1200, # /articles/, /reviews/, /forecasts/, /commentary/, /newsletters/, /trade-log/
+    "content_article": 800,  # /articles/, /reviews/, /forecasts/, /commentary/, /newsletters/, /trade-log/ — passes at 800w
 }
 LEGAL_PATH_PATTERNS = [
     r'/about/?$', r'/authors/?$', r'/editorial/?$', r'/legal/?$',

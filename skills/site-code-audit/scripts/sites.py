@@ -38,8 +38,15 @@ SITES = [
         "source_dir": _workspace_path("entities/bacotti-inc/website/shop"),
         "favicon_paths": [],  # No favicon assets exist; do not inject bacotti's
     },
-    # bithues / bithues-crypto removed 2026-08-23 — not Mike's domains.
-    # Source snapshots live in _archive/2026-08-22/bithues-crypto-snapshot/ if needed.
+    # bithues-crypto removed 2026-08-23 — not Mike's domain. Snapshot at
+    # _archive/2026-08-22/bithues-crypto-snapshot/ if needed.
+    {
+        "name": "bithues",
+        "domain": "https://bithues.com",
+        "source_dir": _workspace_path("projects/bithues/website"),
+        "exclude_paths": ["_archive", "_trash"],
+        "favicon_paths": [],
+    },
     {
         "name": "dependability",
         "domain": "https://dependability.us",

@@ -1,28 +1,32 @@
 {
   "summary": {
     "date": "2026-08-23",
-    "started_at": "2026-08-23T13:59:39.317346+00:00",
-    "completed_at": "2026-08-23T13:59:42.454182+00:00",
+    "started_at": "2026-08-23T14:01:55.587705+00:00",
+    "completed_at": "2026-08-23T14:01:59.039108+00:00",
     "sites_audited": [
       "bacotti",
       "wildwood-press",
+      "bithues",
       "dependability",
       "spaceorbitals",
       "succession",
       "tredey",
       "triadive"
     ],
-    "total_findings": 192,
+    "total_findings": 199,
     "by_severity": {
-      "high": 113,
-      "critical": 76,
-      "medium": 3
+      "high": 123,
+      "medium": 47,
+      "low": 1,
+      "critical": 28
     },
     "by_class": {
-      "word_count_low": 52,
-      "missing_eeat_sections": 21,
-      "duplicate_ad_slot": 78,
-      "thin_with_ads": 38,
+      "word_count_low": 33,
+      "broken_internal_link": 44,
+      "duplicate_h1": 1,
+      "missing_eeat_sections": 25,
+      "duplicate_ad_slot": 79,
+      "thin_with_ads": 14,
       "missing_ad_unit": 3
     },
     "auto_fixed": 0,
@@ -50,6 +54,119 @@
         "page_type": "legal_umbrella"
       },
       {
+        "site": "bithues",
+        "class": "missing_eeat_sections",
+        "severity": "high",
+        "file": "projects/bithues/website/about/index.html",
+        "details": "/legal/-class page missing E-E-A-T sections: credentials, editorial_process, disclosure",
+        "auto_fixable": false,
+        "missing_sections": [
+          "credentials",
+          "editorial_process",
+          "disclosure"
+        ],
+        "word_count": 1195
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/articles/2/index.html",
+        "details": "316w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 316,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/articles/3/index.html",
+        "details": "312w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 312,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/articles/4/index.html",
+        "details": "343w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 343,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/articles/5/index.html",
+        "details": "291w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 291,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/articles/6/index.html",
+        "details": "257w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 257,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "missing_eeat_sections",
+        "severity": "high",
+        "file": "projects/bithues/website/contact/index.html",
+        "details": "/legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process",
+        "auto_fixable": false,
+        "missing_sections": [
+          "credentials",
+          "launch_date",
+          "editorial_process"
+        ],
+        "word_count": 933
+      },
+      {
+        "site": "bithues",
+        "class": "missing_eeat_sections",
+        "severity": "high",
+        "file": "projects/bithues/website/privacy/index.html",
+        "details": "/legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, disclosure",
+        "auto_fixable": false,
+        "missing_sections": [
+          "credentials",
+          "launch_date",
+          "editorial_process",
+          "disclosure"
+        ],
+        "word_count": 850
+      },
+      {
+        "site": "bithues",
+        "class": "missing_eeat_sections",
+        "severity": "high",
+        "file": "projects/bithues/website/terms/index.html",
+        "details": "/legal/-class page missing E-E-A-T sections: credentials, launch_date, corrections_policy, disclosure",
+        "auto_fixable": false,
+        "missing_sections": [
+          "credentials",
+          "launch_date",
+          "corrections_policy",
+          "disclosure"
+        ],
+        "word_count": 900
+      },
+      {
         "site": "dependability",
         "class": "missing_eeat_sections",
         "severity": "high",
@@ -67,10 +184,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/articles/forecast-methodology-2026/index.html",
-        "details": "763w (threshold 1200w for content_article)",
+        "details": "763w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 763,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -81,7 +198,7 @@
         "details": "page has 3 ad slot(s) but only 763w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 763,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 3
       },
       {
@@ -89,10 +206,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/articles/index.html",
-        "details": "140w (threshold 1200w for content_article)",
+        "details": "140w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 140,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -103,7 +220,7 @@
         "details": "page has 3 ad slot(s) but only 140w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 140,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 3
       },
       {
@@ -111,10 +228,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/commentary/2026-07-13/index.html",
-        "details": "497w (threshold 1200w for content_article)",
+        "details": "497w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 497,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -125,7 +242,7 @@
         "details": "page has 2 ad slot(s) but only 497w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 497,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 2
       },
       {
@@ -133,10 +250,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/commentary/2026-07-14/index.html",
-        "details": "564w (threshold 1200w for content_article)",
+        "details": "564w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 564,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -147,7 +264,7 @@
         "details": "page has 2 ad slot(s) but only 564w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 564,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 2
       },
       {
@@ -155,10 +272,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/commentary/2026-07-15/index.html",
-        "details": "665w (threshold 1200w for content_article)",
+        "details": "665w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 665,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -169,51 +286,7 @@
         "details": "page has 2 ad slot(s) but only 665w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 665,
-        "threshold": 1200,
-        "ad_count": 2
-      },
-      {
-        "site": "dependability",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "entities/dependability/website/commentary/2026-07-16/index.html",
-        "details": "1042w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1042,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "dependability",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "entities/dependability/website/commentary/2026-07-16/index.html",
-        "details": "page has 2 ad slot(s) but only 1042w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1042,
-        "threshold": 1200,
-        "ad_count": 2
-      },
-      {
-        "site": "dependability",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "entities/dependability/website/commentary/2026-08-21/index.html",
-        "details": "1122w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1122,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "dependability",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "entities/dependability/website/commentary/2026-08-21/index.html",
-        "details": "page has 2 ad slot(s) but only 1122w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1122,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 2
       },
       {
@@ -270,10 +343,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/forecast/2025-11-14/index.html",
-        "details": "504w (threshold 1200w for content_article)",
+        "details": "504w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 504,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -284,7 +357,7 @@
         "details": "page has 3 ad slot(s) but only 504w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 504,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 3
       },
       {
@@ -292,10 +365,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/forecast/2026-02-14/index.html",
-        "details": "631w (threshold 1200w for content_article)",
+        "details": "631w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 631,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -306,7 +379,7 @@
         "details": "page has 3 ad slot(s) but only 631w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 631,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 3
       },
       {
@@ -355,10 +428,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "entities/dependability/website/trade-log/index.html",
-        "details": "390w (threshold 1200w for content_article)",
+        "details": "390w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 390,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -369,7 +442,7 @@
         "details": "page has 1 ad slot(s) but only 390w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 390,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 1
       },
       {
@@ -387,33 +460,11 @@
         "site": "spaceorbitals",
         "class": "word_count_low",
         "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/articles/getting-into-astrophotography-2026/index.html",
-        "details": "935w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 935,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/articles/getting-into-astrophotography-2026/index.html",
-        "details": "page has 3 ad slot(s) but only 935w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 935,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "word_count_low",
-        "severity": "critical",
         "file": "projects/spaceorbitals/spaceorbitals/articles/hohmann-transfer-explained/index.html",
-        "details": "770w (threshold 1200w for content_article)",
+        "details": "770w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 770,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -424,7 +475,7 @@
         "details": "page has 3 ad slot(s) but only 770w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 770,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 3
       },
       {
@@ -432,10 +483,10 @@
         "class": "word_count_low",
         "severity": "high",
         "file": "projects/spaceorbitals/spaceorbitals/articles/index.html",
-        "details": "20w (threshold 1200w for content_article)",
+        "details": "20w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 20,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -443,10 +494,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "projects/spaceorbitals/spaceorbitals/articles/leo-economy-2026/index.html",
-        "details": "753w (threshold 1200w for content_article)",
+        "details": "753w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 753,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -457,29 +508,7 @@
         "details": "page has 3 ad slot(s) but only 753w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 753,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/articles/understanding-low-earth-orbit/index.html",
-        "details": "887w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 887,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/articles/understanding-low-earth-orbit/index.html",
-        "details": "page has 3 ad slot(s) but only 887w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 887,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 3
       },
       {
@@ -520,72 +549,6 @@
       {
         "site": "spaceorbitals",
         "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/newsletters/four-planetary-science-hits/index.html",
-        "details": "1098w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1098,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/newsletters/four-planetary-science-hits/index.html",
-        "details": "page has 3 ad slot(s) but only 1098w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1098,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-perseids-peak-planets-aligned-august-13/index.html",
-        "details": "1198w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1198,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-perseids-peak-planets-aligned-august-13/index.html",
-        "details": "page has 3 ad slot(s) but only 1198w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1198,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/newsletters/weekly-read-reusability-china-era/index.html",
-        "details": "1079w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1079,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/spaceorbitals/spaceorbitals/newsletters/weekly-read-reusability-china-era/index.html",
-        "details": "page has 3 ad slot(s) but only 1079w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1079,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "spaceorbitals",
-        "class": "word_count_low",
         "severity": "high",
         "file": "projects/spaceorbitals/spaceorbitals/privacy/index.html",
         "details": "91w (threshold 800w for legal_umbrella)",
@@ -599,10 +562,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "projects/spaceorbitals/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html",
-        "details": "782w (threshold 1200w for content_article)",
+        "details": "782w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 782,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -613,7 +576,7 @@
         "details": "page has 2 ad slot(s) but only 782w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 782,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 2
       },
       {
@@ -621,10 +584,10 @@
         "class": "word_count_low",
         "severity": "high",
         "file": "projects/spaceorbitals/spaceorbitals/reviews/index.html",
-        "details": "16w (threshold 1200w for content_article)",
+        "details": "16w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 16,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -638,50 +601,6 @@
           "launch_date"
         ],
         "word_count": 1245
-      },
-      {
-        "site": "succession",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "entities/succession/website/articles/2026-05-04-first-investment-property/index.html",
-        "details": "836w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 836,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "succession",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "entities/succession/website/articles/2026-05-04-first-investment-property/index.html",
-        "details": "page has 2 ad slot(s) but only 836w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 836,
-        "threshold": 1200,
-        "ad_count": 2
-      },
-      {
-        "site": "succession",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "entities/succession/website/articles/index.html",
-        "details": "1020w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1020,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "succession",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "entities/succession/website/articles/index.html",
-        "details": "page has 2 ad slot(s) but only 1020w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1020,
-        "threshold": 1200,
-        "ad_count": 2
       },
       {
         "site": "succession",
@@ -803,50 +722,6 @@
       },
       {
         "site": "tredey",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/tredey/website/forecasts/2026-07-31-framework-skip/index.html",
-        "details": "1083w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1083,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "tredey",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/tredey/website/forecasts/2026-07-31-framework-skip/index.html",
-        "details": "page has 3 ad slot(s) but only 1083w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1083,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "tredey",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/tredey/website/forecasts/vol-expansion-strangle-spx-fomc/index.html",
-        "details": "1052w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1052,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "tredey",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/tredey/website/forecasts/vol-expansion-strangle-spx-fomc/index.html",
-        "details": "page has 3 ad slot(s) but only 1052w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1052,
-        "threshold": 1200,
-        "ad_count": 3
-      },
-      {
-        "site": "tredey",
         "class": "missing_eeat_sections",
         "severity": "high",
         "file": "projects/tredey/website/privacy/index.html",
@@ -890,265 +765,23 @@
       {
         "site": "triadive",
         "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/agent-loop/index.html",
-        "details": "883w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 883,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/agent-loop/index.html",
-        "details": "page has 1 ad slot(s) but only 883w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 883,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/best-ways-to-ask-an-agent/index.html",
-        "details": "1139w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1139,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/best-ways-to-ask-an-agent/index.html",
-        "details": "page has 1 ad slot(s) but only 1139w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1139,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/loops-vs-graphs/index.html",
-        "details": "1042w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1042,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/loops-vs-graphs/index.html",
-        "details": "page has 1 ad slot(s) but only 1042w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1042,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/sessions-sub-agents/index.html",
-        "details": "1143w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1143,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/sessions-sub-agents/index.html",
-        "details": "page has 1 ad slot(s) but only 1143w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1143,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-a-graph/index.html",
-        "details": "1037w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1037,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-a-graph/index.html",
-        "details": "page has 1 ad slot(s) but only 1037w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1037,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-a-loop/index.html",
-        "details": "966w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 966,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-a-loop/index.html",
-        "details": "page has 1 ad slot(s) but only 966w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 966,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-an-ai-agent/index.html",
-        "details": "1024w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1024,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-an-ai-agent/index.html",
-        "details": "page has 1 ad slot(s) but only 1024w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1024,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-memory-short-long-semantic/index.html",
-        "details": "948w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 948,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/what-is-memory-short-long-semantic/index.html",
-        "details": "page has 1 ad slot(s) but only 948w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 948,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/why-memory-is-the-hardest-part/index.html",
-        "details": "1171w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 1171,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/concepts/why-memory-is-the-hardest-part/index.html",
-        "details": "page has 1 ad slot(s) but only 1171w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 1171,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
         "severity": "high",
         "file": "projects/triadive/website/articles/field-notes/index.html",
-        "details": "394w (threshold 1200w for content_article)",
+        "details": "394w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 394,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/field-notes/the-three-amigos-of-the-agent-stack/index.html",
-        "details": "950w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 950,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/field-notes/the-three-amigos-of-the-agent-stack/index.html",
-        "details": "page has 1 ad slot(s) but only 950w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 950,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/field-notes/triads-not-tools/index.html",
-        "details": "841w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 841,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/field-notes/triads-not-tools/index.html",
-        "details": "page has 1 ad slot(s) but only 841w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 841,
-        "threshold": 1200,
-        "ad_count": 1
       },
       {
         "site": "triadive",
         "class": "word_count_low",
         "severity": "high",
         "file": "projects/triadive/website/articles/lessons/index.html",
-        "details": "283w (threshold 1200w for content_article)",
+        "details": "283w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 283,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -1156,10 +789,10 @@
         "class": "word_count_low",
         "severity": "critical",
         "file": "projects/triadive/website/articles/workflows/daily-check-in-loop/index.html",
-        "details": "701w (threshold 1200w for content_article)",
+        "details": "701w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 701,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
       },
       {
@@ -1170,29 +803,7 @@
         "details": "page has 1 ad slot(s) but only 701w (AdSense red flag)",
         "auto_fixable": false,
         "word_count": 701,
-        "threshold": 1200,
-        "ad_count": 1
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/workflows/daily-triage-routine/index.html",
-        "details": "931w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 931,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/workflows/daily-triage-routine/index.html",
-        "details": "page has 1 ad slot(s) but only 931w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 931,
-        "threshold": 1200,
+        "threshold": 800,
         "ad_count": 1
       },
       {
@@ -1200,33 +811,11 @@
         "class": "word_count_low",
         "severity": "high",
         "file": "projects/triadive/website/articles/workflows/index.html",
-        "details": "683w (threshold 1200w for content_article)",
+        "details": "683w (threshold 800w for content_article)",
         "auto_fixable": false,
         "word_count": 683,
-        "threshold": 1200,
+        "threshold": 800,
         "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "word_count_low",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/workflows/three-rules-for-first-plugin/index.html",
-        "details": "844w (threshold 1200w for content_article)",
-        "auto_fixable": false,
-        "word_count": 844,
-        "threshold": 1200,
-        "page_type": "content_article"
-      },
-      {
-        "site": "triadive",
-        "class": "thin_with_ads",
-        "severity": "critical",
-        "file": "projects/triadive/website/articles/workflows/three-rules-for-first-plugin/index.html",
-        "details": "page has 1 ad slot(s) but only 844w (AdSense red flag)",
-        "auto_fixable": false,
-        "word_count": 844,
-        "threshold": 1200,
-        "ad_count": 1
       },
       {
         "site": "triadive",
@@ -1331,6 +920,497 @@
       "page_type": "legal_umbrella"
     },
     {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/2/index.html",
+      "details": "internal href '/articles1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/2/index.html",
+      "details": "internal href '/articles3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/2/index.html",
+      "details": "internal href '/articles4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/2/index.html",
+      "details": "internal href '/articles5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/2/index.html",
+      "details": "internal href '/articles6/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/3/index.html",
+      "details": "internal href '/articles1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/3/index.html",
+      "details": "internal href '/articles2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/3/index.html",
+      "details": "internal href '/articles4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/3/index.html",
+      "details": "internal href '/articles5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/3/index.html",
+      "details": "internal href '/articles6/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/4/index.html",
+      "details": "internal href '/articles1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/4/index.html",
+      "details": "internal href '/articles2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/4/index.html",
+      "details": "internal href '/articles3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/4/index.html",
+      "details": "internal href '/articles5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/4/index.html",
+      "details": "internal href '/articles6/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/5/index.html",
+      "details": "internal href '/articles1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/5/index.html",
+      "details": "internal href '/articles2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/5/index.html",
+      "details": "internal href '/articles3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/5/index.html",
+      "details": "internal href '/articles4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/5/index.html",
+      "details": "internal href '/articles6/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/6/index.html",
+      "details": "internal href '/articles1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/6/index.html",
+      "details": "internal href '/articles2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/6/index.html",
+      "details": "internal href '/articles3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/6/index.html",
+      "details": "internal href '/articles4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/6/index.html",
+      "details": "internal href '/articles5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/best-self-help-books/index.html",
+      "details": "internal href '/articles/best-books-about-productivity' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/articles/dna-ancestry-historical-fiction/index.html",
+      "details": "internal href '/catalog/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/book-match/index.html",
+      "details": "internal href '/reviews/' + b.slug + '.html' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "duplicate_h1",
+      "severity": "low",
+      "file": "projects/bithues/website/reading-maps/index.html",
+      "details": "2 <h1> tags on one page (best practice: 1)",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/2/index.html",
+      "details": "internal href '/stories1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/2/index.html",
+      "details": "internal href '/stories3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/2/index.html",
+      "details": "internal href '/stories4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/2/index.html",
+      "details": "internal href '/stories5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/3/index.html",
+      "details": "internal href '/stories1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/3/index.html",
+      "details": "internal href '/stories2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/3/index.html",
+      "details": "internal href '/stories4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/3/index.html",
+      "details": "internal href '/stories5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/4/index.html",
+      "details": "internal href '/stories1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/4/index.html",
+      "details": "internal href '/stories2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/4/index.html",
+      "details": "internal href '/stories3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/4/index.html",
+      "details": "internal href '/stories5/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/5/index.html",
+      "details": "internal href '/stories1/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/5/index.html",
+      "details": "internal href '/stories2/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/5/index.html",
+      "details": "internal href '/stories3/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "broken_internal_link",
+      "severity": "medium",
+      "file": "projects/bithues/website/stories/5/index.html",
+      "details": "internal href '/stories4/' does not resolve to a known page or asset",
+      "auto_fixable": false
+    },
+    {
+      "site": "bithues",
+      "class": "missing_eeat_sections",
+      "severity": "high",
+      "file": "projects/bithues/website/about/index.html",
+      "details": "/legal/-class page missing E-E-A-T sections: credentials, editorial_process, disclosure",
+      "auto_fixable": false,
+      "missing_sections": [
+        "credentials",
+        "editorial_process",
+        "disclosure"
+      ],
+      "word_count": 1195
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/articles/2/index.html",
+      "details": "316w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 316,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/articles/3/index.html",
+      "details": "312w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 312,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/articles/4/index.html",
+      "details": "343w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 343,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/articles/5/index.html",
+      "details": "291w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 291,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/articles/6/index.html",
+      "details": "257w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 257,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "duplicate_ad_slot",
+      "severity": "high",
+      "file": "projects/bithues/website/articles/kindle-unlimited-reading-revolution/index.html",
+      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
+      "auto_fixable": true,
+      "fix_class": "dedup_ad_slots",
+      "ad_count": 4,
+      "unique_slots": [
+        "1216992329",
+        "1328672966",
+        "7590828986"
+      ],
+      "duplicated_slots": [
+        "1216992329"
+      ]
+    },
+    {
+      "site": "bithues",
+      "class": "missing_eeat_sections",
+      "severity": "high",
+      "file": "projects/bithues/website/contact/index.html",
+      "details": "/legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process",
+      "auto_fixable": false,
+      "missing_sections": [
+        "credentials",
+        "launch_date",
+        "editorial_process"
+      ],
+      "word_count": 933
+    },
+    {
+      "site": "bithues",
+      "class": "missing_eeat_sections",
+      "severity": "high",
+      "file": "projects/bithues/website/privacy/index.html",
+      "details": "/legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, disclosure",
+      "auto_fixable": false,
+      "missing_sections": [
+        "credentials",
+        "launch_date",
+        "editorial_process",
+        "disclosure"
+      ],
+      "word_count": 850
+    },
+    {
+      "site": "bithues",
+      "class": "missing_eeat_sections",
+      "severity": "high",
+      "file": "projects/bithues/website/terms/index.html",
+      "details": "/legal/-class page missing E-E-A-T sections: credentials, launch_date, corrections_policy, disclosure",
+      "auto_fixable": false,
+      "missing_sections": [
+        "credentials",
+        "launch_date",
+        "corrections_policy",
+        "disclosure"
+      ],
+      "word_count": 900
+    },
+    {
       "site": "dependability",
       "class": "missing_eeat_sections",
       "severity": "high",
@@ -1365,10 +1445,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/articles/forecast-methodology-2026/index.html",
-      "details": "763w (threshold 1200w for content_article)",
+      "details": "763w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 763,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1379,7 +1459,7 @@
       "details": "page has 3 ad slot(s) but only 763w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 763,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 3
     },
     {
@@ -1387,10 +1467,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/articles/index.html",
-      "details": "140w (threshold 1200w for content_article)",
+      "details": "140w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 140,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1401,7 +1481,7 @@
       "details": "page has 3 ad slot(s) but only 140w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 140,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 3
     },
     {
@@ -1409,10 +1489,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/commentary/2026-07-13/index.html",
-      "details": "497w (threshold 1200w for content_article)",
+      "details": "497w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 497,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1423,7 +1503,7 @@
       "details": "page has 2 ad slot(s) but only 497w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 497,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 2
     },
     {
@@ -1431,10 +1511,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/commentary/2026-07-14/index.html",
-      "details": "564w (threshold 1200w for content_article)",
+      "details": "564w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 564,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1445,7 +1525,7 @@
       "details": "page has 2 ad slot(s) but only 564w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 564,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 2
     },
     {
@@ -1453,10 +1533,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/commentary/2026-07-15/index.html",
-      "details": "665w (threshold 1200w for content_article)",
+      "details": "665w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 665,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1467,51 +1547,7 @@
       "details": "page has 2 ad slot(s) but only 665w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 665,
-      "threshold": 1200,
-      "ad_count": 2
-    },
-    {
-      "site": "dependability",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "entities/dependability/website/commentary/2026-07-16/index.html",
-      "details": "1042w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1042,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "dependability",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "entities/dependability/website/commentary/2026-07-16/index.html",
-      "details": "page has 2 ad slot(s) but only 1042w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1042,
-      "threshold": 1200,
-      "ad_count": 2
-    },
-    {
-      "site": "dependability",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "entities/dependability/website/commentary/2026-08-21/index.html",
-      "details": "1122w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1122,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "dependability",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "entities/dependability/website/commentary/2026-08-21/index.html",
-      "details": "page has 2 ad slot(s) but only 1122w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1122,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 2
     },
     {
@@ -1568,10 +1604,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/forecast/2025-11-14/index.html",
-      "details": "504w (threshold 1200w for content_article)",
+      "details": "504w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 504,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1582,7 +1618,7 @@
       "details": "page has 3 ad slot(s) but only 504w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 504,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 3
     },
     {
@@ -1590,10 +1626,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/forecast/2026-02-14/index.html",
-      "details": "631w (threshold 1200w for content_article)",
+      "details": "631w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 631,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1604,7 +1640,7 @@
       "details": "page has 3 ad slot(s) but only 631w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 631,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 3
     },
     {
@@ -1653,10 +1689,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "entities/dependability/website/trade-log/index.html",
-      "details": "390w (threshold 1200w for content_article)",
+      "details": "390w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 390,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1667,7 +1703,7 @@
       "details": "page has 1 ad slot(s) but only 390w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 390,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 1
     },
     {
@@ -1685,33 +1721,11 @@
       "site": "spaceorbitals",
       "class": "word_count_low",
       "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/articles/getting-into-astrophotography-2026/index.html",
-      "details": "935w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 935,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/articles/getting-into-astrophotography-2026/index.html",
-      "details": "page has 3 ad slot(s) but only 935w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 935,
-      "threshold": 1200,
-      "ad_count": 3
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "word_count_low",
-      "severity": "critical",
       "file": "projects/spaceorbitals/spaceorbitals/articles/hohmann-transfer-explained/index.html",
-      "details": "770w (threshold 1200w for content_article)",
+      "details": "770w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 770,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1722,7 +1736,7 @@
       "details": "page has 3 ad slot(s) but only 770w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 770,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 3
     },
     {
@@ -1730,10 +1744,10 @@
       "class": "word_count_low",
       "severity": "high",
       "file": "projects/spaceorbitals/spaceorbitals/articles/index.html",
-      "details": "20w (threshold 1200w for content_article)",
+      "details": "20w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 20,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1741,10 +1755,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "projects/spaceorbitals/spaceorbitals/articles/leo-economy-2026/index.html",
-      "details": "753w (threshold 1200w for content_article)",
+      "details": "753w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 753,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1755,29 +1769,7 @@
       "details": "page has 3 ad slot(s) but only 753w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 753,
-      "threshold": 1200,
-      "ad_count": 3
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/articles/understanding-low-earth-orbit/index.html",
-      "details": "887w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 887,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/articles/understanding-low-earth-orbit/index.html",
-      "details": "page has 3 ad slot(s) but only 887w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 887,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 3
     },
     {
@@ -1817,78 +1809,12 @@
     },
     {
       "site": "spaceorbitals",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/newsletters/four-planetary-science-hits/index.html",
-      "details": "1098w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1098,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/newsletters/four-planetary-science-hits/index.html",
-      "details": "page has 3 ad slot(s) but only 1098w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1098,
-      "threshold": 1200,
-      "ad_count": 3
-    },
-    {
-      "site": "spaceorbitals",
       "class": "missing_ad_unit",
       "severity": "medium",
       "file": "projects/spaceorbitals/spaceorbitals/newsletters/index.html",
       "details": "1526w of content but no AdSense ins tag (lost revenue opportunity)",
       "auto_fixable": false,
       "word_count": 1526
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-perseids-peak-planets-aligned-august-13/index.html",
-      "details": "1198w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1198,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/newsletters/orbital-daily-tracker-perseids-peak-planets-aligned-august-13/index.html",
-      "details": "page has 3 ad slot(s) but only 1198w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1198,
-      "threshold": 1200,
-      "ad_count": 3
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/newsletters/weekly-read-reusability-china-era/index.html",
-      "details": "1079w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1079,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "spaceorbitals",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/spaceorbitals/spaceorbitals/newsletters/weekly-read-reusability-china-era/index.html",
-      "details": "page has 3 ad slot(s) but only 1079w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1079,
-      "threshold": 1200,
-      "ad_count": 3
     },
     {
       "site": "spaceorbitals",
@@ -1906,10 +1832,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "projects/spaceorbitals/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html",
-      "details": "782w (threshold 1200w for content_article)",
+      "details": "782w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 782,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1920,7 +1846,7 @@
       "details": "page has 2 ad slot(s) but only 782w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 782,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 2
     },
     {
@@ -1928,10 +1854,10 @@
       "class": "word_count_low",
       "severity": "high",
       "file": "projects/spaceorbitals/spaceorbitals/reviews/index.html",
-      "details": "16w (threshold 1200w for content_article)",
+      "details": "16w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 16,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -1945,28 +1871,6 @@
         "launch_date"
       ],
       "word_count": 1245
-    },
-    {
-      "site": "succession",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "entities/succession/website/articles/2026-05-04-first-investment-property/index.html",
-      "details": "836w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 836,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "succession",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "entities/succession/website/articles/2026-05-04-first-investment-property/index.html",
-      "details": "page has 2 ad slot(s) but only 836w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 836,
-      "threshold": 1200,
-      "ad_count": 2
     },
     {
       "site": "succession",
@@ -2017,28 +1921,6 @@
       "duplicated_slots": [
         "7590828986"
       ]
-    },
-    {
-      "site": "succession",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "entities/succession/website/articles/index.html",
-      "details": "1020w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1020,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "succession",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "entities/succession/website/articles/index.html",
-      "details": "page has 2 ad slot(s) but only 1020w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1020,
-      "threshold": 1200,
-      "ad_count": 2
     },
     {
       "site": "succession",
@@ -2346,28 +2228,6 @@
     },
     {
       "site": "tredey",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/tredey/website/forecasts/2026-07-31-framework-skip/index.html",
-      "details": "1083w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1083,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "tredey",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/tredey/website/forecasts/2026-07-31-framework-skip/index.html",
-      "details": "page has 3 ad slot(s) but only 1083w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1083,
-      "threshold": 1200,
-      "ad_count": 3
-    },
-    {
-      "site": "tredey",
       "class": "duplicate_ad_slot",
       "severity": "high",
       "file": "projects/tredey/website/forecasts/2026-07-31-framework-skip/index.html",
@@ -2671,28 +2531,6 @@
       "duplicated_slots": [
         "1216992329"
       ]
-    },
-    {
-      "site": "tredey",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/tredey/website/forecasts/vol-expansion-strangle-spx-fomc/index.html",
-      "details": "1052w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1052,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "tredey",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/tredey/website/forecasts/vol-expansion-strangle-spx-fomc/index.html",
-      "details": "page has 3 ad slot(s) but only 1052w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1052,
-      "threshold": 1200,
-      "ad_count": 3
     },
     {
       "site": "tredey",
@@ -3503,50 +3341,6 @@
     },
     {
       "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/agent-loop/index.html",
-      "details": "883w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 883,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/agent-loop/index.html",
-      "details": "page has 1 ad slot(s) but only 883w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 883,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/best-ways-to-ask-an-agent/index.html",
-      "details": "1139w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1139,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/best-ways-to-ask-an-agent/index.html",
-      "details": "page has 1 ad slot(s) but only 1139w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1139,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
       "class": "missing_ad_unit",
       "severity": "medium",
       "file": "projects/triadive/website/articles/concepts/index.html",
@@ -3557,211 +3351,13 @@
     {
       "site": "triadive",
       "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/loops-vs-graphs/index.html",
-      "details": "1042w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1042,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/loops-vs-graphs/index.html",
-      "details": "page has 1 ad slot(s) but only 1042w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1042,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/sessions-sub-agents/index.html",
-      "details": "1143w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1143,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/sessions-sub-agents/index.html",
-      "details": "page has 1 ad slot(s) but only 1143w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1143,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-a-graph/index.html",
-      "details": "1037w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1037,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-a-graph/index.html",
-      "details": "page has 1 ad slot(s) but only 1037w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1037,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-a-loop/index.html",
-      "details": "966w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 966,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-a-loop/index.html",
-      "details": "page has 1 ad slot(s) but only 966w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 966,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-an-ai-agent/index.html",
-      "details": "1024w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1024,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-an-ai-agent/index.html",
-      "details": "page has 1 ad slot(s) but only 1024w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1024,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-memory-short-long-semantic/index.html",
-      "details": "948w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 948,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/what-is-memory-short-long-semantic/index.html",
-      "details": "page has 1 ad slot(s) but only 948w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 948,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/why-memory-is-the-hardest-part/index.html",
-      "details": "1171w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 1171,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/concepts/why-memory-is-the-hardest-part/index.html",
-      "details": "page has 1 ad slot(s) but only 1171w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 1171,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
       "severity": "high",
       "file": "projects/triadive/website/articles/field-notes/index.html",
-      "details": "394w (threshold 1200w for content_article)",
+      "details": "394w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 394,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/field-notes/the-three-amigos-of-the-agent-stack/index.html",
-      "details": "950w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 950,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/field-notes/the-three-amigos-of-the-agent-stack/index.html",
-      "details": "page has 1 ad slot(s) but only 950w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 950,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/field-notes/triads-not-tools/index.html",
-      "details": "841w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 841,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/field-notes/triads-not-tools/index.html",
-      "details": "page has 1 ad slot(s) but only 841w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 841,
-      "threshold": 1200,
-      "ad_count": 1
     },
     {
       "site": "triadive",
@@ -3777,10 +3373,10 @@
       "class": "word_count_low",
       "severity": "high",
       "file": "projects/triadive/website/articles/lessons/index.html",
-      "details": "283w (threshold 1200w for content_article)",
+      "details": "283w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 283,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -3788,10 +3384,10 @@
       "class": "word_count_low",
       "severity": "critical",
       "file": "projects/triadive/website/articles/workflows/daily-check-in-loop/index.html",
-      "details": "701w (threshold 1200w for content_article)",
+      "details": "701w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 701,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
     },
     {
@@ -3802,29 +3398,7 @@
       "details": "page has 1 ad slot(s) but only 701w (AdSense red flag)",
       "auto_fixable": false,
       "word_count": 701,
-      "threshold": 1200,
-      "ad_count": 1
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/workflows/daily-triage-routine/index.html",
-      "details": "931w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 931,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/workflows/daily-triage-routine/index.html",
-      "details": "page has 1 ad slot(s) but only 931w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 931,
-      "threshold": 1200,
+      "threshold": 800,
       "ad_count": 1
     },
     {
@@ -3832,33 +3406,11 @@
       "class": "word_count_low",
       "severity": "high",
       "file": "projects/triadive/website/articles/workflows/index.html",
-      "details": "683w (threshold 1200w for content_article)",
+      "details": "683w (threshold 800w for content_article)",
       "auto_fixable": false,
       "word_count": 683,
-      "threshold": 1200,
+      "threshold": 800,
       "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "word_count_low",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/workflows/three-rules-for-first-plugin/index.html",
-      "details": "844w (threshold 1200w for content_article)",
-      "auto_fixable": false,
-      "word_count": 844,
-      "threshold": 1200,
-      "page_type": "content_article"
-    },
-    {
-      "site": "triadive",
-      "class": "thin_with_ads",
-      "severity": "critical",
-      "file": "projects/triadive/website/articles/workflows/three-rules-for-first-plugin/index.html",
-      "details": "page has 1 ad slot(s) but only 844w (AdSense red flag)",
-      "auto_fixable": false,
-      "word_count": 844,
-      "threshold": 1200,
-      "ad_count": 1
     },
     {
       "site": "triadive",
