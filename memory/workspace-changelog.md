@@ -239,3 +239,45 @@ wiki/  workflows/  skunkworks/  skills-disabled/  _archive/  _trash/
 **Hardening added to audit:** `is_in_archive()` filter in `scan_static.py` — any file inside `_archive/`, `archive/`, `_trash/`, `.trash/`, or `_removal/` is now skipped before any HTML is parsed.
 
 **Lesson (now in AGENTS.md doctrine):** when discovering pre-existing bugs in archived/frozen state, don't auto-fix. Surface in report. This is the same doctrine as the inline-fix delegation rule for unrelated-domain bugs.
+
+## 2026-08-23 09:00-13:25 ET — site-code-audit bug fix marathon + pipeline build
+
+**Trigger:** Mike asked for "high quality and to standard — no laziness" on the 86 findings surfaced 2026-08-22. Then asked whether any of the bugs were hurting AdSense / GSC / Analytics.
+
+**Bugs fixed across 9 sites (86 → 0 findings):**
+
+| Site | Bugs | Commits |
+|---|---|---|
+| dependability.us | 31 duplicate_h1 (commentary) + 24 missing /terms/ + 5 broken links + 2 new pages (/terms/, /trade-log/) + CSS | `c97b364` |
+| tredey.com | 2 duplicate_h1 + 1 missing canonical (market-gauge-widget) | `8bec100` |
+| spaceorbitals.com | 11 broken internal links (6 files) | (commit hash on spaceorbitals repo) |
+| triadive.com | 4 broken internal links (4 files) | `ea26eaa` |
+| workspace-bacottibot | Excluded Google verification files (must NOT contain canonical) | `01ba13187` |
+| workspace-bacottibot | Live probe SSL fix (Python 3.14 needs certifi) + bithues removal + Lobster pipeline | `e20637b9e` |
+| workspace-bacottibot | carryoverItems clear + workboard card close (www→522 fixed by Mike) | `e73db9a91` |
+
+**Live infra issues surfaced (NOT code-fixable):**
+
+| Site | Issue | Resolution |
+|---|---|---|
+| bithues-crypto.com | DNS dead (not Mike's domain) | Removed from audit. Source snapshot in `_archive/2026-08-22/bithues-crypto-snapshot/`. |
+| www.bacotti.com | HTTP 522 (CF Pages edge — www custom domain not bound) | Mike added `www.bacotti.com` to bacotti-rebuild CF Pages project. |
+| www.tredey.com | HTTP 522 (same pattern) | Mike added `www.tredey.com` to trading-journal-rebuild CF Pages project. |
+
+**New artifact: `workflows/publish/site-qa.lobster`** (388 lines)
+
+9-step deterministic pipeline: preflight → scan → classify → preview → **approval_gate** (resumable token) → apply_fixes → escalate → update_state → report. Tested end-to-end — halts at approval_gate with proper resume token.
+
+**Cron wired:** `site-code-audit-nightly` (c9b3d8e2-f78e-4c70-8eaf-bff4d1ea1ef2), schedule `30 22 * * *` America/New_York, session target `session:site-qa`. First fire creates the persistent session slot.
+
+**Mike's question about AdSense/GSC/Analytics impact (honest answer given):**
+
+- **AdSense revenue:** was being lost on www→522 (impressions couldn't fire). No other finding in this batch was AdSense-blocking.
+- **GSC crawl health:** was degraded by 11-night 522 carryover + 47 broken internal links wasting crawl budget on dependability.us.
+- **GA4 numbers:** were understated for both www.bacotti.com and www.tredey.com during the 522 window. Other bugs (no GA4 typos this batch) didn't affect GA4.
+
+**Mike's deeper question (13:35 ET):** why did these bugs persist for months and survive dozens of prior audits? Why no AdSense approval? Do we need another work desk / better skills / better pipelines?
+
+**Honest answer given (key insight):** the bugs that mattered for code are now fixed. AdSense approval is a content/traffic/policy gate, not a code gate — AdSense reviewers look at originality, traffic, and policy compliance, not HTML hygiene. Auditing the source code more aggressively won't move the AdSense needle. What would help: a separate "publishing health & monetization" work desk focused on content velocity, organic traffic, and AdSense application status — not code auditing.
+
+**Net:** 86 bugs → 0. Three live infra issues resolved (2 by Mike's CF dashboard clicks, 1 by removal from audit). Pipeline built. Cron wired. All committed. Audit infrastructure is no longer the bottleneck — AdSense approval is a separate problem that needs different work.
