@@ -14,6 +14,7 @@ This catches:
   - the kind of bug where local source is fixed but the push never happened
 """
 import re
+import ssl
 import urllib.request
 import urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,12 +32,20 @@ FAVICON_PROBES = [
     "apple-touch-icon.png",
 ]
 
+# Use certifi's CA bundle (Python 3.14 removed the bundled certs).
+# Falls back gracefully if certifi isn't installed.
+try:
+    import certifi
+    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
+except ImportError:
+    _SSL_CTX = ssl.create_default_context()
+
 
 def _fetch(url: str, want_body: bool = False):
     """Returns (status_code, body_bytes_or_none, content_type)."""
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*"})
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+        with urllib.request.urlopen(req, timeout=TIMEOUT, context=_SSL_CTX) as resp:
             body = resp.read(50_000) if want_body else None
             return resp.status, body, resp.headers.get("Content-Type", "")
     except urllib.error.HTTPError as e:

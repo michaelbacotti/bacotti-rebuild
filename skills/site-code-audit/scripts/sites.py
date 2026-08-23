@@ -38,29 +38,8 @@ SITES = [
         "source_dir": _workspace_path("entities/bacotti-inc/website/shop"),
         "favicon_paths": [],  # No favicon assets exist; do not inject bacotti's
     },
-    {
-        "name": "bithues",
-        "domain": "https://bithues.com",
-        "source_dir": _workspace_path("_archive/2026-08-22/bithues-crypto-snapshot"),
-        # NB: bithues-crypto lives in archive after the 2026-08-22 cleanup.
-        # If it's restored to live work, update this path.
-        "favicon_paths": [
-            "favicon.ico",
-            "favicon-16x16.png",
-            "favicon-32x32.png",
-            "favicon-48x48.png",
-            "favicon-180x180.png",
-            "favicon-192x192.png",
-            "favicon-512x512.png",
-            "apple-touch-icon.png",
-        ],
-    },
-    {
-        "name": "bithues-crypto",
-        "domain": "https://bithues-crypto.com",
-        "source_dir": _workspace_path("_archive/2026-08-22/bithues-crypto-snapshot"),
-        "favicon_paths": [],
-    },
+    # bithues / bithues-crypto removed 2026-08-23 — not Mike's domains.
+    # Source snapshots live in _archive/2026-08-22/bithues-crypto-snapshot/ if needed.
     {
         "name": "dependability",
         "domain": "https://dependability.us",
