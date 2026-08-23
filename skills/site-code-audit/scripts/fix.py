@@ -54,6 +54,83 @@ def GA4_CORRECT_REPLACE(m):
     return m.group(0).replace("G-G-", "G-", 1)
 
 
+# AdSense ins-tag pattern. Captures the whole <ins ... class="adsbygoogle" ...></ins> block.
+AD_INSLOT_RE = re.compile(
+    r'<ins\s+[^>]*class="adsbygoogle"[^>]*>\s*</ins>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def fix_dedup_ad_slots(finding) -> dict | None:
+    """Remove duplicate AdSense <ins> blocks on the same page.
+
+    Strategy:
+    1. Find every <ins class="adsbygoogle" ...></ins> block on the page.
+    2. For each data-ad-slot value, keep the FIRST occurrence, drop the rest.
+    3. Leave pages with no duplicates unchanged.
+    """
+    file_path = WORKSPACE / finding["file"]
+    if not file_path.exists():
+        return None
+    try:
+        text = file_path.read_text(encoding="utf-8")
+    except Exception:
+        return None
+
+    # Walk every ins block, track which data-ad-slots we've seen, drop later dups
+    seen_slots = set()
+    removed_count = 0
+    kept = []
+
+    last_end = 0
+    for m in AD_INSLOT_RE.finditer(text):
+        # Determine this ins block's data-ad-slot
+        ins_block = m.group(0)
+        slot_m = re.search(r'data-ad-slot="(\d+)"', ins_block)
+        slot = slot_m.group(1) if slot_m else None
+        if slot is None:
+            # No slot — keep it (untouched)
+            kept.append((m.start(), m.end(), text[m.start():m.end()]))
+            continue
+        if slot in seen_slots:
+            # Duplicate — drop this block
+            removed_count += 1
+            continue
+        # First occurrence — keep
+        seen_slots.add(slot)
+        kept.append((m.start(), m.end(), ins_block))
+
+    if removed_count == 0:
+        return None
+
+    # Rebuild by walking through text and skipping the dropped ins blocks.
+    # Determine which (start, end) ranges to drop = all ins blocks NOT in `kept`.
+    kept_set = {(s, e) for s, e, _ in kept}
+    ranges_to_drop = []
+    for m in AD_INSLOT_RE.finditer(text):
+        if (m.start(), m.end()) not in kept_set:
+            ranges_to_drop.append((m.start(), m.end()))
+
+    new_text = []
+    cursor = 0
+    for start, end in ranges_to_drop:
+        new_text.append(text[cursor:start])
+        cursor = end
+    new_text.append(text[cursor:])
+    final = "".join(new_text)
+
+    if final == text:
+        return None
+
+    file_path.write_text(final, encoding="utf-8")
+    return {
+        "fix_class": "dedup_ad_slots",
+        "file": finding["file"],
+        "removed_count": removed_count,
+        "kept_slots": sorted(seen_slots),
+    }
+
+
 def fix_inject_favicon(finding) -> dict | None:
     """Run the existing inject_favicon.py against the site."""
     site_name = finding["site"]
@@ -74,6 +151,7 @@ def fix_inject_favicon(finding) -> dict | None:
 FIXERS = {
     "ga4_typo": fix_ga4_typo,
     "inject_favicon": fix_inject_favicon,
+    "dedup_ad_slots": fix_dedup_ad_slots,
 }
 
 
