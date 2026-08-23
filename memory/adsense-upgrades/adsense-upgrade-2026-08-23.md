@@ -21,29 +21,32 @@ Each entry shows: page, current word count, threshold, fix recipe, scaffold.
 ## bithues (bithues)
 
 - **0** thin+ads (CRITICAL — fix first)
-- **5** word count low (high severity if no ads, critical if has ads)
-- **1** duplicate ad slots (high — auto-fixable)
+- **9** word count low (high severity if no ads, critical if has ads)
+- **0** duplicate ad slots (high — auto-fixable)
 - **4** missing E-E-A-T sections (high — needs content)
 - **0** missing ad units (medium — revenue opportunity)
 
 | Class | Severity | Page | Current | Target | Action |
 |---|---|---|---|---|---|
+| word_count_low | high | `/stories/5/index.html` | 103w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/articles/6/index.html` | 257w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/articles/5/index.html` | 291w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/articles/3/index.html` | 312w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/articles/2/index.html` | 316w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/articles/4/index.html` | 343w | 800w | Expand to 800w (content_article) |
+| word_count_low | high | `/stories/4/index.html` | 346w | 800w | Expand to 800w (content_article) |
+| word_count_low | high | `/stories/3/index.html` | 356w | 800w | Expand to 800w (content_article) |
+| word_count_low | high | `/stories/2/index.html` | 412w | 800w | Expand to 800w (content_article) |
 | missing_eeat_sections | high | `/privacy/index.html` | 850w | -w | Add E-E-A-T sections: credentials, launch_date, editorial_process, disclosure |
 | missing_eeat_sections | high | `/terms/index.html` | 900w | -w | Add E-E-A-T sections: credentials, launch_date, corrections_policy, disclosure |
 | missing_eeat_sections | high | `/contact/index.html` | 933w | -w | Add E-E-A-T sections: credentials, launch_date, editorial_process |
 | missing_eeat_sections | high | `/about/index.html` | 1195w | -w | Add E-E-A-T sections: credentials, editorial_process, disclosure |
-| duplicate_ad_slot | high | `/articles/kindle-unlimited-reading-revolution/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
 
 ## dependability (dependability.us)
 
-- **9** thin+ads (CRITICAL — fix first)
-- **9** word count low (high severity if no ads, critical if has ads)
-- **1** duplicate ad slots (high — auto-fixable)
+- **16** thin+ads (CRITICAL — fix first)
+- **16** word count low (high severity if no ads, critical if has ads)
+- **0** duplicate ad slots (high — auto-fixable)
 - **6** missing E-E-A-T sections (high — needs content)
 - **0** missing ad units (medium — revenue opportunity)
 
@@ -59,32 +62,51 @@ Each entry shows: page, current word count, threshold, fix recipe, scaffold.
 | thin_with_ads | critical | `/forecast/2025-11-14/index.html` | 504w | 800w | Expand to 800w (page has 3 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/commentary/2026-07-14/index.html` | 564w | 800w | Expand to 800w (content_article) |
 | thin_with_ads | critical | `/commentary/2026-07-14/index.html` | 564w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/strategies/covered-calls/index.html` | 587w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/strategies/covered-calls/index.html` | 587w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/education/rates-and-options/index.html` | 594w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/education/rates-and-options/index.html` | 594w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/contact/index.html` | 597w | 800w | Expand to 800w (legal_umbrella) |
 | thin_with_ads | critical | `/contact/index.html` | 597w | 800w | Expand to 800w (page has 1 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/education/market-structure/index.html` | 607w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/education/market-structure/index.html` | 607w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/strategies/iron-condors/index.html` | 619w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/strategies/iron-condors/index.html` | 619w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/forecast/2026-02-14/index.html` | 631w | 800w | Expand to 800w (content_article) |
 | thin_with_ads | critical | `/forecast/2026-02-14/index.html` | 631w | 800w | Expand to 800w (page has 3 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/commentary/2026-07-15/index.html` | 665w | 800w | Expand to 800w (content_article) |
 | thin_with_ads | critical | `/commentary/2026-07-15/index.html` | 665w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/education/options-foundations/index.html` | 688w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/education/options-foundations/index.html` | 688w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/education/volatility/index.html` | 723w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/education/volatility/index.html` | 723w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/articles/forecast-methodology-2026/index.html` | 763w | 800w | Expand to 800w (content_article) |
 | thin_with_ads | critical | `/articles/forecast-methodology-2026/index.html` | 763w | 800w | Expand to 800w (page has 3 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/strategies/cash-secured-puts/index.html` | 768w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/strategies/cash-secured-puts/index.html` | 768w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
 | missing_eeat_sections | high | `/contact/index.html` | 597w | -w | Add E-E-A-T sections: launch_date, editorial_process |
 | missing_eeat_sections | high | `/about/index.html` | 824w | -w | Add E-E-A-T sections: credentials, editorial_process |
 | missing_eeat_sections | high | `/disclaimer/index.html` | 896w | -w | Add E-E-A-T sections: launch_date, editorial_process, corrections_policy |
 | missing_eeat_sections | high | `/privacy/index.html` | 897w | -w | Add E-E-A-T sections: credentials, launch_date, editorial_process |
 | missing_eeat_sections | high | `/terms/index.html` | 1083w | -w | Add E-E-A-T sections: credentials, launch_date, editorial_process, corrections_policy |
 | missing_eeat_sections | high | `/methodology/index.html` | 1763w | -w | Add E-E-A-T sections: launch_date |
-| duplicate_ad_slot | high | `/articles/2026-08-22-sp-500-bull-case-8300/index.html` | -w | -w | Dedup ad slots: ['1328672966'] |
 
 ## spaceorbitals (spaceorbitals.com)
 
-- **3** thin+ads (CRITICAL — fix first)
-- **9** word count low (high severity if no ads, critical if has ads)
+- **6** thin+ads (CRITICAL — fix first)
+- **13** word count low (high severity if no ads, critical if has ads)
 - **0** duplicate ad slots (high — auto-fixable)
 - **1** missing E-E-A-T sections (high — needs content)
 - **1** missing ad units (medium — revenue opportunity)
 
 | Class | Severity | Page | Current | Target | Action |
 |---|---|---|---|---|---|
+| word_count_low | critical | `/spaceorbitals/news/kuiper-first-launches/index.html` | 453w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/spaceorbitals/news/kuiper-first-launches/index.html` | 453w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/spaceorbitals/news/spacex-starship-orbit-2026/index.html` | 607w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/spaceorbitals/news/spacex-starship-orbit-2026/index.html` | 607w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
+| word_count_low | critical | `/spaceorbitals/news/fcc-debris-rules-2026/index.html` | 622w | 800w | Expand to 800w (content_article) |
+| thin_with_ads | critical | `/spaceorbitals/news/fcc-debris-rules-2026/index.html` | 622w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/spaceorbitals/articles/leo-economy-2026/index.html` | 753w | 800w | Expand to 800w (content_article) |
 | thin_with_ads | critical | `/spaceorbitals/articles/leo-economy-2026/index.html` | 753w | 800w | Expand to 800w (page has 3 ad slot(s) — AdSense red flag) |
 | word_count_low | critical | `/spaceorbitals/articles/hohmann-transfer-explained/index.html` | 770w | 800w | Expand to 800w (content_article) |
@@ -92,6 +114,7 @@ Each entry shows: page, current word count, threshold, fix recipe, scaffold.
 | word_count_low | critical | `/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html` | 782w | 800w | Expand to 800w (content_article) |
 | thin_with_ads | critical | `/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html` | 782w | 800w | Expand to 800w (page has 2 ad slot(s) — AdSense red flag) |
 | word_count_low | high | `/spaceorbitals/reviews/index.html` | 16w | 800w | Expand to 800w (content_article) |
+| word_count_low | high | `/spaceorbitals/news/index.html` | 19w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/spaceorbitals/articles/index.html` | 20w | 800w | Expand to 800w (content_article) |
 | word_count_low | high | `/spaceorbitals/about/index.html` | 22w | 800w | Expand to 800w (legal_umbrella) |
 | word_count_low | high | `/spaceorbitals/contact/index.html` | 42w | 800w | Expand to 800w (legal_umbrella) |
@@ -104,7 +127,7 @@ Each entry shows: page, current word count, threshold, fix recipe, scaffold.
 
 - **1** thin+ads (CRITICAL — fix first)
 - **1** word count low (high severity if no ads, critical if has ads)
-- **4** duplicate ad slots (high — auto-fixable)
+- **0** duplicate ad slots (high — auto-fixable)
 - **5** missing E-E-A-T sections (high — needs content)
 - **0** missing ad units (medium — revenue opportunity)
 
@@ -117,16 +140,12 @@ Each entry shows: page, current word count, threshold, fix recipe, scaffold.
 | missing_eeat_sections | high | `/terms/index.html` | 1150w | -w | Add E-E-A-T sections: launch_date, editorial_process |
 | missing_eeat_sections | high | `/about/index.html` | 1245w | -w | Add E-E-A-T sections: launch_date |
 | missing_eeat_sections | high | `/disclaimer/index.html` | 1851w | -w | Add E-E-A-T sections: launch_date, editorial_process, corrections_policy, disclosure |
-| duplicate_ad_slot | high | `/articles/2026-05-22-car-wash-real-estate/index.html` | -w | -w | Dedup ad slots: ['7590828986'] |
-| duplicate_ad_slot | high | `/articles/2026-06-06-small-multifamily-deal-analysis/index.html` | -w | -w | Dedup ad slots: ['7590828986'] |
-| duplicate_ad_slot | high | `/articles/2026-06-17-fbi-vacant-property-warning/index.html` | -w | -w | Dedup ad slots: ['7590828986'] |
-| duplicate_ad_slot | high | `/newsletters/index.html` | -w | -w | Dedup ad slots: ['7590828986'] |
 
 ## tredey (tredey.com)
 
 - **0** thin+ads (CRITICAL — fix first)
 - **0** word count low (high severity if no ads, critical if has ads)
-- **73** duplicate ad slots (high — auto-fixable)
+- **0** duplicate ad slots (high — auto-fixable)
 - **5** missing E-E-A-T sections (high — needs content)
 - **0** missing ad units (medium — revenue opportunity)
 
@@ -137,79 +156,6 @@ Each entry shows: page, current word count, threshold, fix recipe, scaffold.
 | missing_eeat_sections | high | `/about/index.html` | 1145w | -w | Add E-E-A-T sections: launch_date |
 | missing_eeat_sections | high | `/terms/index.html` | 1174w | -w | Add E-E-A-T sections: credentials, launch_date, editorial_process |
 | missing_eeat_sections | high | `/disclaimer/index.html` | 1255w | -w | Add E-E-A-T sections: launch_date, editorial_process, corrections_policy |
-| duplicate_ad_slot | high | `/articles/books-that-made-successful-traders/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-13-spx-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-20-bull-put-continuation-spx/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-20-monday-brief/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-21-transition-vol-spx/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-23-bull-put-spread-spx/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-27-fomc-day-1-skip/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-28-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-29-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-30-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-31-framework-skip/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-07-31-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-03-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-04-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-05-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-06-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-07-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-10-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-11-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-12-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-13-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-14-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-17-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-18-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-19-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-20-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/2026-08-21-market-outlook/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/bull-put-spread-spx/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/forecasts/vol-expansion-strangle-spx-fomc/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-04-13-rut-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-04-24-rut-diagonal-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-06-26-qqq-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-10-xsp-iron-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-13-dram-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-13-spx-vertical-credit-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-15-dram-diagonal-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-15-qqq-inverse-diagonal-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-16-skhy-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-17-usar-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-20-xsp-bear-call-insurance/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-20-xsp-bull-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-21-nasa-bull-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-22-nasa-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-22-rsp-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-22-rsp-short-upper-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-23-qqq-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-23-qqq-long-call-condor-narrow/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-23-xsp-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-24-dram-calendar-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-24-qqq-800-calendar-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-24-qqq-850-calendar-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-27-xsp-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-27-xsp-bull-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-29-dram-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-29-qqq-650-calendar-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-07-31-xsp-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-03-portfolio-review-profit-taking-cash-positioning/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-04-portfolio-review-profit-take-treasury-add-staying-bullish/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-06-aapl-bull-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-06-nvda-bull-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-06-nvda-call-calendar/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-06-xsp-dec-iron-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-06-xsp-iron-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-07-spy-diagonal-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-10-intc-diagonal-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-10-meta-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-10-meta-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-10-slv-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-11-gnrc-230-bull-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-11-spy-760-calendar-put-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-11-xsp-815-bear-call-spread/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-13-xsp-long-call-condor/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
-| duplicate_ad_slot | high | `/trade-log/2026-08-18-xlp-long-call-butterfly/index.html` | -w | -w | Dedup ad slots: ['1216992329'] |
 
 ## triadive (triadive.com)
 

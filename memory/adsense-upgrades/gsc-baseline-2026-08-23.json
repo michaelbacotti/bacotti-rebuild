@@ -1,0 +1,48 @@
+{
+  "captured_at": "2026-08-23T14:12:00-04:00",
+  "captured_by": "scripts/adsense-upgrade-report.py (GSC pull)",
+  "period": "2026-05-01 to 2026-08-22 (~120 days)",
+  "scope": "All 5 AdSense sites (Mike's portfolio, pub-id ca-pub-9312870448453345)",
+  "note": "Single aggregate row per site — site-level totals. Use this as the BEFORE state for the 30-day resubmit window.",
+  "sites": {
+    "bithues.com": {
+      "clicks": 0,
+      "impressions": 163,
+      "ctr": 0.0,
+      "note": "essentially no organic search presence"
+    },
+    "dependability.us": {
+      "clicks": 5,
+      "impressions": 4352,
+      "ctr": 0.0011,
+      "note": "highest impressions but lowest CTR — pages rank low"
+    },
+    "spaceorbitals.com": {
+      "clicks": 8,
+      "impressions": 1870,
+      "ctr": 0.0043
+    },
+    "successionholdingllc.com": {
+      "clicks": 11,
+      "impressions": 1091,
+      "ctr": 0.0101,
+      "note": "best CTR of the 5"
+    },
+    "tredey.com": {
+      "clicks": 0,
+      "impressions": 455,
+      "ctr": 0.0
+    }
+  },
+  "totals": {
+    "clicks": 24,
+    "impressions": 7931,
+    "avg_ctr": 0.003
+  },
+  "implications": [
+    "AdSense often gates on organic traffic volume. Current 24 clicks / 120 days across 5 sites is very low.",
+    "Bithues and tredey have 0 clicks — Google AdSense reviewers may see these as 'no audience'.",
+    "Dependability has the most impressions but lowest CTR — needs better titles/meta descriptions.",
+    "Strategy: while cleaning content for AdSense, also work on CTR / ranking. That's a separate but parallel task."
+  ]
+}
