@@ -1,8 +1,8 @@
 {
   "summary": {
     "date": "2026-08-23",
-    "started_at": "2026-08-23T14:01:55.587705+00:00",
-    "completed_at": "2026-08-23T14:01:59.039108+00:00",
+    "started_at": "2026-08-23T14:08:33.242574+00:00",
+    "completed_at": "2026-08-23T14:08:36.661161+00:00",
     "sites_audited": [
       "bacotti",
       "wildwood-press",
@@ -13,20 +13,19 @@
       "tredey",
       "triadive"
     ],
-    "total_findings": 199,
+    "total_findings": 145,
     "by_severity": {
-      "high": 123,
+      "high": 49,
       "medium": 47,
       "low": 1,
-      "critical": 28
+      "critical": 48
     },
     "by_class": {
-      "word_count_low": 33,
+      "word_count_low": 48,
       "broken_internal_link": 44,
       "duplicate_h1": 1,
       "missing_eeat_sections": 25,
-      "duplicate_ad_slot": 79,
-      "thin_with_ads": 14,
+      "thin_with_ads": 24,
       "missing_ad_unit": 3
     },
     "auto_fixed": 0,
@@ -150,6 +149,50 @@
           "disclosure"
         ],
         "word_count": 850
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/stories/2/index.html",
+        "details": "412w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 412,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/stories/3/index.html",
+        "details": "356w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 356,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/stories/4/index.html",
+        "details": "346w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 346,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "bithues",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/bithues/website/stories/5/index.html",
+        "details": "103w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 103,
+        "threshold": 800,
+        "page_type": "content_article"
       },
       {
         "site": "bithues",
@@ -342,6 +385,94 @@
         "site": "dependability",
         "class": "word_count_low",
         "severity": "critical",
+        "file": "entities/dependability/website/education/market-structure/index.html",
+        "details": "607w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 607,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/market-structure/index.html",
+        "details": "page has 2 ad slot(s) but only 607w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 607,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/options-foundations/index.html",
+        "details": "688w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 688,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/options-foundations/index.html",
+        "details": "page has 2 ad slot(s) but only 688w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 688,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/rates-and-options/index.html",
+        "details": "594w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 594,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/rates-and-options/index.html",
+        "details": "page has 2 ad slot(s) but only 594w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 594,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/volatility/index.html",
+        "details": "723w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 723,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/education/volatility/index.html",
+        "details": "page has 2 ad slot(s) but only 723w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 723,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
         "file": "entities/dependability/website/forecast/2025-11-14/index.html",
         "details": "504w (threshold 800w for content_article)",
         "auto_fixable": false,
@@ -407,6 +538,72 @@
           "editorial_process"
         ],
         "word_count": 897
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "entities/dependability/website/strategies/cash-secured-puts/index.html",
+        "details": "768w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 768,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/strategies/cash-secured-puts/index.html",
+        "details": "page has 2 ad slot(s) but only 768w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 768,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "entities/dependability/website/strategies/covered-calls/index.html",
+        "details": "587w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 587,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/strategies/covered-calls/index.html",
+        "details": "page has 2 ad slot(s) but only 587w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 587,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "dependability",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "entities/dependability/website/strategies/iron-condors/index.html",
+        "details": "619w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 619,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "dependability",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "entities/dependability/website/strategies/iron-condors/index.html",
+        "details": "page has 2 ad slot(s) but only 619w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 619,
+        "threshold": 800,
+        "ad_count": 2
       },
       {
         "site": "dependability",
@@ -545,6 +742,83 @@
         "word_count": 42,
         "threshold": 800,
         "page_type": "legal_umbrella"
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html",
+        "details": "622w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 622,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html",
+        "details": "page has 2 ad slot(s) but only 622w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 622,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "word_count_low",
+        "severity": "high",
+        "file": "projects/spaceorbitals/spaceorbitals/news/index.html",
+        "details": "19w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 19,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html",
+        "details": "453w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 453,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html",
+        "details": "page has 2 ad slot(s) but only 453w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 453,
+        "threshold": 800,
+        "ad_count": 2
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "word_count_low",
+        "severity": "critical",
+        "file": "projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html",
+        "details": "607w (threshold 800w for content_article)",
+        "auto_fixable": false,
+        "word_count": 607,
+        "threshold": 800,
+        "page_type": "content_article"
+      },
+      {
+        "site": "spaceorbitals",
+        "class": "thin_with_ads",
+        "severity": "critical",
+        "file": "projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html",
+        "details": "page has 2 ad slot(s) but only 607w (AdSense red flag)",
+        "auto_fixable": false,
+        "word_count": 607,
+        "threshold": 800,
+        "ad_count": 2
       },
       {
         "site": "spaceorbitals",
@@ -1350,24 +1624,6 @@
     },
     {
       "site": "bithues",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/bithues/website/articles/kindle-unlimited-reading-revolution/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 4,
-      "unique_slots": [
-        "1216992329",
-        "1328672966",
-        "7590828986"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "bithues",
       "class": "missing_eeat_sections",
       "severity": "high",
       "file": "projects/bithues/website/contact/index.html",
@@ -1397,6 +1653,50 @@
     },
     {
       "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/stories/2/index.html",
+      "details": "412w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 412,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/stories/3/index.html",
+      "details": "356w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 356,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/stories/4/index.html",
+      "details": "346w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 346,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/bithues/website/stories/5/index.html",
+      "details": "103w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 103,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "bithues",
       "class": "missing_eeat_sections",
       "severity": "high",
       "file": "projects/bithues/website/terms/index.html",
@@ -1422,23 +1722,6 @@
         "editorial_process"
       ],
       "word_count": 824
-    },
-    {
-      "site": "dependability",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "entities/dependability/website/articles/2026-08-22-sp-500-bull-case-8300/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1328672966']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1328672966"
-      ]
     },
     {
       "site": "dependability",
@@ -1603,6 +1886,94 @@
       "site": "dependability",
       "class": "word_count_low",
       "severity": "critical",
+      "file": "entities/dependability/website/education/market-structure/index.html",
+      "details": "607w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 607,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/market-structure/index.html",
+      "details": "page has 2 ad slot(s) but only 607w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 607,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/options-foundations/index.html",
+      "details": "688w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 688,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/options-foundations/index.html",
+      "details": "page has 2 ad slot(s) but only 688w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 688,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/rates-and-options/index.html",
+      "details": "594w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 594,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/rates-and-options/index.html",
+      "details": "page has 2 ad slot(s) but only 594w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 594,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/volatility/index.html",
+      "details": "723w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 723,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/education/volatility/index.html",
+      "details": "page has 2 ad slot(s) but only 723w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 723,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
       "file": "entities/dependability/website/forecast/2025-11-14/index.html",
       "details": "504w (threshold 800w for content_article)",
       "auto_fixable": false,
@@ -1668,6 +2039,72 @@
         "editorial_process"
       ],
       "word_count": 897
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "entities/dependability/website/strategies/cash-secured-puts/index.html",
+      "details": "768w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 768,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/strategies/cash-secured-puts/index.html",
+      "details": "page has 2 ad slot(s) but only 768w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 768,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "entities/dependability/website/strategies/covered-calls/index.html",
+      "details": "587w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 587,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/strategies/covered-calls/index.html",
+      "details": "page has 2 ad slot(s) but only 587w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 587,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "dependability",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "entities/dependability/website/strategies/iron-condors/index.html",
+      "details": "619w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 619,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "dependability",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "entities/dependability/website/strategies/iron-condors/index.html",
+      "details": "page has 2 ad slot(s) but only 619w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 619,
+      "threshold": 800,
+      "ad_count": 2
     },
     {
       "site": "dependability",
@@ -1809,6 +2246,83 @@
     },
     {
       "site": "spaceorbitals",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html",
+      "details": "622w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 622,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html",
+      "details": "page has 2 ad slot(s) but only 622w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 622,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "word_count_low",
+      "severity": "high",
+      "file": "projects/spaceorbitals/spaceorbitals/news/index.html",
+      "details": "19w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 19,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html",
+      "details": "453w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 453,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html",
+      "details": "page has 2 ad slot(s) but only 453w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 453,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "word_count_low",
+      "severity": "critical",
+      "file": "projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html",
+      "details": "607w (threshold 800w for content_article)",
+      "auto_fixable": false,
+      "word_count": 607,
+      "threshold": 800,
+      "page_type": "content_article"
+    },
+    {
+      "site": "spaceorbitals",
+      "class": "thin_with_ads",
+      "severity": "critical",
+      "file": "projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html",
+      "details": "page has 2 ad slot(s) but only 607w (AdSense red flag)",
+      "auto_fixable": false,
+      "word_count": 607,
+      "threshold": 800,
+      "ad_count": 2
+    },
+    {
+      "site": "spaceorbitals",
       "class": "missing_ad_unit",
       "severity": "medium",
       "file": "projects/spaceorbitals/spaceorbitals/newsletters/index.html",
@@ -1874,56 +2388,6 @@
     },
     {
       "site": "succession",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "entities/succession/website/articles/2026-05-22-car-wash-real-estate/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['7590828986']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1328672966",
-        "7590828986"
-      ],
-      "duplicated_slots": [
-        "7590828986"
-      ]
-    },
-    {
-      "site": "succession",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "entities/succession/website/articles/2026-06-06-small-multifamily-deal-analysis/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['7590828986']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1328672966",
-        "7590828986"
-      ],
-      "duplicated_slots": [
-        "7590828986"
-      ]
-    },
-    {
-      "site": "succession",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "entities/succession/website/articles/2026-06-17-fbi-vacant-property-warning/index.html",
-      "details": "page has 3 duplicate ad slot(s); duplicated: ['7590828986']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 4,
-      "unique_slots": [
-        "7590828986"
-      ],
-      "duplicated_slots": [
-        "7590828986"
-      ]
-    },
-    {
-      "site": "succession",
       "class": "missing_eeat_sections",
       "severity": "high",
       "file": "entities/succession/website/contact/index.html",
@@ -1949,22 +2413,6 @@
         "disclosure"
       ],
       "word_count": 1851
-    },
-    {
-      "site": "succession",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "entities/succession/website/newsletters/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['7590828986']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 2,
-      "unique_slots": [
-        "7590828986"
-      ],
-      "duplicated_slots": [
-        "7590828986"
-      ]
     },
     {
       "site": "succession",
@@ -2030,23 +2478,6 @@
     },
     {
       "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/articles/books-that-made-successful-traders/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
       "class": "missing_eeat_sections",
       "severity": "high",
       "file": "projects/tredey/website/contact/index.html",
@@ -2075,482 +2506,6 @@
     },
     {
       "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-13-spx-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-20-bull-put-continuation-spx/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-20-monday-brief/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-21-transition-vol-spx/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-23-bull-put-spread-spx/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-27-fomc-day-1-skip/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-28-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-29-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-30-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-31-framework-skip/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-07-31-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-03-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-04-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-05-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-06-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-07-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-10-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-11-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-12-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-13-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-14-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-17-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-18-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-19-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-20-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/2026-08-21-market-outlook/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/bull-put-spread-spx/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/forecasts/vol-expansion-strangle-spx-fomc/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
       "class": "missing_eeat_sections",
       "severity": "high",
       "file": "projects/tredey/website/privacy/index.html",
@@ -2576,754 +2531,6 @@
         "editorial_process"
       ],
       "word_count": 1174
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-04-13-rut-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-04-24-rut-diagonal-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-06-26-qqq-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-10-xsp-iron-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-13-dram-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-13-spx-vertical-credit-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-15-dram-diagonal-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-15-qqq-inverse-diagonal-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-16-skhy-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-17-usar-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-20-xsp-bear-call-insurance/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-20-xsp-bull-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-21-nasa-bull-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-22-nasa-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-22-rsp-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-22-rsp-short-upper-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-23-qqq-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-23-qqq-long-call-condor-narrow/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-23-xsp-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-24-dram-calendar-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-24-qqq-800-calendar-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-24-qqq-850-calendar-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-27-xsp-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-27-xsp-bull-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-29-dram-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-29-qqq-650-calendar-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-07-31-xsp-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-03-portfolio-review-profit-taking-cash-positioning/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-04-portfolio-review-profit-take-treasury-add-staying-bullish/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-06-aapl-bull-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-06-nvda-bull-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-06-nvda-call-calendar/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-06-xsp-dec-iron-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-06-xsp-iron-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-07-spy-diagonal-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-10-intc-diagonal-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-10-meta-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-10-meta-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-10-slv-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-11-gnrc-230-bull-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-11-spy-760-calendar-put-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-11-xsp-815-bear-call-spread/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-13-xsp-long-call-condor/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
-    },
-    {
-      "site": "tredey",
-      "class": "duplicate_ad_slot",
-      "severity": "high",
-      "file": "projects/tredey/website/trade-log/2026-08-18-xlp-long-call-butterfly/index.html",
-      "details": "page has 1 duplicate ad slot(s); duplicated: ['1216992329']",
-      "auto_fixable": true,
-      "fix_class": "dedup_ad_slots",
-      "ad_count": 3,
-      "unique_slots": [
-        "1216992329",
-        "1328672966"
-      ],
-      "duplicated_slots": [
-        "1216992329"
-      ]
     },
     {
       "site": "triadive",

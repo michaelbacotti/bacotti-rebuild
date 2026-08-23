@@ -1,12 +1,12 @@
 # Site Code Audit — 2026-08-23
 
 **Sites audited:** bacotti, wildwood-press, bithues, dependability, spaceorbitals, succession, tredey, triadive
-**Findings:** 199 total | **Auto-fixed:** 0 | **Needs attention:** 72
+**Findings:** 145 total | **Auto-fixed:** 0 | **Needs attention:** 97
 
 ## Severity breakdown
 
-- **critical:** 28
-- **high:** 123
+- **critical:** 48
+- **high:** 49
 - **medium:** 47
 - **low:** 1
 
@@ -22,6 +22,10 @@
 - `bithues` **word_count_low** (high) — projects/bithues/website/articles/6/index.html: 257w (threshold 800w for content_article)
 - `bithues` **missing_eeat_sections** (high) — projects/bithues/website/contact/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
 - `bithues` **missing_eeat_sections** (high) — projects/bithues/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, disclosure
+- `bithues` **word_count_low** (high) — projects/bithues/website/stories/2/index.html: 412w (threshold 800w for content_article)
+- `bithues` **word_count_low** (high) — projects/bithues/website/stories/3/index.html: 356w (threshold 800w for content_article)
+- `bithues` **word_count_low** (high) — projects/bithues/website/stories/4/index.html: 346w (threshold 800w for content_article)
+- `bithues` **word_count_low** (high) — projects/bithues/website/stories/5/index.html: 103w (threshold 800w for content_article)
 - `bithues` **missing_eeat_sections** (high) — projects/bithues/website/terms/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, corrections_policy, disclosure
 - `dependability` **missing_eeat_sections** (high) — entities/dependability/website/about/index.html: /legal/-class page missing E-E-A-T sections: credentials, editorial_process
 - `dependability` **word_count_low** (critical) — entities/dependability/website/articles/forecast-methodology-2026/index.html: 763w (threshold 800w for content_article)
@@ -38,12 +42,26 @@
 - `dependability` **thin_with_ads** (critical) — entities/dependability/website/contact/index.html: page has 1 ad slot(s) but only 597w (AdSense red flag)
 - `dependability` **missing_eeat_sections** (high) — entities/dependability/website/contact/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process
 - `dependability` **missing_eeat_sections** (high) — entities/dependability/website/disclaimer/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, corrections_policy
+- `dependability` **word_count_low** (critical) — entities/dependability/website/education/market-structure/index.html: 607w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/market-structure/index.html: page has 2 ad slot(s) but only 607w (AdSense red flag)
+- `dependability` **word_count_low** (critical) — entities/dependability/website/education/options-foundations/index.html: 688w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/options-foundations/index.html: page has 2 ad slot(s) but only 688w (AdSense red flag)
+- `dependability` **word_count_low** (critical) — entities/dependability/website/education/rates-and-options/index.html: 594w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/rates-and-options/index.html: page has 2 ad slot(s) but only 594w (AdSense red flag)
+- `dependability` **word_count_low** (critical) — entities/dependability/website/education/volatility/index.html: 723w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/volatility/index.html: page has 2 ad slot(s) but only 723w (AdSense red flag)
 - `dependability` **word_count_low** (critical) — entities/dependability/website/forecast/2025-11-14/index.html: 504w (threshold 800w for content_article)
 - `dependability` **thin_with_ads** (critical) — entities/dependability/website/forecast/2025-11-14/index.html: page has 3 ad slot(s) but only 504w (AdSense red flag)
 - `dependability` **word_count_low** (critical) — entities/dependability/website/forecast/2026-02-14/index.html: 631w (threshold 800w for content_article)
 - `dependability` **thin_with_ads** (critical) — entities/dependability/website/forecast/2026-02-14/index.html: page has 3 ad slot(s) but only 631w (AdSense red flag)
 - `dependability` **missing_eeat_sections** (high) — entities/dependability/website/methodology/index.html: /legal/-class page missing E-E-A-T sections: launch_date
 - `dependability` **missing_eeat_sections** (high) — entities/dependability/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
+- `dependability` **word_count_low** (critical) — entities/dependability/website/strategies/cash-secured-puts/index.html: 768w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/strategies/cash-secured-puts/index.html: page has 2 ad slot(s) but only 768w (AdSense red flag)
+- `dependability` **word_count_low** (critical) — entities/dependability/website/strategies/covered-calls/index.html: 587w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/strategies/covered-calls/index.html: page has 2 ad slot(s) but only 587w (AdSense red flag)
+- `dependability` **word_count_low** (critical) — entities/dependability/website/strategies/iron-condors/index.html: 619w (threshold 800w for content_article)
+- `dependability` **thin_with_ads** (critical) — entities/dependability/website/strategies/iron-condors/index.html: page has 2 ad slot(s) but only 619w (AdSense red flag)
 - `dependability` **missing_eeat_sections** (high) — entities/dependability/website/terms/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, corrections_policy
 - `dependability` **word_count_low** (critical) — entities/dependability/website/trade-log/index.html: 390w (threshold 800w for content_article)
 - `dependability` **thin_with_ads** (critical) — entities/dependability/website/trade-log/index.html: page has 1 ad slot(s) but only 390w (AdSense red flag)
@@ -56,6 +74,13 @@
 - `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/authors/index.html: 719w (threshold 800w for legal_umbrella)
 - `spaceorbitals` **missing_eeat_sections** (high) — projects/spaceorbitals/spaceorbitals/authors/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process
 - `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/contact/index.html: 42w (threshold 800w for legal_umbrella)
+- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html: 622w (threshold 800w for content_article)
+- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html: page has 2 ad slot(s) but only 622w (AdSense red flag)
+- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/news/index.html: 19w (threshold 800w for content_article)
+- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html: 453w (threshold 800w for content_article)
+- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html: page has 2 ad slot(s) but only 453w (AdSense red flag)
+- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html: 607w (threshold 800w for content_article)
+- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html: page has 2 ad slot(s) but only 607w (AdSense red flag)
 - `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/privacy/index.html: 91w (threshold 800w for legal_umbrella)
 - `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html: 782w (threshold 800w for content_article)
 - `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html: page has 2 ad slot(s) but only 782w (AdSense red flag)
@@ -87,7 +112,7 @@
 
 ## 📋 Other findings
 
-### bithues (46)
+### bithues (45)
 
 - `broken_internal_link` (medium) — internal href '/articles1/' does not resolve to a known page or asset
 - `broken_internal_link` (medium) — internal href '/articles3/' does not resolve to a known page or asset
@@ -99,36 +124,11 @@
 - `broken_internal_link` (medium) — internal href '/articles4/' does not resolve to a known page or asset
 - `broken_internal_link` (medium) — internal href '/articles5/' does not resolve to a known page or asset
 - `broken_internal_link` (medium) — internal href '/articles6/' does not resolve to a known page or asset
-- …and 36 more
-
-### dependability (1)
-
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1328672966']
+- …and 35 more
 
 ### spaceorbitals (1)
 
 - `missing_ad_unit` (medium) — 1526w of content but no AdSense ins tag (lost revenue opportunity)
-
-### succession (4)
-
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['7590828986']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['7590828986']
-- `duplicate_ad_slot` (high) — page has 3 duplicate ad slot(s); duplicated: ['7590828986']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['7590828986']
-
-### tredey (73)
-
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- `duplicate_ad_slot` (high) — page has 1 duplicate ad slot(s); duplicated: ['1216992329']
-- …and 63 more
 
 ### triadive (2)
 

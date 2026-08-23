@@ -62,6 +62,8 @@ LEGAL_PATH_PATTERNS = [
 CONTENT_PATH_PATTERNS = [
     r'/articles/', r'/reviews/', r'/forecasts/', r'/commentary/',
     r'/newsletters/', r'/trade-log/', r'/forecast/',
+    r'/playbook/', r'/education/', r'/strategies/',
+    r'/insights/', r'/news/', r'/stories/',
 ]
 
 # E-E-A-T required section patterns (look for these phrases in page text)
@@ -354,20 +356,48 @@ def _scan_html_for_site(site) -> list:
 
         # Page type classification
         page_type = _classify_page_type(rel)
+
+        # Has ads? (checked even when page_type == "other" — duplicate slots are
+        # bugs regardless of page type)
+        ad_count = _has_ads(html_for_adsense)
+        has_ads = ad_count > 0
+        unique_slots = _unique_ad_slots(html_for_adsense)
+
+        # Finding: duplicate_ad_slot (BUG regardless of page type)
+        # NOTE: dependability articles intentionally use 3 distinct slots
+        # (top/middle/bottom) — that's layout, not copy-paste dup. Only flag
+        # when the SAME data-ad-slot appears more than once on a page.
+        if has_ads:
+            duplicate_slot_count = ad_count - len(unique_slots)
+            if duplicate_slot_count > 0:
+                slot_repeat = {}
+                for m in AD_DATA_SLOT_RE.finditer(html_for_adsense):
+                    s = m.group(1)
+                    slot_repeat[s] = slot_repeat.get(s, 0) + 1
+                duplicated = sorted([s for s, c in slot_repeat.items() if c > 1])
+                findings.append(
+                    {
+                        "site": site["name"],
+                        "class": "duplicate_ad_slot",
+                        "severity": "high",
+                        "file": rel,
+                        "details": f"page has {duplicate_slot_count} duplicate ad slot(s); duplicated: {duplicated}",
+                        "auto_fixable": True,
+                        "fix_class": "dedup_ad_slots",
+                        "ad_count": ad_count,
+                        "unique_slots": sorted(unique_slots),
+                        "duplicated_slots": duplicated,
+                    }
+                )
+
+        # Skip word-count/E-E-A-T checks for non-classified pages (listing/archives)
         if page_type == "other":
-            continue  # listing/archives/products not flagged
+            continue
 
         # Word count
         text = _extract_visible_text(html_for_adsense)
         word_count = _count_words(text)
         threshold = WORDCOUNT_THRESHOLDS[page_type]
-
-        # Has ads?
-        ad_count = _has_ads(html_for_adsense)
-        has_ads = ad_count > 0
-
-        # Unique ad slots
-        unique_slots = _unique_ad_slots(html_for_adsense)
 
         # Finding 1: word_count_low
         if word_count < threshold:
@@ -401,34 +431,6 @@ def _scan_html_for_site(site) -> list:
                     "ad_count": ad_count,
                 }
             )
-
-        # Finding 3: duplicate_ad_slot (more than one ins tag per page from copy-paste)
-        # NOTE: dependability articles intentionally use 3 distinct slots
-        # (top/middle/bottom) — that's layout, not copy-paste dup. Only flag
-        # when the SAME data-ad-slot appears more than once on a page.
-        if has_ads:
-            duplicate_slot_count = ad_count - len(unique_slots)
-            if duplicate_slot_count > 0:
-                # Find which slots appear >1 time
-                slot_repeat = {}
-                for m in AD_DATA_SLOT_RE.finditer(html_for_adsense):
-                    s = m.group(1)
-                    slot_repeat[s] = slot_repeat.get(s, 0) + 1
-                duplicated = sorted([s for s, c in slot_repeat.items() if c > 1])
-                findings.append(
-                    {
-                        "site": site["name"],
-                        "class": "duplicate_ad_slot",
-                        "severity": "high",
-                        "file": rel,
-                        "details": f"page has {duplicate_slot_count} duplicate ad slot(s); duplicated: {duplicated}",
-                        "auto_fixable": True,
-                        "fix_class": "dedup_ad_slots",
-                        "ad_count": ad_count,
-                        "unique_slots": sorted(unique_slots),
-                        "duplicated_slots": duplicated,
-                    }
-                )
 
         # Finding 4: missing_eeat_sections (legal_umbrella pages only)
         if page_type == "legal_umbrella":
