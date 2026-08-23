@@ -120,6 +120,11 @@ def all_html_files(site):
         f for f in files
         if not any(ex in f.relative_to(site["source_dir"]).parts for ex in excludes)
     ]
+    # Filter out Google Search Console verification files (e.g. googlea3cb21e8d74bf905.html).
+    # Google requires these files to contain ONLY the verification token, no canonical/etc.
+    import re as _re
+    google_verify_re = _re.compile(r"^google[a-f0-9]{16,}\.html$", _re.IGNORECASE)
+    files = [f for f in files if not google_verify_re.match(f.name)]
     return files
 
 
