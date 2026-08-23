@@ -26,7 +26,10 @@ Schema:
 import json
 import datetime
 import argparse
-import requests
+import re
+import sys
+import urllib.request
+import urllib.parse
 from pathlib import Path
 
 WORKSPACE = Path("/Users/mike/.openclaw/workspace-bacottibot")
@@ -117,36 +120,54 @@ SITE_TOPICS = {
 }
 
 
-def brave_search(query: str, count: int = 5) -> list:
-    """Run a web search via the Brave Search API.
+def duckduckgo_search(query: str, count: int = 5) -> list:
+    """Run a web search via DuckDuckGo's HTML endpoint.
 
-    Returns a list of {title, url, description} dicts.
-    Falls back to empty list if API fails.
+    No API key needed. Returns a list of {title, url, description} dicts.
+    Falls back to empty list on error.
     """
-    creds_path = WORKSPACE / "credentials" / "brave-search.json"
-    if not creds_path.exists():
-        return []
     try:
-        creds = json.loads(creds_path.read_text())
-        api_key = creds.get("api_key")
-        if not api_key:
-            return []
-        headers = {"Accept": "application/json", "X-Subscription-Token": api_key}
-        params = {"q": query, "count": count}
-        r = requests.get(
-            "https://api.search.brave.com/res/v1/web/search",
-            headers=headers, params=params, timeout=15,
-        )
-        r.raise_for_status()
-        results = r.json().get("web", {}).get("results", [])
-        return [{
-            "title": x.get("title", ""),
-            "url": x.get("url", ""),
-            "description": x.get("description", ""),
-        } for x in results]
+        encoded = urllib.parse.quote_plus(query)
+        url = f"https://html.duckduckgo.com/html/?q={encoded}"
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X) OpenClaw-content-research/1.0",
+        })
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            html = resp.read().decode("utf-8", errors="replace")
     except Exception as e:
-        print(f"[trends] brave search error for {query!r}: {e}", file=__import__('sys').stderr)
+        print(f"[trends] DDG search error for {query!r}: {e}", file=sys.stderr)
         return []
+
+    # Parse result blocks. DDG HTML structure: <a class="result__a" href="...">title</a>
+    # and <a class="result__snippet">desc</a>
+    results = []
+    title_re = re.compile(r'<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>(.*?)</a>', re.IGNORECASE | re.DOTALL)
+    snippet_re = re.compile(r'<a[^>]+class="result__snippet"[^>]*>(.*?)</a>', re.IGNORECASE | re.DOTALL)
+    tag_re = re.compile(r"<[^>]+>")
+    titles = title_re.findall(html)
+    snippets = [tag_re.sub(" ", s).strip()[:300] for s in snippet_re.findall(html)]
+    for i, (u, t) in enumerate(titles[:count]):
+        results.append({
+            "title": tag_re.sub(" ", t).strip(),
+            "url": u,
+            "description": snippets[i] if i < len(snippets) else "",
+        })
+    return results
+
+
+# Search backend. Set via env var TRENDS_BACKEND, default DDG (no key needed).
+SEARCH_BACKEND = "duckduckgo"
+
+
+def web_search(query: str, count: int = 5) -> list:
+    """Run a web search using the configured backend.
+
+    Currently supports duckduckgo (no key needed). Returns
+    a list of {title, url, description} dicts.
+    """
+    if SEARCH_BACKEND == "duckduckgo":
+        return duckduckgo_search(query, count=count)
+    return []
 
 
 def score_topic(topic: str, site_config: dict, results: list) -> float:
@@ -171,18 +192,34 @@ def score_topic(topic: str, site_config: dict, results: list) -> float:
 
 
 def discover_topics(site: str, max_topics: int = 5) -> list:
-    """Discover trending topics for a site."""
+    """Discover trending topics for a site.
+
+    Two modes:
+      1. With web search: each template query is searched, results scored
+      2. Without (DDG blocks bots, no API key): fall back to template-only
+         candidates. The orchestrating agent should call web_search
+         (its own tool) to enrich these before drafting.
+
+    Either way, returns up to max_topics candidates sorted by relevance.
+    """
     if site not in SITE_TOPICS:
         return []
     cfg = SITE_TOPICS[site]
     candidates = []
+    year = datetime.datetime.now().year
     for q_template in cfg["queries"]:
         # Replace placeholders if any
-        query = q_template.replace("{year}", str(datetime.datetime.now().year))
+        query = q_template.replace("{year}", str(year))
         query = query.replace("{month}", datetime.datetime.now().strftime("%B"))
         query = query.replace("{quarter}", f"Q{(datetime.datetime.now().month - 1) // 3 + 1}")
-        results = brave_search(query, count=5)
+        # Try a web search for validation
+        results = web_search(query, count=3) if SEARCH_BACKEND else []
         score = score_topic(query, cfg, results)
+        # If web search failed (no results), give a baseline score so the topic
+        # still flows through. The orchestrating agent can re-score using its
+        # own web_search tool.
+        if not results:
+            score = max(score, 0.4)  # baseline for "this is a template topic"
         candidates.append({
             "site": site,
             "topic": query,

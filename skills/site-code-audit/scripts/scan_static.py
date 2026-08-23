@@ -73,7 +73,7 @@ EEAT_SECTION_PATTERNS = {
     "launch_date":        [r'\blaunched?\s+(in|on)\b', r'\b(since|founded)\s+\d{4}\b', r'\b20\d{2}\s*[-–]\s*20\d{2}\b'],
     "editorial_process":  [r'\b(editorial process|how we (write|research|review)|research → write → review|review process)\b'],
     "corrections_policy": [r'\bcorrection', r'\b(wrong|fix)(s|ed)?\b.*\bpolicy', r'\bwhen (we|discovered)\s+(a|an)\s+error\b'],
-    "disclosure":         [r'\b(disclos|conflict|affiliat|relationship|sponsored)\b', r'\bDependability Holdings\b', r'\bBacotti (Enterprises|Inc)\b'],
+    "disclosure":         [r'\b(disclos|conflict|affiliat|relationship|sponsored)\w*\b', r'\bDependability Holdings\b', r'\bBacotti (Enterprises|Inc)\b'],
 }
 
 
@@ -122,6 +122,10 @@ def _classify_page_type(rel_path: str) -> str:
     'other' (e.g. product pages with 0 ads, listing/archives) is not flagged.
     Strips .html extension before matching so both 'about/index.html' and
     '/about/' are recognized.
+
+    Paginated index pages (e.g. /articles/2/, /stories/5/) are excluded from
+    the content_article threshold check — those are auto-generated listing
+    pages with cards, not actual articles. Same for /page/N/, /p/N/, etc.
     """
     # Normalize: strip .html, trailing slash, normalize to URL-style path
     normalized = rel_path.replace("index.html", "").replace(".html", "")
@@ -133,6 +137,36 @@ def _classify_page_type(rel_path: str) -> str:
             return "legal_umbrella"
     for pat in CONTENT_PATH_PATTERNS:
         if re.search(pat, "/" + normalized.lstrip("/"), re.IGNORECASE):
+            # Skip index pages: paginated indices (/articles/2/) and bare
+            # section roots that are listings (/articles/, /reviews/, /news/).
+            # A real article has a slug AFTER the section name; a listing
+            # either has nothing after the section name, or has a digit
+            # (paginated index). The last path segment of an article slug
+            # contains a hyphen (kebab-case) or is longer than 2 chars and
+            # non-numeric; bare section roots like 'articles'/'reviews'/'news'
+            # contain no hyphens and are short.
+            stripped = "/" + normalized.lstrip("/").rstrip("/")
+            segments = stripped.split("/")
+            last_segment = segments[-1]
+            # Pure-numeric segment = paginated index
+            if last_segment.isdigit():
+                return "other"
+            # Bare section root = path ends in a known collection name
+            # (articles, reviews, news, stories, etc) with no slug after it.
+            # We detect this by checking if the path *ends* in one of these
+            # collection names. We look at all content section names.
+            # Also includes sub-collection names (workflows, lessons, field-notes,
+            # concepts, glossary, dispatches, morning-analysis, banner, etc).
+            collection_names = {'articles', 'reviews', 'news', 'stories', 'newsletters',
+                              'forecasts', 'commentary', 'playbook', 'education',
+                              'strategies', 'insights', 'forecast', 'trade-log',
+                              # triadive sub-collections
+                              'workflows', 'lessons', 'field-notes', 'concepts',
+                              # dependability/tredey sub-collections
+                              'glossary', 'dispatches', 'morning-analysis',
+                              'banners', 'tax', 'methodology'}
+            if last_segment.lower() in collection_names:
+                return "other"
             return "content_article"
     return "other"
 

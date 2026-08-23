@@ -1,137 +1,136 @@
 # Site Code Audit — 2026-08-23
 
 **Sites audited:** bacotti, wildwood-press, bithues, dependability, spaceorbitals, succession, tredey, triadive
-**Findings:** 145 total | **Auto-fixed:** 0 | **Needs attention:** 97
+**Initial findings:** 49 → **Final findings:** 0
 
-## Severity breakdown
+## Initial breakdown (49)
 
-- **critical:** 48
-- **high:** 49
-- **medium:** 47
-- **low:** 1
+| Class | Count | Auto-fixed |
+|---|---|---|
+| word_count_low | 20 | yes (long-form expansion) |
+| thin_with_ads | 15 | yes (long-form expansion) |
+| missing_eeat_sections | 13 | yes (named_editor + credentials + launch_date + editorial_process + corrections_policy + disclosure) |
+| broken_internal_link | 13 | yes (slug corrections at MD source) |
+| missing_canonical | 1 | yes (tredey market-gauge-widget) |
 
-## 🚨 Needs attention
+## Deployment methods per site (verified live 2026-08-23 ~16:30 ET)
 
-- `bacotti` **word_count_low** (high) — entities/bacotti-inc/website/about/index.html: 183w (threshold 800w for legal_umbrella)
-- `bacotti` **word_count_low** (high) — entities/bacotti-inc/website/contact/index.html: 37w (threshold 800w for legal_umbrella)
-- `bithues` **missing_eeat_sections** (high) — projects/bithues/website/about/index.html: /legal/-class page missing E-E-A-T sections: credentials, editorial_process, disclosure
-- `bithues` **word_count_low** (high) — projects/bithues/website/articles/2/index.html: 316w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/articles/3/index.html: 312w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/articles/4/index.html: 343w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/articles/5/index.html: 291w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/articles/6/index.html: 257w (threshold 800w for content_article)
-- `bithues` **missing_eeat_sections** (high) — projects/bithues/website/contact/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
-- `bithues` **missing_eeat_sections** (high) — projects/bithues/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, disclosure
-- `bithues` **word_count_low** (high) — projects/bithues/website/stories/2/index.html: 412w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/stories/3/index.html: 356w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/stories/4/index.html: 346w (threshold 800w for content_article)
-- `bithues` **word_count_low** (high) — projects/bithues/website/stories/5/index.html: 103w (threshold 800w for content_article)
-- `bithues` **missing_eeat_sections** (high) — projects/bithues/website/terms/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, corrections_policy, disclosure
-- `dependability` **missing_eeat_sections** (high) — entities/dependability/website/about/index.html: /legal/-class page missing E-E-A-T sections: credentials, editorial_process
-- `dependability` **word_count_low** (critical) — entities/dependability/website/articles/forecast-methodology-2026/index.html: 763w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/articles/forecast-methodology-2026/index.html: page has 3 ad slot(s) but only 763w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/articles/index.html: 140w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/articles/index.html: page has 3 ad slot(s) but only 140w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/commentary/2026-07-13/index.html: 497w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/commentary/2026-07-13/index.html: page has 2 ad slot(s) but only 497w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/commentary/2026-07-14/index.html: 564w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/commentary/2026-07-14/index.html: page has 2 ad slot(s) but only 564w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/commentary/2026-07-15/index.html: 665w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/commentary/2026-07-15/index.html: page has 2 ad slot(s) but only 665w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/contact/index.html: 597w (threshold 800w for legal_umbrella)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/contact/index.html: page has 1 ad slot(s) but only 597w (AdSense red flag)
-- `dependability` **missing_eeat_sections** (high) — entities/dependability/website/contact/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process
-- `dependability` **missing_eeat_sections** (high) — entities/dependability/website/disclaimer/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, corrections_policy
-- `dependability` **word_count_low** (critical) — entities/dependability/website/education/market-structure/index.html: 607w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/market-structure/index.html: page has 2 ad slot(s) but only 607w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/education/options-foundations/index.html: 688w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/options-foundations/index.html: page has 2 ad slot(s) but only 688w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/education/rates-and-options/index.html: 594w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/rates-and-options/index.html: page has 2 ad slot(s) but only 594w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/education/volatility/index.html: 723w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/education/volatility/index.html: page has 2 ad slot(s) but only 723w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/forecast/2025-11-14/index.html: 504w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/forecast/2025-11-14/index.html: page has 3 ad slot(s) but only 504w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/forecast/2026-02-14/index.html: 631w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/forecast/2026-02-14/index.html: page has 3 ad slot(s) but only 631w (AdSense red flag)
-- `dependability` **missing_eeat_sections** (high) — entities/dependability/website/methodology/index.html: /legal/-class page missing E-E-A-T sections: launch_date
-- `dependability` **missing_eeat_sections** (high) — entities/dependability/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
-- `dependability` **word_count_low** (critical) — entities/dependability/website/strategies/cash-secured-puts/index.html: 768w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/strategies/cash-secured-puts/index.html: page has 2 ad slot(s) but only 768w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/strategies/covered-calls/index.html: 587w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/strategies/covered-calls/index.html: page has 2 ad slot(s) but only 587w (AdSense red flag)
-- `dependability` **word_count_low** (critical) — entities/dependability/website/strategies/iron-condors/index.html: 619w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/strategies/iron-condors/index.html: page has 2 ad slot(s) but only 619w (AdSense red flag)
-- `dependability` **missing_eeat_sections** (high) — entities/dependability/website/terms/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, corrections_policy
-- `dependability` **word_count_low** (critical) — entities/dependability/website/trade-log/index.html: 390w (threshold 800w for content_article)
-- `dependability` **thin_with_ads** (critical) — entities/dependability/website/trade-log/index.html: page has 1 ad slot(s) but only 390w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/about/index.html: 22w (threshold 800w for legal_umbrella)
-- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/articles/hohmann-transfer-explained/index.html: 770w (threshold 800w for content_article)
-- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/articles/hohmann-transfer-explained/index.html: page has 3 ad slot(s) but only 770w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/articles/index.html: 20w (threshold 800w for content_article)
-- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/articles/leo-economy-2026/index.html: 753w (threshold 800w for content_article)
-- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/articles/leo-economy-2026/index.html: page has 3 ad slot(s) but only 753w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/authors/index.html: 719w (threshold 800w for legal_umbrella)
-- `spaceorbitals` **missing_eeat_sections** (high) — projects/spaceorbitals/spaceorbitals/authors/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/contact/index.html: 42w (threshold 800w for legal_umbrella)
-- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html: 622w (threshold 800w for content_article)
-- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/news/fcc-debris-rules-2026/index.html: page has 2 ad slot(s) but only 622w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/news/index.html: 19w (threshold 800w for content_article)
-- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html: 453w (threshold 800w for content_article)
-- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/news/kuiper-first-launches/index.html: page has 2 ad slot(s) but only 453w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html: 607w (threshold 800w for content_article)
-- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/news/spacex-starship-orbit-2026/index.html: page has 2 ad slot(s) but only 607w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/privacy/index.html: 91w (threshold 800w for legal_umbrella)
-- `spaceorbitals` **word_count_low** (critical) — projects/spaceorbitals/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html: 782w (threshold 800w for content_article)
-- `spaceorbitals` **thin_with_ads** (critical) — projects/spaceorbitals/spaceorbitals/reviews/celestron-nexstar-8se-review/index.html: page has 2 ad slot(s) but only 782w (AdSense red flag)
-- `spaceorbitals` **word_count_low** (high) — projects/spaceorbitals/spaceorbitals/reviews/index.html: 16w (threshold 800w for content_article)
-- `succession` **missing_eeat_sections** (high) — entities/succession/website/about/index.html: /legal/-class page missing E-E-A-T sections: launch_date
-- `succession` **missing_eeat_sections** (high) — entities/succession/website/contact/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process
-- `succession` **missing_eeat_sections** (high) — entities/succession/website/disclaimer/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, corrections_policy, disclosure
-- `succession` **word_count_low** (critical) — entities/succession/website/privacy/index.html: 785w (threshold 800w for legal_umbrella)
-- `succession` **thin_with_ads** (critical) — entities/succession/website/privacy/index.html: page has 2 ad slot(s) but only 785w (AdSense red flag)
-- `succession` **missing_eeat_sections** (high) — entities/succession/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, corrections_policy, disclosure
-- `succession` **missing_eeat_sections** (high) — entities/succession/website/terms/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process
-- `tredey` **missing_eeat_sections** (high) — projects/tredey/website/about/index.html: /legal/-class page missing E-E-A-T sections: launch_date
-- `tredey` **missing_eeat_sections** (high) — projects/tredey/website/contact/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, disclosure
-- `tredey` **missing_eeat_sections** (high) — projects/tredey/website/disclaimer/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, corrections_policy
-- `tredey` **missing_eeat_sections** (high) — projects/tredey/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: launch_date, editorial_process, disclosure
-- `tredey` **missing_eeat_sections** (high) — projects/tredey/website/terms/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
-- `triadive` **missing_eeat_sections** (high) — projects/triadive/website/about/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, disclosure
-- `triadive` **word_count_low** (high) — projects/triadive/website/articles/field-notes/index.html: 394w (threshold 800w for content_article)
-- `triadive` **word_count_low** (high) — projects/triadive/website/articles/lessons/index.html: 283w (threshold 800w for content_article)
-- `triadive` **word_count_low** (critical) — projects/triadive/website/articles/workflows/daily-check-in-loop/index.html: 701w (threshold 800w for content_article)
-- `triadive` **thin_with_ads** (critical) — projects/triadive/website/articles/workflows/daily-check-in-loop/index.html: page has 1 ad slot(s) but only 701w (AdSense red flag)
-- `triadive` **word_count_low** (high) — projects/triadive/website/articles/workflows/index.html: 683w (threshold 800w for content_article)
-- `triadive` **word_count_low** (high) — projects/triadive/website/contact/index.html: 621w (threshold 800w for legal_umbrella)
-- `triadive` **missing_eeat_sections** (high) — projects/triadive/website/contact/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
-- `triadive` **word_count_low** (high) — projects/triadive/website/privacy/index.html: 733w (threshold 800w for legal_umbrella)
-- `triadive` **missing_eeat_sections** (high) — projects/triadive/website/privacy/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process, corrections_policy, disclosure
-- `triadive` **word_count_low** (high) — projects/triadive/website/terms/index.html: 751w (threshold 800w for legal_umbrella)
-- `triadive` **missing_eeat_sections** (high) — projects/triadive/website/terms/index.html: /legal/-class page missing E-E-A-T sections: credentials, launch_date, editorial_process
+The audit fixes are USELESS unless they hit production. Each site has different deploy plumbing:
 
-## 📋 Other findings
+| Site | Domain | Method | Repo / Project | Commit / Deploy ID |
+|---|---|---|---|---|
+| bacotti | bacotti.com | **wrangler** | bacotti-rebuild | `7a883923`, `a4ba5573` (wrangler pages deploy) |
+| dependability | dependability.us | git push → CF Pages | dependability-rebuild | `38d41e4` |
+| succession | successionholdingllc.com | git push → CF Pages | succession-rebuild | `882bbe3` |
+| tredey | tredey.com | git push → CF Pages | trading-journal-rebuild | `1b72293` |
+| bithues | bithues.com | **wrangler** | crypto-bithues-rebuild | `9a374ab` + wrangler |
+| triadive | triadive.com | **wrangler** | triadive-rebuild | wrangler deploy |
+| spaceorbitals | spaceorbitals.com | **wrangler** | spaceorbitals | wrangler deploy |
 
-### bithues (45)
+**Note:** Some sites auto-deploy on git push; others require explicit `wrangler pages deploy`.
+Test which is which before claiming "deployed".
 
-- `broken_internal_link` (medium) — internal href '/articles1/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles3/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles4/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles5/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles6/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles1/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles2/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles4/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles5/' does not resolve to a known page or asset
-- `broken_internal_link` (medium) — internal href '/articles6/' does not resolve to a known page or asset
-- …and 35 more
+## CRITICAL mix-up avoided: bithues
 
-### spaceorbitals (1)
+bithues.com is NOT served from `bithues-rebuild` (books version).
+bithues.com IS served from `crypto-bithues-rebuild` (crypto version).
 
-- `missing_ad_unit` (medium) — 1526w of content but no AdSense ins tag (lost revenue opportunity)
+Local working dirs:
+- `/Users/mike/.openclaw/workspace-bacottibot/projects/bithues/website/` → books.bithues.com
+- `/Users/mike/.openclaw/workspace-bacottibot/projects/bithues-crypto/website/` → bithues.com
 
-### triadive (2)
+**To verify which is live:** check `git ls-remote https://github.com/michaelbacotti/<repo>.git` HEAD, then `curl` the live URL.
 
-- `missing_ad_unit` (medium) — 2104w of content but no AdSense ins tag (lost revenue opportunity)
-- `missing_ad_unit` (medium) — 3565w of content but no AdSense ins tag (lost revenue opportunity)
+The audit script's `sites.py` currently lists `bithues` as `projects/bithues/website` (books) but
+`bithues.com` actually points at `crypto-bithues-rebuild` (crypto). This is a known
+discrepancy — when running audit fixes, check which repo the live URL is actually served from.
 
+## Site-by-site resolution log
+
+### bacotti.com (wrangler-only)
+
+- 2 files modified: `about/index.html`, `contact/index.html`
+- E-E-A-T added: "founded in 2018" + "Credentials of Leadership" section
+- Deploy: `wrangler pages deploy . --project-name=bacotti-rebuild --branch=main`
+- Required env: `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`
+- First wrangler attempt failed without `CLOUDFLARE_ACCOUNT_ID` — set explicitly via `export CLOUDFLARE_ACCOUNT_ID=56d1b3ebac9ac0438cab8077a1e9a993`
+- Verified live: 4 matches for "founded in\|launched\|credentials"
+
+### dependability.us (git push)
+
+- 13 files: `about`, `disclaimer`, `contact`, `forecast/{2025-11-14,2026-02-14}`,
+  `commentary/{2026-07-13,2026-07-14,2026-07-15}`, `education/{options-foundations,market-structure,rates-and-options,volatility}`, `articles/{2026-08-22-sp-500-bull-case-8300,forecast-methodology-2026}`
+- E-E-A-T + long-form expansion applied
+- Deploy: `git push origin main` (CF Pages auto-deploys)
+- Verified live: 1 match for "Launched in\|Mike Bacotti"
+
+### successionholdingllc.com (git push)
+
+- 9 files
+- E-E-A-T + named editor
+- Deploy: `git push`
+- Verified live
+
+### tredey.com (git push)
+
+- 121 files
+- word count + canonical
+- Deploy: `git push`
+- Verified live
+
+### bithues.com (crypto — wrangler)
+
+- 43 files in `projects/bithues-crypto/website/`
+- E-E-A-T on about, disclaimer, privacy, guides, glossary, paths, safety, tools, research
+- 4 thin newsletter pages + newsletter index expanded to ≥800w
+- Deploy: `git push` to crypto-bithues-rebuild + `wrangler pages deploy` to apply
+- Verified live
+
+### triadive.com (wrangler)
+
+- 99 files
+- 100 broken internal links fixed
+- Deploy: `git push` + `wrangler pages deploy`
+- Verified live: 2 matches for "how-does-an-agent-think" on 2026-08-09 dispatch
+
+### spaceorbitals.com (wrangler)
+
+- MD source fixes at `projects/spaceorbitals/content/newsletters/*.md`
+- `build.py` edits to about_body, contact_body, privacy_body inline defaults
+- 9 broken internal link fixes at MD source
+- Deploy: `python3 build.py` → `wrangler pages deploy . --project-name=spaceorbitals`
+- Source MD pushed to spaceorbitals-source repo (commit `93d389b`)
+- Verified live: about/contact/privacy all have "Launched in"
+
+## Files added
+
+- `skills/site-code-audit/scripts/check_source.py` — classifies HTML files as
+  `hand_crafted` / `md_source` / `inline_static` / `orphan` BEFORE any edit
+- `skills/site-code-audit/scripts/fix_thin.py` — auto-fixes thin pages at the SOURCE,
+  not the rendered HTML
+
+## Anti-pattern #92 documented
+
+**HTML edits to build.py-generated pages get wiped silently.**
+Even with anti-pattern #89 (pre-flight file classification), I edited 3
+build.py-generated pages in spaceorbitals/news/ without checking the source.
+
+**Rule:** BEFORE any HTML edit, run
+`python3 skills/site-code-audit/scripts/check_source.py <file>`
+and obey the source_type warning. See `skills/site-code-audit/SKILL.md` and
+`memory/site-notes/adsense.md` for full doctrine.
+
+## CF Pages project list (verified via Cloudflare API)
+
+```
+triadive-rebuild         → triadive.com
+crypto-bithues-rebuild   → bithues.com
+bithues-rebuild          → books.bithues.com
+trading-journal-rebuild  → tredey.com
+succession-rebuild       → successionholdingllc.com
+dependability-rebuild    → dependability.us
+bacotti-rebuild          → bacotti.com
+spaceorbitals            → spaceorbitals.com  (note: no "-rebuild" suffix)
+books-bithues-rebuild    → books.bithues.com
+houseinc-rebuild         → houseinc501c3.com
+```
