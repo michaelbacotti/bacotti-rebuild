@@ -1,0 +1,168 @@
+{
+  "lastUpdated": "2026-08-23T12:55:00+00:00",
+  "lastSitemapAudit": {
+    "date": "2026-08-22",
+    "timestamp": "2026-08-23T03:07:30+00:00",
+    "sites": {
+      "bithues": {
+        "total": 39,
+        "passed": 39,
+        "failed": 0,
+        "status": "PASS",
+        "failures": [],
+        "reportPath": "memory/memory/bithues-audit-2026-08-22.json"
+      },
+      "dependability": {
+        "total": 113,
+        "passed": 113,
+        "failed": 0,
+        "status": "PASS",
+        "failures": [],
+        "reportPath": "memory/memory/dependability-audit-2026-08-22.json"
+      },
+      "succession": {
+        "total": 80,
+        "passed": 80,
+        "failed": 0,
+        "status": "PASS",
+        "failures": [],
+        "reportPath": "memory/memory/succession-audit-2026-08-22.json",
+        "note": "Domain migrated 2026-08-22 from www.successionplanning.us \u2192 successionholdingllc.com. Audit updated to new domain; old domain is a 1-page lander redirect."
+      },
+      "bacotti": {
+        "total": 8,
+        "passed": 6,
+        "failed": 2,
+        "status": "FAIL",
+        "failures": [
+          {
+            "url": "https://bacotti.com/404/",
+            "issue": "canonical_mismatch",
+            "detail": "page canonical is https://bacotti.com/ (homepage); should be self-canonical or noindex",
+            "severity": "medium"
+          },
+          {
+            "url": "https://bacotti.com/shop/",
+            "issue": "canonical_cross_domain",
+            "detail": "page canonical points to https://shop.bacotti.com/ (different subdomain); this is correct SEO behavior for a subdomain split but may confuse auditors expecting self-canonical",
+            "severity": "low"
+          }
+        ],
+        "sitemap_status": {
+          "https://bacotti.com/sitemap.xml": "HTTP 200",
+          "https://www.bacotti.com/sitemap.xml": "HTTP 522"
+        },
+        "reportPath": "memory/memory/bacotti-audit-2026-08-22.json",
+        "note": "Eleventh consecutive night: www.bacotti.com returns HTTP 522 from Cloudflare edge. Apex (bacotti.com) serves valid 8-URL sitemap. 2 canonical anomalies detected on apex pages."
+      }
+    },
+    "totals": {
+      "sitesAudited": 4,
+      "sitesPassed": 3,
+      "sitesFailed": 1,
+      "urlsTotal": 240,
+      "urlsPassed": 238,
+      "urlsFailed": 2
+    },
+    "bithues": {
+      "total": 39,
+      "passed": 39,
+      "failed": 0,
+      "status": "passed",
+      "failureURLs": [],
+      "date": "2026-08-22"
+    },
+    "dependability": {
+      "total": 113,
+      "passed": 113,
+      "failed": 0,
+      "status": "passed",
+      "failureURLs": [],
+      "date": "2026-08-22"
+    },
+    "succession": {
+      "total": 80,
+      "passed": 80,
+      "failed": 0,
+      "status": "passed",
+      "failureURLs": [],
+      "date": "2026-08-22",
+      "note": "Domain migrated: www.successionplanning.us \u2192 successionholdingllc.com"
+    },
+    "bacotti": {
+      "total": 8,
+      "passed": 6,
+      "failed": 2,
+      "status": "failed",
+      "failureURLs": [
+        "https://bacotti.com/404/ (canonical mismatch \u2192 /)",
+        "https://bacotti.com/shop/ (canonical \u2192 shop.bacotti.com subdomain)"
+      ],
+      "date": "2026-08-22"
+    }
+  },
+  "carryoverItems": [
+    {
+      "id": "sitemap-bacotti-2026-08-12-13-14-15",
+      "site": "bacotti",
+      "firstSeen": "2026-08-12",
+      "severity": "high",
+      "status": "escalated",
+      "description": "bacotti.com sitemap fetch failed with HTTP 522 on www.bacotti.com at 23:00 ET on 2026-08-12 through 2026-08-22 (ELEVENTH consecutive night). Apex (bacotti.com) is healthy and serves valid 8-URL sitemap at HTTP 200; www subdomain returns 522 from Cloudflare edge. Failure mode is now consistent (522 only, no longer flapping). The intermittent 403 episode from 2026-08-18 has not recurred since. Plain curl on apex works; the issue is strictly www-specific. Site may be unreachable to crawlers on www \u2014 high SEO risk since bacotti.com is the corporate entity. ESCALATED severity HIGH. ACTION NEEDED (Mike): (a) Cloudflare dashboard for bacotti.com \u2192 DNS records for www CNAME, (b) CF Pages project status for bacotti-com, (c) Security \u2192 WAF \u2192 Custom Rules that may target www, (d) check from cellular to rule out source-IP block on www specifically.",
+      "urls": [
+        "https://www.bacotti.com/sitemap.xml",
+        "https://bacotti.com/sitemap.xml"
+      ],
+      "lastSeen": "2026-08-22"
+    },
+    {
+      "id": "code-audit-bithues-crypto-dns-2026-08-22",
+      "site": "bithues-crypto",
+      "firstSeen": "2026-08-22",
+      "lastSeen": "2026-08-23",
+      "consecutiveNights": 2,
+      "severity": "critical",
+      "status": "carryover",
+      "class": "live_unreachable",
+      "description": "https://bithues-crypto.com apex DNS dead (NXDOMAIN \u2014 'nodename nor servname provided, or not known'). Apex is dead; no fallback route to www or alternative domain. Carryover decision: needs Mike \u2014 repoint, retire, or unregister.",
+      "firstSeenAudit": "code-audit-2026-08-22"
+    },
+    {
+      "id": "code-audit-bacotti-www-522-2026-08-22",
+      "site": "bacotti",
+      "firstSeen": "2026-08-22",
+      "lastSeen": "2026-08-23",
+      "consecutiveNights": 2,
+      "severity": "high",
+      "status": "carryover",
+      "class": "live_non_200",
+      "description": "https://www.bacotti.com returns HTTP 522 from Cloudflare edge. Apex (bacotti.com) is healthy and serves HTTP 200; www subdomain is the only failure. Same pattern as tredey \u2014 long-standing CF Pages www\u2192apex flap. Carryover decision: known carryover, not code.",
+      "firstSeenAudit": "code-audit-2026-08-22"
+    },
+    {
+      "id": "code-audit-tredey-www-522-2026-08-22",
+      "site": "tredey",
+      "firstSeen": "2026-08-22",
+      "lastSeen": "2026-08-23",
+      "consecutiveNights": 2,
+      "severity": "high",
+      "status": "carryover",
+      "class": "live_non_200",
+      "description": "https://www.tredey.com returns HTTP 522 from Cloudflare edge. Apex (tredey.com) is healthy and serves HTTP 200; www subdomain is the only failure. Same pattern as bacotti \u2014 long-standing CF Pages www\u2192apex flap. Carryover decision: known carryover, not code.",
+      "firstSeenAudit": "code-audit-2026-08-22"
+    }
+  ],
+  "lastCodeAudit": {
+    "date": "2026-08-23",
+    "timestamp": "2026-08-23T12:49:14+00:00",
+    "total": 3,
+    "by_severity": {
+      "critical": 1,
+      "high": 2
+    },
+    "auto_fixed": 0,
+    "needs_attention_count": 3,
+    "reportPath": "memory/memory/code-audit-2026-08-23.md",
+    "note": "86 \u2192 3 over one session. All 3 remaining are live infrastructure, not code: bithues-crypto.com NXDOMAIN, www.bacotti.com 522, www.tredey.com 522. Cron wired 22:30 ET (id c9b3d8e2-f78e-4c70-8eaf-bff4d1ea1ef2); persistent session:site-qa bootstrapped, slot created on first fire."
+  }
+}
