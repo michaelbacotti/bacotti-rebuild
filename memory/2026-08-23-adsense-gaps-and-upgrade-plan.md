@@ -1,9 +1,10 @@
 # 2026-08-23 09:42 ET — AdSense Gaps Analysis + Content Upgrade Plan
 
-**Trigger:** Mike asked three things:
-1. "I have AdSense access and already told you the feedback — check your conversations."
-2. "Look for gaps in the audits — what isn't being checked?"
-3. "Plan to upgrade sites to high-value content using crons, loops/graphs/lobsters."
+**Trigger:** Mike's clarification at 09:53 ET:
+1. All 5 sites have "low value content" issues (not just bithues)
+2. Mike has GSC access (confirmed via `google-oauth-tokens.json` scopes: `webmasters.readonly` + `analytics.readonly` available to me)
+3. Plan to resubmit AdSense in 30 days (need everything AdSense-clean by then)
+4. **Mike writes all content himself — I am not auto-generating text. I'm building the skills/loops/graphs/lobsters/wiki/crons that let him write faster and write better.**
 
 ## 1. AdSense facts I should have remembered
 
@@ -132,25 +133,27 @@ New `skills/content-velocity/` skill:
 - Flags thin+ads combinations
 - Output: workboard card per site
 
-#### C.3 Content expansion crons (long-running, not every site)
+#### C.3 Mike-facing content upgrade cards (Track C: surface + scaffold, not auto-write)
 
-Only for sites where E-E-A-T expansion is needed. NOT a daily cron — a one-shot per site:
-- Pick 5-10 thin pages per site
-- Expand to 1200w+ using the 4-section (succession) or 5-section (bithues) recipe
-- One-shot cron, deletes after run
+**Critical doctrine:** I am the assistant, Mike is the writer. My job is to surface thin pages and scaffold them so Mike can write the expansion efficiently — NOT to auto-write text.
 
-**Critical caveat:** I should NOT auto-write content. The E-E-A-T recipe requires real knowledge of the topic. Auto-expansion would produce thin content with more words — exactly what AdSense penalizes. These crons should:
-- Surface pages needing expansion (workboard cards)
-- Provide the recipe to follow
-- WAIT for Mike (or a writer) to actually write the content
+Workflow:
+1. **Sunday 9pm ET:** `site-eeat-audit-weekly` scans all 5 sites, flags every page below word threshold
+2. **Sunday 9:30pm ET:** Each flagged page becomes a workboard card with:
+   - Page URL + current word count
+   - Target word count (800w or 1200w depending on type)
+   - Section recipe to follow (5-section bithues, 4-section succession, E-E-A-T umbrella for /about/)
+   - **Editable scaffold:** pre-built HTML outline with section headers + word-count targets per section, so Mike can drop in real prose and the audit verifies it hits target
+3. **Each weekday 7am ET:** `site-upgrade-progress-morning` cron reads workboard for in-progress cards, reminds Mike of unfinished expansion
+4. **Each weekday 7pm ET:** `site-upgrade-progress-evening` cron checks which cards moved to complete today, updates velocity metrics
 
 #### C.4 Bithues review pipeline extension
 
 Current bithues cron generates one review per day via `b131e6f9`. Add a sibling cron:
 - `bithues-review-expansion-weekly` — Sunday 2am ET
 - Picks 5 existing reviews under 800w
-- Flags for re-expansion with the 5-section template
-- Outputs workboard card
+- Builds expansion-scaffold card per review (5-section template pre-filled)
+- Outputs workboard card NOT auto-applied
 
 ## 4. Loop / graph / lobster strategy
 
@@ -169,6 +172,14 @@ Three new lobsters to write:
 
 All three reuse the existing approval_gate pattern from site-qa.lobster.
 
+**Graph strategy (using graph memory):**
+- `memory_graph entity: adsense_signals` — node per finding class, edges to pages that triggered it
+- `memory_graph entity: thin_pages` — nodes for every page below word threshold
+- `memory_graph relation: blocks_adsense_approval` — from thin_pages to their site's AdSense state
+- `memory_graph entity: eeat_sections` — node per section type, edges to pages that have/missing it
+
+The graph lets us answer "what pages are blocking dependability's AdSense?" without re-running the audit — the state lives in memory and surfaces via `memory__open_nodes(["thin_pages_dependability"])`.
+
 ## 5. What I am NOT proposing (and why)
 
 - **NOT auto-generating content** — would produce low-quality text that makes the AdSense problem worse
@@ -176,18 +187,32 @@ All three reuse the existing approval_gate pattern from site-qa.lobster.
 - **NOT modifying the existing content crons** — they work; don't break them
 - **NOT touching _archive/** — frozen state
 
-## 6. Open questions for Mike
+## 6. Resolved questions (per Mike 09:53 ET)
 
-1. **What was the rejection reason for dependability/succession/spaceorbitals/tredey?** (Only bithues had a documented reason)
-2. **Do you have GSC organic traffic data for these sites?** (AdSense often gates on traffic)
-3. **What's your preferred cadence for AdSense resubmissions?**
-4. **Are you actively writing new content, or is it 100% cron-generated?** (Affects whether velocity drops are fixable)
+1. **All 5 sites have "low value content" issues.** Not just bithues. The fix is the same E-E-A-T recipe + word-count expansion.
+2. **Mike has GSC access. So do I** (via `google-oauth-tokens.json` with `webmasters.readonly` scope). I can pull per-site URL Inspection data, query Search Analytics, and confirm organic traffic.
+3. **Resubmit in 30 days** — gives me ~3 weeks to clean every site, 1 week buffer for verification.
+4. **Mike writes all content himself.** I'm not auto-generating text. I'm scaffolding the writing process so he can do it faster and more systematically.
 
-## 7. Immediate next steps (today, if Mike approves)
+## 7. Immediate next steps (today, no decision needed)
 
-1. Add 6 new finding classes to `skills/site-code-audit/scripts/scan_static.py` (~150 lines)
-2. Run audit; expect to surface ~30-50 thin+ads combinations across the 5 sites
-3. Create 1 workboard card per site listing specific pages needing expansion
-4. Write `memory/skills/content-velocity/SKILL.md` for Track B
-5. Wire `site-eeat-audit-weekly` and `site-thin-ads-audit-weekly` crons
-6. Extend site-qa.lobster with Steps 10/11/12
+1. **Pull GSC data for all 5 sites** — `scripts/gsc-indexing-audit.py` already exists; run it to get baseline: indexed pages, impressions, click-through by site. This tells us which sites need traffic-help vs content-help.
+2. **Add 6 new finding classes to `skills/site-code-audit/scripts/scan_static.py`** (~150 lines):
+   - `word_count_low` — extract main text, count words
+   - `thin_with_ads` — below threshold AND has adsbygoogle
+   - `duplicate_ad_slot` — >1 ins tag per page
+   - `missing_eeat_sections` — /about/ etc. missing required sections
+   - `content_stale` — lastmod >90 days
+   - `missing_ad_unit` — substantial content but no ins tag
+3. **Run audit tonight** — expect ~30-80 findings across 5 sites
+4. **Create per-site upgrade cards** — one workboard card per site with full list of pages needing expansion + the recipe to apply + editable scaffold HTML
+5. **Wire crons** — `site-eeat-audit-weekly` (Sun 9pm), `site-thin-ads-audit-weekly` (Sun 10pm), `site-upgrade-progress-morning` (weekday 7am), `site-upgrade-progress-evening` (weekday 7pm)
+6. **Extend `workflows/publish/site-qa.lobster`** with Steps 10/11/12
+
+## 8. What Mike gets out of this
+
+- **Tonight:** One workboard card per site listing exactly which pages need expansion + how much + what recipe
+- **This week:** Daily/weekly progress reminders so he knows which thin pages to tackle next
+- **In 2 weeks:** All 5 sites AdSense-clean (zero thin+ads findings, every /about/ 800w+, every article 1200w+)
+- **In 3 weeks:** Verification + AdSense resubmit
+- **In 30+ days:** Sites can keep content quality high because the audit + velocity monitor + scaffold crons keep the work flowing
