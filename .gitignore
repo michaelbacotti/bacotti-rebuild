@@ -1,10 +1,25 @@
-# Long-term memory file - contains API tokens, OAuth secrets, dev app credentials
-# (CF Pages OAuth, Pinterest dev, etc.). NEVER commit; only exists locally.
+# Sacred files - local-only. Contain persona, identity, user info, and MEMORY.md
+# (which has API tokens, OAuth secrets, dev app credentials). MUST stay local.
 MEMORY.md
+SOUL.md
+IDENTITY.md
+USER.md
+HEARTBEAT.md
+AGENTS.md
+AGENTS-anti-patterns.md
+AGENTS-memory.md
+AGENTS-operations.md
+DREAMS.md
+REDIRECTS.md
+SOP-sites-and-projects.md
+WORKSPACE_CLEANUP_PLAN.md
+blog-merge-plan.md
+README.md
 
 # Local credentials
 .openclaw/credentials/
 .openclaw/tmp/cf-token.env
+.openclaw/tmp/launch-agents/
 
 # OS / editor noise
 .DS_Store
