@@ -579,3 +579,17 @@ On the policy side, the GENIUS Act's proposed stablecoin implementation rules la
 - **Crypto Hack News: Bofur Capital Hit by $2M Address Poisoning** — https://www.coingabbar.com/en/crypto-currency-news/crypto-hack-news-bofur-capital-2m-address-poisoning
   Crypto Hack News: Bofur Capital lost $2M in an address poisoning scam, while the attacker later appeared to poison its own wallet.
 
+
+## 2026-08-24
+
+- **Wallet Drainers: What You Really Approve on Confirm** — https://cryptoticker.io/en/wallet-drainer-token-approval-signature/
+  Investing in cryptocurrencies carries a high level of risk. Most emptied wallets were never hacked. Nobody guessed the seed, nobody broke into a device. The owners tapped &quot;confirm&quot; themselves, and in doing so allowed a stranger&#x27;s contract to move their tokens whenever it likes. That i
+- **Stablecoin Depegs Explained: What Really Happens When a Digital Dollar Breaks the Buck** — https://news.bitcoin.com/learning-insights/stablecoin-depegs-explained/
+  After new U.S. federal stablecoin ... walking away. The category opened 2026 at $310 billion, climbed to roughly $320 billion by mid-April, and topped out near $322.1 billion in mid-May....
+- **Boltz Bitcoin Bridge Shutdown: AI Hacks Force Exit [2026]** — https://shattered.io/boltz-bitcoin-bridge-ai-hack-shutdown-2026/
+  Boltz shut down its Bitcoin swap bridge Aug. 3, 2026 after AI-assisted hacks outpaced its small team. Founders exited 10 days later.
+- **What Is an EOA? Externally Owned Accounts | Support - Eco** — https://eco.com/support/en/articles/12005956-what-is-an-eoa-externally-owned-accounts
+  For the deep dive, see What is EIP-7702 and the 2026 account abstraction guide. ​ · Most EOA losses come from one of three causes: private-key exposure, signature phishing, and approval abuse. Each has a concrete mitigation.
+- **Address Poisoning: $2M Lost Over 7 of 40 Characters** — https://cryptoticker.io/en/address-poisoning-check-wallet-address/
+  Address poisoning: a fake address matched the real one in 7 of 40 characters and intercepted 2M USDC. Our count, and how you protect yourself.
+
