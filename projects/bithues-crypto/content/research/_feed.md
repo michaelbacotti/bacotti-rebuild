@@ -593,3 +593,17 @@ On the policy side, the GENIUS Act's proposed stablecoin implementation rules la
 - **Address Poisoning: $2M Lost Over 7 of 40 Characters** — https://cryptoticker.io/en/address-poisoning-check-wallet-address/
   Address poisoning: a fake address matched the real one in 7 of 40 characters and intercepted 2M USDC. Our count, and how you protect yourself.
 
+
+## 2026-08-25
+
+- **Coldcard's 1,778 Bitcoin Loss Forces Urgent Seed Phrase Overhaul | The Currency analytics** — https://thecurrencyanalytics.com/bitcoin/coldcards-1778-bitcoin-loss-forces-urgent-seed-phrase-overhaul-286404
+  Coinkite released firmware version 5.6.1 for Coldcard Mk4 and Mk5 devices and version 1.5.1Q for the Coldcard Q, both requiring users to generate entirely new seed phrases. How much Bitcoin was lost in the Coldcard exploit? The Coldcard exploit resulted in the confirmed loss of 1,778 BTC, worth appr
+- **Stablecoin Depeg Risk: Historical Cases, Warning Signs, and Recovery Paths** — https://pro.edgex.exchange/en-US/news/article/stablecoin-depeg-history-ust-usdc-usdt-fdusd
+  CoinLineup&#x27;s stablecoin fundamentals guide provides additional context on reserves and redemption. A depeg occurs when a stablecoin&#x27;s executable market price moves materially away from its target value, usually $1.
+- **Another DeFi Hack: Term Labs Loses $8.5 Million in Governance Exploit** — https://finance.yahoo.com/markets/crypto/articles/another-defi-hack-term-labs-123536364.html
+  The post highlighted that the wallet behind the attack was originally seeded with 2 ETH withdrawn from Tornado Cash. Mixer funding is a common precursor to onchain theft, since it breaks the link to an exchange deposit.
+- **AI Firm Exposes Ledger Bug, CTO Calls It Fear-Mongering After Quiet Fix | Editor's Pick AI News | CryptoRank.io** — https://cryptorank.io/news/feed/74aa9-ledger-ethereum-app-bug-disclosure-clash
+  Aug 23, 2026 · 3 min read · by Lockridge Okoth · for BeInCrypto · Share: AI Overview · TestMachine&#x27;s AI found a Ledger Ethereum app bug that let a malicious dApp swap the APDU command during approval so users could unknowingly sign unlimited token approvals, a vector Chainalysis links ...
+- **Bofur Capital loses $2M in address poisoning attack after Compound withdrawal | Security Scam Alert | CryptoRank.io** — https://cryptorank.io/news/feed/830a1-bofur-capital-address-poisoning-attack
+  Bofur Capital lost about $2 million after an address poisoning attack that began with a 0.0002 USDC dust transfer following a withdrawal from DeFi lender Compound; the attacker swapped the stolen assets into 2 million DAI which are held at address 0xe2eB…1816a. Security firm PeckShield says this wal
+
