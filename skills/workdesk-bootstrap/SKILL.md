@@ -7,6 +7,19 @@ description: Bootstrap pattern for XO / website-manager workdesks. Documents the
 
 **Created:** 2026-08-26
 **Status:** VERIFIED — triadive-website-manager live 2026-08-26 11:48 ET using recipe below
+**Last amended:** 2026-08-26 — added Workdesk Charter loading + curated tools enforcement (post-mortem of first live workdesk session)
+
+## ⚠️ MANDATORY: Read `skills/workdesk-charter/SKILL.md` before bootstrapping
+
+Every workdesk loaded by this recipe MUST have its priming cron reference the [Workdesk Charter](../workdesk-charter/SKILL.md). The Charter contains 5 locked directives that prevent the 5 specific failure modes observed in the first live workdesk session (2026-08-26):
+
+1. No routing deliberation when Mike arrives directly
+2. Do, don't ask (Mike 2026-08-23 directive)
+3. Verify every cross-reference before asserting it
+4. Traceable decisions go to workboard
+5. Tools-allow is curated, not inherited
+
+The Charter includes the canonical 47-tool curated list. Every priming cron and every recurring cron for a workdesk MUST use that list (not the 275-tool global default).
 
 ## Problem statement
 
@@ -119,25 +132,51 @@ The cron jobs DB is the source of truth (it overrides the JSON config files). Th
 
 ### Step 6: Schedule one-shot priming cron (deleteAfterRun=true, delivery.mode=none)
 
+**MANDATORY priming prompt template** — every workdesk priming must include these reads. The Workdesk Charter is the locked operating manual; the other reads are workdesk-specific context.
+
 ```python
 priming = {
     "name": "<workdesk-id>-prime",
     "declarationKey": "<workdesk-id>-prime",
-    "schedule": {"kind": "at", "at": "2026-08-26T16:00:00Z"},
+    "schedule": {"kind": "at", "at": "<ISO timestamp>"},
     "sessionTarget": "session:agent:main:<workdesk-id>",
     "wakeMode": "now",
     "deleteAfterRun": True,
     "enabled": True,
     "payload": {
         "kind": "agentTurn",
-        "message": "First wake for <workdesk-id> workdesk. Read these files for context: [OWNED_FILES.md, skills, cron prompts]. Post a workboard comment reporting readiness. Exit cleanly.",
+        "message": (
+            "First wake for <workdesk-id> workdesk. Read these files for context, then post a single workboard comment to your board reporting readiness, and exit cleanly:\n\n"
+            "REQUIRED (every workdesk):\n"
+            "1. /Users/mike/.openclaw/workspace-bacottibot/skills/workdesk-charter/SKILL.md — LOCKED operating directives (5 rules from first live workdesk failure modes 2026-08-26)\n"
+            "2. /Users/mike/.openclaw/workspace-bacottibot/<OWNED_FILES.md path> — what you own\n\n"
+            "WORKDESK-SPECIFIC:\n"
+            "3. /Users/mike/.openclaw/workspace-bacottibot/skills/site-publishing-workflow/SKILL.md (website-managers only)\n"
+            "4. /Users/mike/.openclaw/workspace-bacottibot/skills/site-code-audit/SKILL.md (website-managers + QC)\n"
+            "5. /Users/mike/.openclaw/workspace-bacottibot/skills/bookkeeping-workflow/SKILL.md (entity XOs)\n"
+            "6. /Users/mike/.openclaw/workspace-bacottibot/<cron prompt 1 path>\n"
+            "7. /Users/mike/.openclaw/workspace-bacottibot/<cron prompt 2 path>\n\n"
+            "Then post a single workboard comment on the <board-id> board:\n"
+            "- Title: '<Workdesk-name> workdesk primed'\n"
+            "- Body: 'Loaded context (charter + ownership + N cron prompts). N crons bound: [<list with IDs>]. Next fires: <compute and report>.'\n\n"
+            "Exit cleanly. Do NOT do any other work."
+        ),
         "model": "minimax/MiniMax-M2.7",
-        "timeoutSeconds": 300
+        "timeoutSeconds": 300,
+        "toolsAllow": [/* see curated list in workdesk-charter/SKILL.md §5 */]
     },
     "delivery": {"mode": "none"}
 }
 # cron.add(priming)
 # cron.run(jobId, runMode="force")  # immediately
+```
+
+**CRITICAL: `payload.toolsAllow` MUST be set to the curated list (NOT `is_default=true`).** See `skills/workdesk-charter/SKILL.md` §5 for the canonical 47-tool list. Without this, the cron inherits the 275-tool global default including `cloudflare__*`, `blender__*`, `github__*`, etc.
+
+```python
+import json
+curated = json.load(open('/Users/mike/.openclaw/workspace-bacottibot/.openclaw/tmp/workdesk-bootstrap/curated-tools.json'))
+priming['payload']['toolsAllow'] = curated
 ```
 
 ### Step 7: Verify
