@@ -102,6 +102,7 @@ def image_tag(src: str, alt: str, is_hero: bool = False) -> str:
 # ── Config ────────────────────────────────────────────────────────────────────
 CONTENT_DIR       = Path(__file__).parent.parent / "content" / "articles"
 FORECAST_CONTENT_DIR = Path(__file__).parent.parent / "content" / "forecasts"
+BANNER_CONTENT_DIR = Path(__file__).parent.parent / "content" / "banners"
 OUTPUT_DIR   = Path(__file__).parent.parent / "website"
 TEMPLATE_DIR = Path(__file__).parent
 
@@ -520,7 +521,7 @@ STYLE_BLOCK = """
 DEPENDABILITY_EEAT_BLOCK = """
 <section class="eeat-block" aria-label="About this article">
  <h2>About this article</h2>
- <p><strong>Editor:</strong> Mike Bacotti, founder of <a href="https://dependability.us/about/">Dependability Holdings LLC</a>. Mike has tracked derivatives market structure and options positioning since <time datetime="2019">2019</time>, with a documented public trade-log, a Cboe trading floor community membership, and the &ldquo;How we forecast&rdquo; methodology that anchors every brief on the site.</p>
+ <p><strong>Editor:</strong> The <a href="https://dependability.us/about/">Dependability Holdings LLC</a> Research Desk has tracked derivatives market structure and options positioning since the firm's launch in <time datetime="2019">2019</time>, with a documented public trade-log and the &ldquo;How we forecast&rdquo; methodology that anchors every brief on the site.</p>
  <p><strong>Launched:</strong> Dependability went live in <time datetime="2024-03">March 2024</time> as a single weekday morning brief covering S&amp;P 500 levels, VIX dynamics, and what to do with options positions that week. It now publishes a daily morning analysis, weekly forecast, and a complete trade journal covering every position the desk has placed since launch.</p>
  <p><strong>Editorial process:</strong> Each piece distils primary reporting (Cboe options data, OCC positioning, FRED macro series, SEC filings, Federal Reserve releases) into a worked-example frame: <em>what the data says, why it matters, what to do this week</em>. Forecasts are screened against the <a href="/forecast/">forecast archive</a> and cross-checked against at least one confirming primary source before publication. Forecasts that turn out wrong receive a <a href="/archive/">post-mortem</a> within 30 days.</p>
  <p><strong>Corrections policy:</strong> When an article gets a fact wrong, we correct it inline and append a dated correction note at the top of the next morning brief. Send corrections to <a href="mailto:corrections@dependability.us">corrections@dependability.us</a> &mdash; we aim to acknowledge within 48 hours.</p>
@@ -991,17 +992,26 @@ def load_articles() -> list:
 # ── Forecast Builder ───────────────────────────────────────────────────────────
 
 def load_forecasts():
-    """Load all forecast MD files. Returns sorted newest-first."""
+    """Load all forecast MD files. Returns sorted newest-first.
+    Skips 0-byte stub files (which would wipe existing rendered HTML)."""
     forecasts = []
     if not FORECAST_CONTENT_DIR.exists():
         print(f"WARNING: content/forecasts/ not found at {FORECAST_CONTENT_DIR}")
         return forecasts
+    skipped = 0
     for path in sorted(FORECAST_CONTENT_DIR.glob("*.md"), reverse=True):
         raw = path.read_text(encoding="utf-8")
+        # Skip 0-byte stub files — they would overwrite rendered HTML with empty content.
+        # Anti-pattern #91 (locked 2026-08-25): stub MD files must NOT be processed by build.
+        if not raw.strip():
+            skipped += 1
+            continue
         meta, body = parse_front_matter(raw)
         slug = path.stem
         meta.setdefault("title", slug)
         forecasts.append((slug, meta, body))
+    if skipped:
+        print(f"  Skipped {skipped} empty forecast stub(s).")
     return forecasts
 
 
@@ -1075,7 +1085,7 @@ def parse_forecast_body(body: str) -> dict:
     # in narrative text. The narrative-scan fallback is restricted to plausible
     # current-era years (2024-2099) to be defensive.
     target_date_label = ""
-    narrative_first = blocks[0].splitlines()[0] if blocks else ""
+    narrative_first = blocks[0].splitlines()[0] if blocks and blocks[0].splitlines() else ""
     date_match = re.search(
         r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+(202[4-9]|20[3-9]\d)",
         narrative_first + " " + blocks[0],
@@ -1376,9 +1386,9 @@ def build_forecast_page(latest_forecast: tuple, all_forecasts: list) -> str:
 
     tmpl = load_template("_article_template.html")
     tmpl = tmpl.replace("</head>", f"{STYLE_BLOCK}</head>\n", 1)
-    tmpl = tmpl.replace("PAGE TITLE", "S&P 500 Forecast June 2026: 7,431 Target | Dependability", 1)
+    tmpl = tmpl.replace("PAGE TITLE", f"S&P 500 Forecast — {date_display} | Dependability Holdings LLC", 1)
     tmpl = tmpl.replace("PAGE DESCRIPTION",
-        meta.get("description", "S&P 500 outlook — 1-month, 3-month, and year-end price targets with bull case rationale and risk analysis."), 1)
+        meta.get("description", f"S&P 500 forecast published {date_display}."), 1)
     tmpl = tmpl.replace("<!-- PAGE CONTENT GOES HERE -->", main_html, 1)
     # Ensure canonical is absolute URL (Google prefers absolute canonicals)
     tmpl = tmpl.replace("CANONICAL_PLACEHOLDER", f"{BASE_URL}/forecast/", 1)
@@ -1488,17 +1498,65 @@ def build_forecast_detail_page(forecast: tuple, all_forecasts: list) -> str:
 
 
 def build_archive_page(all_forecasts: list) -> str:
-    """Build archive.html listing all archived forecasts, newest-first."""
+    """Build archive.html listing all archived forecasts, newest-first.
+    When MD stubs are empty (skipped by load_forecasts anti-pattern #91),
+    scan the output forecast/ directory for existing rendered HTML pages."""
     archived = [f for f in all_forecasts if f[1].get("archived")]
     if not archived:
         archived = all_forecasts[1:]  # everything except the latest
 
+    # If we only have 1 forecast but the output dir has more, scan output dir
+    if len(archived) <= 1:
+        forecast_output = OUTPUT_DIR / "forecast"
+        if forecast_output.exists():
+            output_forecasts = []
+            for subdir in sorted(forecast_output.iterdir(), reverse=True):
+                if not subdir.is_dir():
+                    continue
+                if subdir.name.startswith("."):
+                    continue
+                if len(subdir.name) != 10 or subdir.name[4:5] != "-" or subdir.name[7:8] != "-":
+                    continue
+                slug = subdir.name
+                # Skip the latest (already shown as live forecast)
+                if all_forecasts and slug == all_forecasts[0][0]:
+                    continue
+                # Try to read meta from the rendered HTML (has meta description)
+                html_path = subdir / "index.html"
+                if html_path.exists():
+                    html_text = html_path.read_text(encoding="utf-8")
+                    # Extract title
+                    title_match = re.search(r'<title>([^<]+)</title>', html_text)
+                    title = title_match.group(1).replace(" | Dependability Holdings LLC", "") if title_match else slug
+                    # Extract description from meta
+                    desc_match = re.search(r'<meta name="description" content="([^"]+)"', html_text)
+                    description = desc_match.group(1) if desc_match else ""
+                    # Extract date from the HTML — look for "Updated" pattern
+                    date_match = re.search(r'Updated ([A-Z][a-z]+ [0-9]+, [0-9]{4})', html_text)
+                    date_str = ""
+                    if date_match:
+                        date_str = date_match.group(1)
+                        # Convert "August 25, 2026" to "2026-08-25" for meta
+                        try:
+                            from datetime import datetime
+                            dt = datetime.strptime(date_str, "%B %d, %Y")
+                            date_str_iso = dt.strftime("%Y-%m-%d")
+                        except Exception:
+                            date_str_iso = slug
+                    else:
+                        date_str_iso = slug
+                    meta = {"date": date_str_iso, "title": title, "description": description}
+                    output_forecasts.append((slug, meta, ""))
+            if output_forecasts:
+                archived = output_forecasts
+
     items_html = ""
+    from datetime import datetime
+    date_display = ""
     for slug, meta, body in archived:
         title = meta.get("title", slug)
         date_str = meta.get("date", "")
         try:
-            from datetime import datetime
             date_display = datetime.strptime(date_str, "%Y-%m-%d").strftime("%B %d, %Y")
         except Exception:
             date_display = date_str
@@ -1693,8 +1751,37 @@ def generate_sitemap(articles: list, forecasts: list) -> str:
         loc = f"/{slug}/" if slug in ROOT_ARTICLES else f"/articles/{slug}/"
         urls.append((loc, "monthly", "0.7", _lastmod(meta)))
 
-    for slug, meta, _ in forecasts:
-        urls.append((f"/forecast/{slug}/", "monthly", "0.8", _lastmod(meta)))
+    # Include ALL forecast subdirs from output, not just those with valid MD stubs.
+    # Empty-stub forecasts still have rendered HTML on disk and need sitemap entries.
+    forecast_output = OUTPUT_DIR / "forecast"
+    if forecast_output.exists():
+        for subdir in sorted(forecast_output.iterdir(), reverse=True):
+            if not subdir.is_dir():
+                continue
+            if subdir.name.startswith("."):
+                continue
+            # Only include dirs with an index.html
+            if not (subdir / "index.html").exists():
+                continue
+            # Skip non-date dirs (e.g., 'index.html' is a file not a dir, caught above)
+            if len(subdir.name) != 10 or subdir.name[4:5] != "-" or subdir.name[7:8] != "-":
+                continue
+            slug = subdir.name
+            # Get lastmod from frontmatter date if available in the MD stub, else from directory mtime
+            meta_date = ""
+            stub_path = FORECAST_CONTENT_DIR / f"{slug}.md"
+            if stub_path.exists():
+                stub_text = stub_path.read_text(encoding="utf-8")
+                fm_meta, _ = parse_front_matter(stub_text)
+                meta_date = _lastmod(fm_meta)
+            if not meta_date:
+                import time
+                meta_date = time.strftime("%Y-%m-%d", time.localtime((subdir / "index.html").stat().st_mtime))
+            urls.append((f"/forecast/{slug}/", "monthly", "0.8", meta_date))
+    else:
+        # Fallback: just use the forecasts list
+        for slug, meta, _ in forecasts:
+            urls.append((f"/forecast/{slug}/", "monthly", "0.8", _lastmod(meta)))
 
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
