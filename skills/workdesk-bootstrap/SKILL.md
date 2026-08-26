@@ -179,6 +179,30 @@ curated = json.load(open('/Users/mike/.openclaw/workspace-bacottibot/.openclaw/t
 priming['payload']['toolsAllow'] = curated
 ```
 
+**CLI command (verified 2026-08-26 — use `--session-key`, NOT `--session`):**
+
+```bash
+openclaw cron add \
+  --agent <workdesk-id> \
+  --session-key "agent:main:<workdesk-id>" \
+  --at "2026-08-26T17:30:00Z" \
+  --delete-after-run \
+  --wake now \
+  --name "<workdesk-id>-prime" \
+  --description "First wake for <workdesk-id> — read charter + post readiness" \
+  --model minimax/MiniMax-M2.7 \
+  --timeout-seconds 300 \
+  --tools "read,write,edit,apply_patch,exec,process,filesystem__read_text_file,filesystem__write_file,filesystem__edit_file,filesystem__list_directory,filesystem__search_files,filesystem__directory_tree,filesystem__read_multiple_files,workboard_create,workboard_list,workboard_read,workboard_comment,workboard_boards,workboard_stats,workboard_runs,workboard_proof,workboard_complete,workboard_heartbeat,workboard_claim,workboard_release,workboard_specify,memory_search,memory_get,wiki_get,wiki_search,wiki_status,sessions_list,sessions_history,sessions_send,session_status,subagents,cron,skill_workshop,update_plan,sequential-thinking,sqlite__sqlite_all,sqlite__sqlite_get,sqlite__sqlite_run" \
+  --no-deliver \
+  --message "First wake for <workdesk-id> workdesk. Read $WORKSPACE/skills/workdesk-charter/SKILL.md, then post a single workboard comment reporting readiness. Exit cleanly."
+```
+
+**LESSONS from 2026-08-26 rollout:**
+1. `--session` accepts only `main|isolated|current|session:<id>`. To target a workdesk session (like `agent:main:triadive-website-manager`), use `--session-key "agent:main:<workdesk-id>"` instead.
+2. `--tools` flag is comma-separated, not space-separated.
+3. Cron IDs MUST be queried from `cron_jobs` DB — don't guess them from MEMORY.md.
+4. After `openclaw cron add`, the new cron shows `payload_tools_allow_json` populated by the `--tools` flag — but the count may be 43 instead of 47 (the inline `--tools` flag misses 4 filesystem helpers: `list_allowed_directories`, `create_directory`, `move_file`, `get_file_info`). For the priming cron this is fine; for production content crons, set via direct sqlite UPDATE with the full curated list.
+
 ### Step 7: Verify
 
 ```bash
