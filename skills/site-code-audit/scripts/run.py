@@ -18,8 +18,9 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 from scan_static import scan_static, SITES  # noqa: E402
 from scan_live import scan_live  # noqa: E402
 from scan_crons import scan_crons  # noqa: E402
+from scan_source_integrity import scan_source_integrity  # noqa: E402
 from fix import apply_fixes  # noqa: E402
-from notify import write_reports  # noqa: E402
+from notify import write_reports, create_workboard_cards_for_cron_findings  # noqa: E402
 
 WORKSPACE = Path("/Users/mike/.openclaw/workspace-bacottibot")
 
@@ -49,7 +50,13 @@ def main():
     print("[code-audit] phase 3/4: cron health", flush=True)
     cron_findings = scan_crons()
 
-    all_findings = static_findings + live_findings + cron_findings
+    # Layer 3.5: cron source-of-truth integrity (catches 0-byte MDs + silent cron failures)
+    # Added 2026-08-26 after the dependability.us morning brief incident
+    # where 32 MD source files were 0 bytes for 6 weeks without detection.
+    print("[code-audit] phase 3.5/4: cron source integrity", flush=True)
+    source_integrity_findings = scan_source_integrity()
+
+    all_findings = static_findings + live_findings + cron_findings + source_integrity_findings
     print(f"[code-audit] total findings: {len(all_findings)}", flush=True)
 
     # Layer 4: auto-fix (if not scan-only)
@@ -58,6 +65,17 @@ def main():
         print("[code-audit] phase 4/4: auto-fix", flush=True)
         fixed = apply_fixes(all_findings, dry_run=args.dry_run)
         print(f"[code-audit] applied {len(fixed)} auto-fix(es)", flush=True)
+
+    # Surface high-severity cron-source findings as workboard cards
+    high_findings = [f for f in source_integrity_findings if f.get("severity") == "high"]
+    if high_findings:
+        print(f"[code-audit] {len(high_findings)} high-severity cron-source finding(s) — surfacing to workboard", flush=True)
+        try:
+            cards_created = create_workboard_cards_for_cron_findings(high_findings)
+            for c in cards_created:
+                print(f"  [workboard] {c}", flush=True)
+        except Exception as e:
+            print(f"[code-audit] workboard hook errored: {e}", flush=True)
 
     # Reports
     print("[code-audit] writing reports", flush=True)

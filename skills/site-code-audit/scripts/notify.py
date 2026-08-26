@@ -173,3 +173,74 @@ def _update_state(summary, findings):
     ]
 
     STATE_FILE.write_text(json.dumps(state, indent=2))
+
+
+def create_workboard_cards_for_cron_findings(findings: list) -> list:
+    """For each high/critical cron-source finding, create a workboard card
+    on the owning website-manager's board.
+
+    Cards include: severity, source path, cron_id, suggested next step.
+    Returns list of card IDs created.
+    """
+    import os
+    import subprocess
+    cards = []
+    for f in findings:
+        if f.get("class") not in (
+            "cron_source_stale",
+            "cron_source_missing",
+            "cron_source_zero_byte",
+        ):
+            continue
+        if f.get("severity") not in ("critical", "high"):
+            continue
+        owner = f.get("owner_workdesk", "")
+        if not owner:
+            continue
+
+        # Map owner workdesk → board id (board ids use website-* prefix)
+        # e.g. agent:main:dependability-website-manager → website-dependability
+        site_key = (
+            owner.replace("agent:main:", "")
+            .replace("-website-manager", "")
+            .replace("-xo", "")
+        )
+        board_id = f"website-{site_key}"
+
+        title = f"[{f.get('severity', '?')}] {f.get('label', 'cron-source')}: {f.get('details', '')[:120]}"
+        body = (
+            f"**Source path:** `{f.get('file', '?')}`\n"
+            f"**Cron ID:** `{f.get('cron_id', '?')}`\n"
+            f"**Class:** `{f.get('class', '?')}`\n"
+            f"**Severity:** `{f.get('severity', '?')}`\n"
+            f"**Details:** {f.get('details', '')}\n\n"
+            f"**Files:**\n" + "\n".join(f"- `{p}`" for p in f.get("files", [])) + "\n\n"
+            f"**Suggested next step:**\n"
+            f"1. Check the cron's last run status — was it FailoverError, timeout, or empty-output?\n"
+            f"2. Read MEMORY.md → 'Open To-Dos' for prior incidents on this cron\n"
+            f"3. If MD source is 0 bytes, run `restore_md_sources.py` (if applicable) or manually backfill\n"
+            f"4. If pipeline is broken, fix the prompt and disable the broken cron until the next rebuild\n\n"
+            f"Auto-created by site-code-audit nightly scan (2026-08-26). "
+            f"Owner: {owner}. Route via workboard card."
+        )
+
+        # Use the OpenClaw workboard_create CLI since this script is called from cron
+        try:
+            # Try the API directly if available
+            cmd = [
+                "openclaw", "workboard", "create",
+                "--title", title,
+                "--notes", body,
+                "--board-id", board_id,
+                "--priority", "high" if f.get("severity") == "high" else "urgent",
+                "--agent-id", owner.replace("agent:main:", "main:").replace("-website-manager", "-website-manager"),
+            ]
+            env = os.environ.copy()
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=30, env=env)
+            if res.returncode == 0:
+                cards.append(title)
+            else:
+                cards.append(f"FAILED: {res.stderr[:200]}")
+        except Exception as e:
+            cards.append(f"ERROR: {e}")
+    return cards

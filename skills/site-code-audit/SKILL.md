@@ -6,8 +6,9 @@ description: "Site audit + auto-fix + verify_published post-build gate. E-E-A-T 
 # Site Code Audit
 
 **Created:** 2026-08-22
-**Last upgraded:** 2026-08-23 (cron-quality upgrade — E-E-A-T gate + verify_published.py)
+**Last upgraded:** 2026-08-26 (workdesk-ownership note — see below)
 **Status:** Live (nightly 22:30 ET, after sitemap audit)
+**Owning workdesk:** `agent:main:quality-control` (locked 2026-08-26 06:39 ET). All crons invoking this skill's pipeline (`c9b3d8e2` site-code-audit-nightly + `47d92495` Nightly Sitemap Audit) are bound to the QC workdesk. Per-site website-managers do NOT run this skill's pipeline — they consume its outputs (workboard cards, daily notes, `memory/.workspace-state.json`) and own site-specific fixes.
 
 ## What it does
 
@@ -162,6 +163,7 @@ python3 skills/site-code-audit/scripts/check_source.py <file>
 
 - `references/quality-standards.md` — Mike's E-E-A-T recipe, word-count policy, per-site EEAT_BLOCK mapping
 - `references/anti-patterns.md` — anti-pattern #89 (HTML wipe), #92 (edit-at-source), #91 (deploy method), #93 (verify live)
+- `skills/site-publishing-workflow/SKILL.md` — cron → session binding, watchdog ownership, per-site manager table
 
 ## Reversal / safety
 
