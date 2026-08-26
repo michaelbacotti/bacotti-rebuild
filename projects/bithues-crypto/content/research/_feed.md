@@ -607,3 +607,17 @@ On the policy side, the GENIUS Act's proposed stablecoin implementation rules la
 - **Bofur Capital loses $2M in address poisoning attack after Compound withdrawal | Security Scam Alert | CryptoRank.io** — https://cryptorank.io/news/feed/830a1-bofur-capital-address-poisoning-attack
   Bofur Capital lost about $2 million after an address poisoning attack that began with a 0.0002 USDC dust transfer following a withdrawal from DeFi lender Compound; the attacker swapped the stolen assets into 2 million DAI which are held at address 0xe2eB…1816a. Security firm PeckShield says this wal
 
+
+## 2026-08-26
+
+- **Crypto self-custody security: your 2026 checklist guide • Diamond Pigs** — https://www.diamondpigs.com/blog/crypto-self-custody-security-checklist-2026
+  Not sure whether to use a hot wallet or a cold wallet? Learn the key differences, risks, and how to pick the right crypto storage setup. ... Learn how crypto rebalancing discipline uses mechanical rules to override fear, greed, and impulsive trades that quietly erode long-term returns. ... Learn cry
+- **Coldcard Enhances Seed Generation and Coinkite Warns Existing Phrases Remain Unsafe - Crypto Economy** — https://crypto-economy.com/coldcard-enhances-seed-generation-and-coinkite-warns-existing-phrases-remain-unsafe/
+  Coinkite urged Coldcard users to migrate their funds to new seeds immediately, warning that existing seeds will remain vulnerable even after installing the update. Confirmed losses from the exploit reached 1,778 BTC, positioning the incident as the third-largest cryptocurrency exploit of 2026, accor
+- **When Stablecoins Lose Their $1 Peg: Causes and Risks** — https://www.gncrypto.news/news/when-stablecoins-lose-their-1-peg/
+  A stablecoin depeg occurs when a token marketed as worth one dollar trades below or above $1 on the market.
+- **2026 Crypto’s Most-Hacked Year, and the AI Race to Defend It | by nice_citizen | Coinmonks | Aug, 2026 | Medium** — https://medium.com/coinmonks/2026-cryptos-most-hacked-year-and-the-ai-race-to-defend-it-9ff0a1a17dec
+  In August 2026, Payward, the parent company of Kraken, joined Project Glasswing and adopted Claude Mythos for security, which makes it one of the first crypto firms known to reach this tier of defensive capability.
+- **GTA 6 Leaks Increasingly Seem To Be Just A Big Crypto Scam** — https://kotaku.com/gta-6-leaks-crypto-scam-2000726671
+  Vice Cit claims they’ve been able to trace the wallet that created the coin back to a KuCoin wallet, and KuCoin’s policy allows law enforcement with a subpoena to receive identity information about account holders. Given that Take-Two is already subpoenaing Discord and Microsoft for records regardin
+
