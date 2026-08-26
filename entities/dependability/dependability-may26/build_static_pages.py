@@ -68,6 +68,8 @@ BANNED_EEAT_PHRASES = [
     "Michael Bacotti",
     "complete trade journal covering every position",
     "verifiable against our brokerage statements",
+    "/trade-log/",  # dependability.us no longer publishes a position tracker (2026-08-26 Mike directive)
+    "site's own recorded trades",
 ]
 
 

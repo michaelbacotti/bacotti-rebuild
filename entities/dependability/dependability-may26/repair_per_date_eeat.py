@@ -49,11 +49,11 @@ OLD_EEAT_LINES = [
 # This must match the corrected content in build_morning.py.
 NEW_EEAT_BLOCK = """<section class="eeat-block" aria-label="About this article">
  <h2>About this article</h2>
- <p><strong>Editor:</strong> The <a href="https://dependability.us/about/">Dependability Holdings LLC</a> Research Desk has tracked derivatives market structure and options positioning since the firm&rsquo;s launch in <time datetime="2019">2019</time>, with a documented public position tracker and the &ldquo;How we forecast&rdquo; methodology that anchors every brief on the site.</p>
- <p><strong>Launched:</strong> Dependability went live in <time datetime="2024-03">March 2024</time> as a single weekday morning brief covering S&amp;P 500 levels, VIX dynamics, and what to do with options positions that week. Today it publishes a daily morning analysis, a weekly forecast, and a public <a href="/trade-log/">position tracker</a> for every published position the desk holds in its own portfolio. The journal of executed trades lives on <a href="https://tredey.com/forecasts/">tredey.com</a>.</p>
+ <p><strong>Editor:</strong> The <a href="https://dependability.us/about/">Dependability Holdings LLC</a> Research Desk has tracked derivatives market structure and options positioning since the firm&rsquo;s launch in <time datetime="2019">2019</time>, with a documented methodology and the &ldquo;How we forecast&rdquo; page that anchors every brief on the site.</p>
+ <p><strong>Launched:</strong> Dependability went live in <time datetime="2024-03">March 2024</time> as a single weekday morning brief covering S&amp;P 500 levels, VIX dynamics, and what to do with options positions that week. Today it publishes a daily morning analysis and a weekly forecast. The journal of executed trades &mdash; every closed position with timestamp, brokerage reconciliation, and post-mortem &mdash; lives on <a href="https://tredey.com/forecasts/">tredey.com</a>.</p>
  <p><strong>Editorial process:</strong> Each piece distils primary reporting (Cboe options data, OCC positioning, FRED macro series, SEC filings, Federal Reserve releases) into a worked-example frame: <em>what the data says, why it matters, what to do this week</em>. Forecasts are screened against the <a href="/forecast/">forecast archive</a> and cross-checked against at least one confirming primary source before publication. Forecasts that turn out wrong receive a <a href="/archive/">post-mortem</a> within 30 days.</p>
  <p><strong>Corrections policy:</strong> When an article gets a fact wrong, we correct it inline and append a dated correction note at the top of the next morning brief. Send corrections to <a href="mailto:corrections@dependability.us">corrections@dependability.us</a> &mdash; we aim to acknowledge within 48 hours.</p>
- <p><strong>Disclosure:</strong> Dependability Holdings LLC is a research entity, not a registered investment adviser or broker-dealer. Nothing on this site is investment advice or a recommendation to buy, sell, or hold any security. The desk may hold positions mentioned in any article; the <a href="/trade-log/">position tracker</a> on this site shows current and historical positions held by the desk, and the journal of closed trades is on <a href="https://tredey.com/forecasts/">tredey.com</a>.</p>
+ <p><strong>Disclosure:</strong> Dependability Holdings LLC is a research entity, not a registered investment adviser or broker-dealer. Nothing on this site is investment advice or a recommendation to buy, sell, or hold any security. The desk may hold positions mentioned in any article; the journal of closed trades is on <a href="https://tredey.com/forecasts/">tredey.com</a>.</p>
 </section>"""
 
 
@@ -64,12 +64,19 @@ def patch_file(path: Path, dry_run: bool = False) -> tuple[bool, int]:
 
     html = path.read_text(encoding="utf-8")
 
-    # Check if OLD EEAT block is present
-    # Use a multi-line match — match the whole block as a substring
+    # Check if OLD EEAT block is present (any version of it).
+    # We match the EEAT block opener and any of several known 'OLD' phrases
+    # that have appeared in commentary pages across recent fixes.
+    # The opener is the stable anchor; the closing </section> after the
+    # </p> is the stable closer.
     old_block_re = re.compile(
         r'<section class="eeat-block" aria-label="About this article">'
-        r'.*?verifiable against our brokerage statements\.</p>'
-        r'\s*</section>',
+        r'.*?'
+        r'(?:verifiable against our brokerage statements\.</p>'
+        r'|position tracker</a> for every published position the desk holds in its own portfolio'
+        r'|position tracker</a> on this site shows current and historical positions held by the desk'
+        r')'
+        r'.*?</section>',
         re.DOTALL,
     )
 
