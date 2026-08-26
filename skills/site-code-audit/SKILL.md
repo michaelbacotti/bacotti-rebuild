@@ -10,6 +10,8 @@ description: "Site audit + auto-fix + verify_published post-build gate. E-E-A-T 
 **Status:** Live (nightly 22:30 ET, after sitemap audit)
 **Owning workdesk:** `agent:main:quality-control` (locked 2026-08-26 06:39 ET). All crons invoking this skill's pipeline (`c9b3d8e2` site-code-audit-nightly + `47d92495` Nightly Sitemap Audit) are bound to the QC workdesk. Per-site website-managers do NOT run this skill's pipeline — they consume its outputs (workboard cards, daily notes, `memory/.workspace-state.json`) and own site-specific fixes.
 
+**As of 2026-08-26:** `agent:main:quality-control` is NOT YET CONFIGURED at the gateway level. `agents_list` returns only `main`. All crons targeting this workdesk (and all XO/WM workdesks) silently fall through to `agent:main`. See `skills/workdesk-bootstrap/SKILL.md` for the gap analysis and bootstrap pattern. Until the workdesks are wired up, this skill runs as `main` and posts findings to `workboard` for later consumption by whoever wakes up.
+
 ## What it does
 
 Three layers of coverage, all in one nightly run:
@@ -17,6 +19,7 @@ Three layers of coverage, all in one nightly run:
 1. **Static source scan** — every Python file in `_build/` and `skills/*/scripts/`, every HTML page on all 8 sites, `_redirects`, `manifest.json`, `wrangler.toml`, sitemap files, `.well-known/*`.
 2. **Live HTTP probe** — fetches each site's apex + key URLs with a real browser UA, verifies HTTP 200 / favicon serves / GA4 tag format.
 3. **Cron health check** — pulls all cron job statuses, surfaces anything errored >2 days.
+4. **Cron source-of-truth integrity check** — for each cron-managed MD source dir, verifies size > 0 and that the most-recent MD was updated within the cron's expected run window. Catches the failure mode where the cron LLM step silently produces 0-byte MDs but the live HTML is fine. Anti-pattern #55.
 
 Plus a **post-build gate** (`verify_published.py`) that runs after every cron build and aborts on E-E-A-T / word-count / AdSense / canonical / anti-pattern #89 failures.
 
