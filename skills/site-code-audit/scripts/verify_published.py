@@ -183,6 +183,34 @@ def eeat_section_present(html: str) -> dict:
     }
 
 
+def has_duplicate_footer(html: str) -> dict:
+    """Detect duplicate Sources / Disclaimer footer blocks.
+
+    Perplexity audit 2026-08-28: cron agent sometimes writes the Sources +
+    Disclaimer pair twice in the body of an article (once in the MD body, once
+    in the rendered HTML), separated by an <hr>. This reads as a copy-paste
+    error, weakens polish, and looks like a "thin templated" page to AdSense
+    and Google helpful-content evaluation.
+
+    Returns:
+      {
+        "sources_count": int,
+        "disclaimer_count": int,
+        "duplicate": bool,
+      }
+    """
+    # Count occurrences inside <p>/<em>/plain text — match the rendered block
+    # regardless of whether the cron emitted "<em>Sources:" or "<p><em>Sources:"
+    sources_count = len(re.findall(r"<em>\s*Sources:", html, re.IGNORECASE))
+    disclaimer_count = len(re.findall(r"<em>\s*Disclaimer:", html, re.IGNORECASE))
+    duplicate = sources_count > 1 or disclaimer_count > 1
+    return {
+        "sources_count": sources_count,
+        "disclaimer_count": disclaimer_count,
+        "duplicate": duplicate,
+    }
+
+
 def verify_file(html_path: Path) -> dict:
     """Verify a single HTML file. Returns a result dict."""
     try:
@@ -202,6 +230,7 @@ def verify_file(html_path: Path) -> dict:
     adsense = has_adsense(html)
     canonical = has_canonical(html)
     eeat = eeat_section_present(html)
+    footer = has_duplicate_footer(html)
 
     # Determine severity
     failures = []
@@ -229,6 +258,16 @@ def verify_file(html_path: Path) -> dict:
     else:
         warnings.append("no E-E-A-T section wrapper found (class .eeat-block)")
 
+    # Anti-pattern: duplicate Sources / Disclaimer footer blocks (added 2026-08-28).
+    # Per Perplexity audit: duplicate footer is a copy-paste error that reads as
+    # thin templated content. Strip the duplicate before publishing.
+    if footer["duplicate"]:
+        failures.append(
+            f"duplicate Sources/Disclaimer footer "
+            f"(Sources={footer['sources_count']}, Disclaimer={footer['disclaimer_count']}) — "
+            f"strip duplicate + intervening <hr>; should be exactly 1 of each"
+        )
+
     return {
         "file": rel_file,
         "words": words,
@@ -239,6 +278,11 @@ def verify_file(html_path: Path) -> dict:
             "section_marker": eeat["section_marker"],
             "recipe_present": eeat["recipe_present"],
             "recipe_total": eeat["recipe_total"],
+        },
+        "footer": {
+            "sources_count": footer["sources_count"],
+            "disclaimer_count": footer["disclaimer_count"],
+            "duplicate": footer["duplicate"],
         },
         "warnings": warnings,
         "failures": failures,
