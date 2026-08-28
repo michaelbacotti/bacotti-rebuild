@@ -2,58 +2,6 @@
 
 Latest items from daily link-discovery cron (14-day rolling window). The bithues desk reads every item, groups them by theme, and writes the morning brief below.
 
-## 2026-08-14
-
-### Headline: Trezor's Shipping Partner Just Leaked 14,000 Customer Records — And the Wallets Are Fine
-The first supply-chain breach of the week hit a logistics provider, not a wallet. That changes the threat model for anyone who has ever ordered hardware.
-
-### Today's signal
-Trezor's disclosure this morning is structurally different from the day's other crypto stories. The 13,689 customers whose names, phone numbers, and home addresses were leaked did not lose private keys, seed phrases, or wallet balances. The shipping partner — ShipMonk, a US-based fulfillment company that holds SOC 2 Type II certification — lost a database. The cryptographic product worked exactly as designed; the operations layer around it did not. The 24/7 Wall St. analysis of Bitcoin ETF inflows ($853M for the week) frames this as a flight from self-custody into regulated wrappers, but the day's deeper signal is the opposite: the wrappers are also vulnerable, just at different seams. The lesson is that the custody chain extends past the device into every vendor that touches the box, the receipt, the warranty card, and the support ticket. Trezor's warning to customers — verify any communication against official channels, never enter a wallet backup on any website — is the right guidance for a world where the threat actor already has your address.
-
-### Why it matters
-- The wallet's cryptography held; the vendor's database did not. The supply chain — not the wallet — is now the dominant attack surface for holders who have ordered hardware in the last three years.
-- ShipMonk's SOC 2 Type II certification made the breach worse, not better. The compliance audit gave customers confidence that the third-party logistics layer was safe. That confidence is now wrong for 14,000 people.
-- Phishing campaigns that reference a real shipping address, a real order number, and a real purchase history will follow this breach within days. The data is already in the wild.
-- The Bitcoin ETF inflow data ($853M, largest weekly since April) suggests holders are reading the supply-chain news as a vote against self-custody. The right framing is the opposite: ETF custody is a different threat model, not a safer one.
-
-### What to do today
-- **Audit every vendor that handles your hardware wallet.** The device maker, the shipper, the warranty database, and any third-party plug-in are now part of your custody chain. Ask each one what data they hold about you and what their breach history is.
-- **Expect a tailored phishing message by mail, email, or SMS in the next two weeks.** Anyone who has ordered a hardware wallet from Trezor should assume their shipping data is now public. Verify any urgent security message by opening the vendor's official site yourself — never click through.
-- **Re-evaluate your ETF-vs-self-custody split based on the threat model, not the fear cycle.** ETF wrappers trade operational risk for counterparty risk. Make the choice deliberately, not as a reaction to a single breach.
-
-### Key developments
-- **Trezor says ShipMonk breach exposed 14,000 customer records** — https://finance.biggo.com/news/edb70dd6-a7ff-48d6-964a-bf9c60d25fd7
-  **What happened:** Trezor disclosed that fulfillment partner ShipMonk lost names, phone numbers, and home addresses for 13,689 customers. No wallet data, seed phrases, or private keys were exposed. Trezor urged customers to verify any urgent security communication against official channels and to never enter a wallet backup on any website.
-  **Why it matters:** The first major hardware-wallet supply-chain breach of 2026. The threat surface for anyone who has ordered a hardware wallet now includes the third-party logistics vendor, the warranty database, and the support ticket system — not just the device itself.
-  **Reader implication:** Treat your hardware wallet order as a piece of publicly-known information going forward. Expect phishing attempts that reference your real address and order number. Verify by opening the vendor's site yourself.
-  **Tags:** data breach, supply-chain attack, operational security
-  **Severity:** High
-- **The Block reframes the Coldcard bug as 'private-key compromise is the original sin'** — https://theblock.co/news/regulation/2026-08/07-coldcard-bitcoin-exploit-crypto-original-sin-private-keys-blockaid-ceo-411160?amp=
-  **What happened:** The Block's follow-up interview with Blockaid CEO Ido Wollenstein puts a number on the year so far: roughly 75% of H1 2026 crypto losses trace back to private-key or seed-phrase failure, not smart-contract bugs. The framing is the year's cleanest articulation of why custody attacks dominate.
-  **Why it matters:** The single statistic that explains the year — and the single mitigation that explains the gap (verify on-device, never type seeds anywhere).
-  **Reader implication:** Rank your own threat model by the same denominator: which of your custody layers depends on a single device, a single seed, a single approval flow?
-  **Tags:** private-key compromise, operational security, seed-phrase exposure
-  **Severity:** Structural
-- **Bitcoin ETFs pulled $853M this week — the largest weekly inflow since April** — https://247wallst.com/investing/cryptocurrency/2026/08/08/bitcoin-etfs-are-having-their-best-week-since-april-did-the-coldcard-hack-push-853m-into-bitcoin-ets/
-  **What happened:** Spot Bitcoin ETFs absorbed $853M during the week of the Coldcard disclosure, the largest weekly inflow since April. The 24/7 Wall St. analysis frames the timing as a flight from self-custody.
-  **Why it matters:** Capital is rotating from self-custody into regulated wrappers. The structural question is whether ETF exposure is the right substitute — it trades operational risk for counterparty risk, and the right answer depends on whether you trust the issuer more than you trust your own operational discipline.
-  **Reader implication:** Review your ETF allocation as a deliberate threat-model choice, not a reaction to a single breach. ETF wrappers are not safer — they are different.
-  **Tags:** market structure, infrastructure concentration
-  **Severity:** Structural
-
-### Items (raw, archived for completeness)
-- **What Is USD1 Stablecoin? A Beginner's Guide | BTCC** — https://www.btcc.com/en-US/academy/crypto-wiki/altcoin/usd1-stablecoin
-  > Generic USD1 explainer. *Below the editorial bar — generic primer, not a development. Dropped from Key developments.*
-- **Cryptocurrency Scams — BitPay Support** — https://support.bitpay.com/hc/en-us/articles/360003867971-Cryptocurrency-Scams
-  > Vendor support-page copy on scam awareness. *Below the editorial bar — generic consumer-protection reference, not a development. Dropped.*
-
-### Related reading
-- **Cold Wallet vs. Hot Wallet: A Decision Framework** — /guides/cold-wallet-vs-hot-wallet/
-- **Seed Phrases: What They Are and How People Lose Them** — /guides/seed-phrases-what-they-are-and-how-people-lose-them/
-- **The Wallet Safety Checklist** — /tools/wallet-safety-checklist/
-
----
-
 ## 2026-08-15
 
 ### Headline: A Single Whale Lost $26M in 15 Minutes — and It Wasn't the First Time
@@ -516,4 +464,18 @@ On the policy side, the GENIUS Act's proposed stablecoin implementation rules la
   “I started on the dark net forum Dread where the original leaks had been posted hours before being posted anywhere else but that led me nowhere. Then I realized maybe this person left a paper trail in their crypto transactions while setting all of this up. What I found was a wallet at the center of 
 - **August 2026's Exploit Wave: Governance Failures, Protocol Bugs, And A Widening Attack Surface | Metaverse Post** — https://mpost.io/august-2026s-exploit-wave-governance-failures-protocol-bugs-and-a-widening-attack-surface/
   No device firmware or on-chain funds were compromised, but the incident highlights the physical risk dimension: in-person coercion attacks have resulted in an estimated $30 million in losses in H1 2026, with home invasions now accounting for 37% of incidents.
+
+
+## 2026-08-28
+
+- **Crypto Scams 2026: Common Types and How to Spot Them • Diamond Pigs** — https://www.diamondpigs.com/blog/crypto-scams-2026
+  Crypto scams 2026 increasingly use AI-generated voices, deepfake video, and cloned platforms, making visual trust cues less reliable. No legitimate exchange, wallet, or platform will ever ask for your seed phrase or private key.
+- **Can You Insure Stablecoins Against a Depeg?** — https://stablecoininsider.org/stablecoin-depeg-insurance/
+  Native USDC is the Circle-issued contract on that chain. This 2026 treasury checklist shows how to tell it from a third-party bridged wrapper before you accept, hold, or redeem: Circle issues it, Circle redeems it, and Circle publishes the address.
+- **You Approved a Wallet Signature. The Theft Comes Later** — https://www.secureworld.io/industry-news/crypto-wallet-signature-theft
+  A quick vocabulary note, since the terms get blended in coverage of these scams. Permit2 is a separate mechanism, a Uniswap-built contract that manages approvals through its own system, and wallet vendors treat it as its own signature-phishing category. Related problem, different plumbing.
+- **15 crypto investors lose $9.4 million to Tron address poisoning scam** — https://en.coin-turk.com/15-crypto-investors-lose-9-4-million-to-tron-address-poisoning-scam/
+  🧑‍💻 The attacker capitalized on look-alike addresses to trick users into misdirecting their funds. 🛡️ MetaMask and Trust Wallet have advanced protections on some chains, but Tron ...
+- **GoCaracal Malware Uses Ethereum Smart Contract to Fetch Replacement C2 Address** — https://thehackernews.com/2026/08/gocaracal-malware-uses-ethereum-smart.html
+  Multiple public RPC endpoints can ... channel on Ethereum,&quot; Arctic Wolf said. The smart-contract mechanism lets the operator change the replacement C2 address without shipping a new GoCaracal binary....
 
