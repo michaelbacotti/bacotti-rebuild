@@ -48,10 +48,12 @@ def generate_stub(iso: str) -> Path:
 
     human = human_date(iso)
 
-    # Title format (anti-pattern #125): the document <title> and visible H2 must
-    # match. Stubs don't have a real one-liner, so we use a descriptive placeholder.
-    doc_title = f"Morning Brief — {human} | Dependability"
-    stub_h2 = f"{human} Morning Brief — Pending Canonical Publish"
+    # Title distribution (anti-pattern #125 round 4 — Mike 2026-08-28 09:03 ET):
+    # - Visible H2: just the one-liner (no date). Stubs don't have a one-liner,
+    #   so we use a descriptive placeholder.
+    # - Document <title>: prepends the date for the browser tab + Google SERP.
+    stub_h2 = "Morning Brief — Pending Canonical Publish"
+    doc_title = f"{human} \u2014 {stub_h2} | Dependability"
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
