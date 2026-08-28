@@ -155,6 +155,106 @@ def find_date_dirs():
     return out
 
 
+# Defense-in-depth (added 2026-08-28 from Perplexity audit):
+# The morning cron occasionally emits the Sources + Disclaimer pair twice in a
+# per-date HTML (once in the MD body, then again at the end of the rendered
+# article-body). If we render that HTML into commentary/index.html unchanged,
+# the duplication ships to production. detect_and_strip_dup_footer() walks each
+# per-date HTML and removes the duplicate pair + any intervening <hr>. Idempotent.
+_DUP_SOURCES_RE = re.compile(
+    r"<p>\s*<em>\s*Sources:.*?</em>\s*</p>", re.IGNORECASE | re.DOTALL,
+)
+_DUP_DISCLAIMER_RE = re.compile(
+    r"<p>\s*<em>\s*Disclaimer:.*?</em>\s*</p>", re.IGNORECASE | re.DOTALL,
+)
+_DUP_HR_RE = re.compile(
+    r"<hr[^>]*>\s*", re.IGNORECASE,
+)
+
+
+def detect_and_strip_dup_footer(html: str) -> tuple[str, dict]:
+    """Strip duplicate Sources + Disclaimer footer blocks from a per-date HTML.
+
+    Strategy: find the FIRST Sources block and FIRST Disclaimer block. Treat
+    everything between them (inclusive) as the legitimate "footer run".
+    Anything AFTER the legitimate run that contains another Sources or
+    Disclaimer block (plus any intervening <hr>) is a duplicate — strip it.
+
+    Idempotent: re-running on already-clean HTML is a no-op.
+
+    Returns (cleaned_html, stats).
+    """
+    sources_hits = len(_DUP_SOURCES_RE.findall(html))
+    disclaimer_hits = len(_DUP_DISCLAIMER_RE.findall(html))
+    stats = {
+        "sources_before": sources_hits,
+        "disclaimer_before": disclaimer_hits,
+        "stripped": False,
+    }
+    if sources_hits <= 1 and disclaimer_hits <= 1:
+        return html, stats
+
+    # Find positions of first Sources and first Disclaimer
+    first_sources_m = _DUP_SOURCES_RE.search(html)
+    first_disclaimer_m = _DUP_DISCLAIMER_RE.search(html)
+    if not first_sources_m or not first_disclaimer_m:
+        return html, stats
+
+    # Define the "legitimate footer run" as the span from the earlier of the
+    # two first-occurrences to the later one. Anything past that point is the
+    # duplicate run to strip.
+    first_pos = min(first_sources_m.start(), first_disclaimer_m.start())
+    last_pos = max(first_sources_m.end(), first_disclaimer_m.end())
+
+    # Find the start of the duplicate run: scan forward from last_pos looking
+    # for the next <hr> or next duplicate Sources/Disclaimer block.
+    scan = last_pos
+    # Skip whitespace
+    scan += len(html[last_pos:]) - len(html[last_pos:].lstrip())
+    # Match the duplicate region: any <hr> + Sources/Disclaimer blocks + whitespace
+    dup_pattern = re.compile(
+        r"(?:\s*<hr[^>]*>\s*|\s*<p>\s*<em>\s*(?:Sources|Disclaimer):.*?</em>\s*</p>)+",
+        re.IGNORECASE | re.DOTALL,
+    )
+    dup_match = dup_pattern.match(html, scan)
+    if not dup_match:
+        return html, stats
+
+    # Strip from the start of the duplicate region to its end.
+    cleaned = html[:scan] + html[dup_match.end():]
+    sources_after = len(_DUP_SOURCES_RE.findall(cleaned))
+    disclaimer_after = len(_DUP_DISCLAIMER_RE.findall(cleaned))
+    stats["sources_after"] = sources_after
+    stats["disclaimer_after"] = disclaimer_after
+    stats["stripped"] = (sources_after != sources_hits or disclaimer_after != disclaimer_hits)
+    return cleaned, stats
+
+
+def dedup_per_date_htmls(dates: list) -> int:
+    """Strip duplicate footers from all per-date HTMLs that need it.
+
+    Called by main() before any rendering. Idempotent. Returns the count of
+    files that were patched in this run (for logging).
+    """
+    patched = 0
+    for d, path in dates:
+        try:
+            html = path.read_text()
+        except Exception:
+            continue
+        cleaned, stats = detect_and_strip_dup_footer(html)
+        if stats["stripped"]:
+            tmp = path.with_suffix(".html.tmp")
+            tmp.write_text(cleaned)
+            os.replace(tmp, path)
+            print(
+                f"  dedup: {d.isoformat()} — sources {stats['sources_before']}→{stats.get('sources_after','?')}, "
+                f"disclaimer {stats['disclaimer_before']}→{stats.get('disclaimer_after','?')}"
+            )
+            patched += 1
+    return patched
+
+
 def extract_title(html):
     """Extract the H2 hero title from a per-date article page."""
     m = re.search(r'<h2 style="margin-bottom:16px;[^"]*">(.+?)</h2>', html, re.DOTALL)
@@ -292,6 +392,14 @@ def main():
     if not dates:
         print(f"ERROR: No morning briefs found in {COMMENTARY_DIR}")
         return 1
+
+    # Defense-in-depth (2026-08-28): strip any per-date HTML that has duplicate
+    # Sources + Disclaimer footer blocks. The morning cron's LLM step
+    # occasionally emits these twice; the verify_published.py post-build gate
+    # catches it but we'd rather fix it upstream before any rendering.
+    patched = dedup_per_date_htmls(dates)
+    if patched:
+        print(f"Dedup pass: patched {patched} per-date HTML file(s)")
 
     today = date.today()
     html, featured_iso = build_index_html(dates, today)
