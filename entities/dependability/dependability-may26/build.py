@@ -395,6 +395,15 @@ def md_to_html(body: str) -> str:
             html_parts.append(f"<h1>{wrap_inline(line[2:])}</h1>")
             continue
 
+        # Blank lines INSIDE a list (ul or ol) do NOT close the list in
+        # CommonMark — only a non-list line does. Skipping the close on blank
+        # lines was the cause of every numbered/bulleted list item wrapping in
+        # its own <ol>/<ul> with all items rendered as "1." (anti-pattern #124).
+        if not line:
+            # If we're inside a list, preserve the open tag and continue.
+            if in_ul or in_ol:
+                continue
+
         if line.startswith("- ") or line.startswith("* "):
             if not in_ul:
                 html_parts.append("<ul>")
@@ -439,6 +448,14 @@ def md_to_html(body: str) -> str:
     # Flush any trailing table at EOF
     if in_table:
         html_parts.append(flush_table())
+    # Flush any trailing list at EOF (so a list followed only by EOF doesn't
+    # leave an unclosed <ul> or <ol>).
+    if in_ul:
+        html_parts.append("</ul>")
+        in_ul = False
+    if in_ol:
+        html_parts.append("</ol>")
+        in_ol = False
 
     html = "\n".join(html_parts)
 
