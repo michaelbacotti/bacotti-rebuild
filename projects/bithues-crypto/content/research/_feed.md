@@ -2,59 +2,6 @@
 
 Latest items from daily link-discovery cron (14-day rolling window). The bithues desk reads every item, groups them by theme, and writes the morning brief below.
 
-## 2026-08-15
-
-### Headline: A Single Whale Lost $26M in 15 Minutes — and It Wasn't the First Time
-The same address cluster was drained in 2023, drained again this week, and is on a permanent target list. The defense is operational, not cryptographic.
-
-### Today's signal
-The dominant story of the day is the second major loss from the same Ethereum whale address in three years. Scam Sniffer's analysis puts the loss at roughly $26M across three wallets emptied in under fifteen minutes, with assets converted to DAI and ETH almost immediately. The same address cluster surrendered $24M to phishing in September 2023. The mechanism is different each time — approval abuse, then private-key compromise — but the target is the same. The day's second story, the Trezor data-breach follow-up with 13,689 customers exposed, reinforces the same lesson: attackers are patient. They are not trying to break your cryptography; they are trying to break your operations layer, and they have time on their side. The Fortune long-form on the Coldcard hack — 'why it hurt more than your average crypto hack' — makes the same point in a different voice. The structural defense against persistent target lists is not 'be more careful next time.' It is 'change the on-chain address.'
-
-### Why it matters
-- The same address being hit twice in three years proves the persistence of target lists. The address, not the key, is the durable identifier; the attack mechanism rotates.
-- Approval abuse and private-key compromise are different mechanisms but the same workflow: an interface that lets the user authorize a transaction they should not have. The cure for both is the same — on-device verification of the full recipient address.
-- The Trezor breach and the whale loss look unrelated but share a structural lesson: attackers are not trying to break cryptography. They are trying to break operations.
-- The 'did everything right' framing in the Coldcard long-form is the cleanest articulation of why standard threat models are no longer sufficient. Cold storage worked exactly as designed; the device shipped a bad generator.
-
-### What to do today
-- **Break persistent target lists by changing the wallet, not just the key.** If your address has been hit before, the address is on a list. A new seed on the same device does not remove you from the list — only a new wallet on a different device with no on-chain link does.
-- **Verify the full recipient address on-device, every time.** Approval abuse drained $26M today. The mitigation is matching the full address on your hardware wallet's screen before signing anything above trivial amounts.
-- **Audit your Trezor exposure in light of the breach.** If you ordered from Trezor in the last three years, your shipping data is now public. Expect phishing messages by mail, email, and SMS in the next two weeks.
-- **Re-read your own threat model against the 'did everything right' test.** The Coldcard hack did everything right and still lost. If your only defense is 'I followed the instructions,' it is not enough.
-
-### Key developments
-- **A whale lost $26M in 15 minutes to a private-key compromise** — https://blockchain.news/flashnews/whale-losess-26m-private-key-compromise
-  **What happened:** Scam Sniffer flagged a suspected private-key compromise that emptied three wallets for roughly $26M in under fifteen minutes, with assets converted to DAI and ETH. The address cluster had already surrendered $24M to phishing in September 2023.
-  **Why it matters:** This is the second major drain from the same whale in three years, proof that the address — not the key — is the persistent target. The mechanism rotates; the address does not.
-  **Reader implication:** If your address has been hit before, the address is on a target list. A new seed on the same device does not remove you from the list. A new wallet on a different device with no on-chain link does.
-  **Tags:** private-key compromise, treasury exposure, approval abuse
-  **Severity:** Critical
-- **Trezor's data breach exposed 13,689 customers — full scope disclosed** — https://cryptoticker.io/en/trezor-shipmonk-data-breach-customer-addresses-leaked/
-  **What happened:** Trezor's full disclosure: names, phone numbers, and home addresses for 13,689 customers. The provider (ShipMonk) holds SOC 2 Type II certification, an audited security standard. Trezor's guidance is short: never enter a wallet backup or seed phrase on any website, ever.
-  **Why it matters:** The audit certification did not prevent the breach. The right lesson is that compliance attestations describe the past, not the future. Assume any third-party vendor in your custody chain has been or will be breached.
-  **Reader implication:** Treat every vendor in your custody chain as a potential breach vector. The cryptography is not the threat surface anymore — the operations layer is.
-  **Tags:** data breach, supply-chain attack, operational security
-  **Severity:** High
-- **Fortune: Why the Coldcard hack hurt more than your average crypto hack** — https://fortune.com/2026/08/10/bitcoin-coldcard-hack-hardware-wallet-security-seed-phrases/
-  **What happened:** Fortune's long-form on the Coldcard incident: $100M stolen from hardware-wallet owners who did everything right. The piece walks through what 'did everything right' actually means in 2026 and why it is no longer sufficient.
-  **Why it matters:** The 'did everything right' framing is the cleanest articulation of why standard threat models are insufficient. Cold storage worked exactly as designed; the device shipped a bad generator. The structural defense is to assume any single point of failure in your custody chain will fail.
-  **Reader implication:** Re-read your threat model against the 'did everything right' test. If your only defense is 'I followed the instructions,' it is not enough.
-  **Tags:** firmware risk, seed-phrase exposure, private-key compromise
-  **Severity:** Structural
-
-### Items (raw, archived for completeness)
-- **How to Spot a Crypto Scam Before You Invest | Bright Coding** — https://www.blog.brightcoding.dev/2026/08/14/how-to-spot-a-crypto-scam-before-you-invest
-  > Generic consumer-protection explainer. *Below the editorial bar — generic explainer, not a development. Dropped.*
-- **Stablecoin Yields: How to Earn on USDT, USDC & DAI Safely | Cobo** — https://www.cobo.com/post/stablecoin-yields
-  > Stablecoin yield explainer. *Below the editorial bar — generic reference, not a development. Dropped.*
-
-### Related reading
-- **Cold Wallet vs. Hot Wallet: A Decision Framework** — /guides/cold-wallet-vs-hot-wallet/
-- **Address Poisoning: The Quiet Cousin of Approval Abuse** — /guides/address-poisoning/
-- **How to Verify a Hardware Wallet Before You Use It** — /guides/verify-hardware-wallet/
-
----
-
 ## 2026-08-16
 
 ### Headline: Phishing Moved Offline This Week: Postal Letters Started Arriving in Switzerland
@@ -478,4 +425,18 @@ On the policy side, the GENIUS Act's proposed stablecoin implementation rules la
   🧑‍💻 The attacker capitalized on look-alike addresses to trick users into misdirecting their funds. 🛡️ MetaMask and Trust Wallet have advanced protections on some chains, but Tron ...
 - **GoCaracal Malware Uses Ethereum Smart Contract to Fetch Replacement C2 Address** — https://thehackernews.com/2026/08/gocaracal-malware-uses-ethereum-smart.html
   Multiple public RPC endpoints can ... channel on Ethereum,&quot; Arctic Wolf said. The smart-contract mechanism lets the operator change the replacement C2 address without shipping a new GoCaracal binary....
+
+
+## 2026-08-29
+
+- **Crypto Scams September 2026: The Complete Active Threats List** — https://www.coingabbar.com/en/crypto-blogs-details/crypto-scam-alert-list-active-fraud-schemes-2026
+  This month&#x27;s threat list includes a mail-based government impersonation campaign with a live deadline, AI-generated video fraud, wallet-draining smart contract approvals, and a physical kiosk scam that keeps growing despite years of warnings.
+- **What Is a Stablecoin Depeg? Causes and Real Examples | Bitsgap blog** — https://bitsgap.com/blog/what-is-a-stablecoin-depeg
+  A stablecoin depeg is when price breaks from $1 — not the same as supply shrinking. Real 2022-2026 examples and how pegs get restored.
+- **Crypto Phishing in 2026: Risks & How to Manage Them** — https://www.chainupad.com/blog/what-is-phishing-in-crypto/
+  Address poisoning — Attackers ... transactions within three hours. On Ethereum and BNB Chain alone, more than 270 million poisoning attempts have been tracked....
+- **Dust Attack and Address Poisoning: The Tiny Transactions That Could Cost You A Lot - DailyCoin** — https://dailycoin.com/dust-attack-and-address-poisoning-the-tiny-transactions-that-could-cost-you-a-lot
+  Risk of further attacks: Attackers can potentially link addresses, track transactions, and identify wallet owners. Once wallet addresses are linked, attackers may use this information to target high-value users with phishing, extortion, or further address-poisoning scams. Loss of funds: Address pois
+- **CyberLeek Crypto Explained: GTA 6 Links, Risks, Price Hype & Red Flags** — https://www.bleap.finance/en-us/blog/cyberleek-crypto-gta-6-token
+  Importantly, gaming communities and journalism have attributed the leaks to CyberLeek, Rockstar Games has not attributed them to anyone, and the episode is unrelated to the Rockstar leak in September 2022. The footage and the coin moved as one machine. CyberLeek released several alleged GTA VI video
 
