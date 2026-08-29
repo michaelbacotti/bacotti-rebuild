@@ -429,14 +429,187 @@ On the policy side, the GENIUS Act's proposed stablecoin implementation rules la
 
 ## 2026-08-29
 
-- **Crypto Scams September 2026: The Complete Active Threats List** — https://www.coingabbar.com/en/crypto-blogs-details/crypto-scam-alert-list-active-fraud-schemes-2026
-  This month&#x27;s threat list includes a mail-based government impersonation campaign with a live deadline, AI-generated video fraud, wallet-draining smart contract approvals, and a physical kiosk scam that keeps growing despite years of warnings.
-- **What Is a Stablecoin Depeg? Causes and Real Examples | Bitsgap blog** — https://bitsgap.com/blog/what-is-a-stablecoin-depeg
-  A stablecoin depeg is when price breaks from $1 — not the same as supply shrinking. Real 2022-2026 examples and how pegs get restored.
-- **Crypto Phishing in 2026: Risks & How to Manage Them** — https://www.chainupad.com/blog/what-is-phishing-in-crypto/
-  Address poisoning — Attackers ... transactions within three hours. On Ethereum and BNB Chain alone, more than 270 million poisoning attempts have been tracked....
-- **Dust Attack and Address Poisoning: The Tiny Transactions That Could Cost You A Lot - DailyCoin** — https://dailycoin.com/dust-attack-and-address-poisoning-the-tiny-transactions-that-could-cost-you-a-lot
-  Risk of further attacks: Attackers can potentially link addresses, track transactions, and identify wallet owners. Once wallet addresses are linked, attackers may use this information to target high-value users with phishing, extortion, or further address-poisoning scams. Loss of funds: Address pois
-- **CyberLeek Crypto Explained: GTA 6 Links, Risks, Price Hype & Red Flags** — https://www.bleap.finance/en-us/blog/cyberleek-crypto-gta-6-token
-  Importantly, gaming communities and journalism have attributed the leaks to CyberLeek, Rockstar Games has not attributed them to anyone, and the episode is unrelated to the Rockstar leak in September 2022. The footage and the coin moved as one machine. CyberLeek released several alleged GTA VI video
+### Headline: Coldcard's Forced Migration Met the AI Wallet Arms Race
+Two structural threads converged on holders this week, and neither one was optional.
 
+### This week's signal
+Three threads converged on ordinary crypto holders this week, and each carried a different operational deadline. The first was the Coldcard migration window: Coinkite shipped firmware 5.6.1 for the Mk4 and Mk5, plus 1.5.1Q for the Q, and then told users in plain language that existing seeds remain unsafe even after the update. Roughly 1,778 BTC has been confirmed lost from wallets generated during the late-July entropy-bug window, and Coinkite's own framing — third-largest exploit of 2026 — leaves no room to defer. The new seeds cannot be generated on the same device class without breaking the on-chain link that makes the wallet addressable. The second thread was address poisoning reaching industrial scale: 15 Tron investors lost a combined $9.4 million in one campaign this week, Bofur Capital lost another $2 million after a Compound withdrawal triggered a dust-then-poison pattern, and cumulative industry research put the total at 270 million poisoning attempts across Ethereum and BNB Smart Chain over two years with at least $83.8 million in confirmed losses. The technique is no longer opportunistic; it is industrial, and the half-life of any on-chain address is now the time it takes an attacker to send one dust transfer. The third thread was AI on both sides of the wallet layer. Payward, the parent of Kraken, joined Project Glasswing and adopted Claude Mythos for security — the first major exchange publicly disclosed at that defensive tier. The same week, AI-assisted drainer kits, an AI-discovered Ledger APDU swap bug, and a GoCaracal malware variant that pulls replacement command-and-control addresses from an Ethereum smart contract showed the offensive AI tooling is moving at the same pace. Boltz, a small-team Bitcoin bridge, shut down earlier in August after AI-assisted hacks outpaced its defenses. The wallet layer went algorithmic on both ends this week — and the gap between firms that can match that pace and those that cannot is now the single biggest counterparty signal in the custody stack.
+
+### Why it matters
+- Coldcard migration is non-deferrable. Coinkite explicitly stated that existing seeds remain vulnerable even after installing firmware 5.6.1 or 1.5.1Q. Anyone holding funds on a seed generated on a Coldcard between July 24 and 31, 2026 must treat that wallet as permanently compromised and migrate to a new seed on a different device or vendor before any further on-chain activity.
+- Address poisoning graduated from opportunistic to industrial this week. 270 million attempts across two chains in two years, with a single Tron campaign draining 15 holders for $9.4 million in days. The dust transfer that primes the technique is essentially free to send, and the failure mode (copying an address from transaction history) is the single most common user behavior in self-custody.
+- Defensive AI has crossed from research to production at major exchanges. Payward's adoption of Claude Mythos signals that AI-tier anomaly detection is now a budget item at the top of the custody stack. Expect custody providers and self-custody vendors to follow within 90 days; the gap between firms with AI-tier monitoring and those without will become a material due-diligence criterion for any institutional allocator.
+- Offensive AI is moving at the same pace. Drainer kits that automate the entire malicious approval flow are now sold as turnkey products. The Ledger APDU swap bug was discovered by an AI offensive-tool firm. GoCaracal's C2-via-smart-contract pattern removes the need for static offensive infrastructure. The barrier to entry for sophisticated wallet attacks is collapsing faster than most vendors can patch against it.
+- The 30-second stablecoin depeg is now a recurring reference event in coverage, and the GENIUS Act's proposed 1:1 reserve and same-day redemption requirements set a new benchmark. Holders who still treat stablecoins as cash-equivalent without reading the issuer's reserve composition and redemption window are increasingly exposed to a tail risk that the regulatory framework is finally trying to make visible.
+- The Boltz bridge shutdown is the operational signal for the entire bridge category. A small-team bridge operator conceded the AI offensive-defensive imbalance and exited. Holders using bridges should now treat team size, published defensive posture, multisig with enforced timelocks, and incident-report history as the four non-negotiable due-diligence items, and consolidate to the few operators that publish them.
+
+### What to do this week
+- **Migrate Coldcard funds to a new seed on a different device this weekend..** If you generated a Coldcard seed between July 24 and 31, 2026, the firmware update does not help you — Coinkite's own statement is that existing seeds remain unsafe. Generate the replacement seed on a different device or vendor, move funds in a single transaction to limit the exposure window, and verify the destination address character-by-character on-device before signing.
+- **Audit your stablecoin exposure by issuer, chain, exchange, and redemption window..** Concentration on any of those four axes is a counterparty risk. Use the GENIUS Act comment period to identify issuers that cannot meet the proposed 1:1 reserve and same-day redemption standard — those are the ones most likely to depeg in the next stress event, and concentration among them is the structural tail risk most holders still ignore.
+- **Revoke every unlimited token approval older than 30 days before next Friday..** Use revoke.cx or your wallet's approval manager. This week's 15-investor Tron loss, Bofur Capital's $2 million drain, and the broader drainer-kit pattern all start with a stale approval the victim forgot about. Revocation is free and immediate; recovery from a signed approval is not.
+- **Scan the last 90 days of outgoing transactions for unauthorized dust transfers..** Any dust amount from an address you did not authorize is a poison candidate. Treat every address that has ever touched your wallet as suspect: do not copy from transaction history for any future transfer above a trivial amount, and match the complete recipient address on your hardware wallet's screen before signing every transfer.
+- **Bookmark the official pages for every wallet, exchange, and bridge you use..** The phishing ecosystem now operates at scale across app stores, fake domains, vishing, and physical mail. A saved bookmark to the vendor's actual https URL eliminates the most common credential-theft delivery path; verify the certificate and the exact domain spelling each time before signing in.
+- **Ask your custodian whether they have deployed AI-tier anomaly detection..** If you custody with an exchange or use a hosted wallet service, the question is now table-stakes: do they have AI-tier monitoring on withdrawal patterns, address-poisoning detection, and approval-flow analysis? If they cannot answer, treat that as a material counterparty risk and either demand disclosure or move to an operator that publishes its defensive posture.
+
+### Key developments
+- **Coldcard shipped firmware 5.6.1 and 1.5.1Q and told users existing seeds remain unsafe after the update** — https://thecurrencyanalytics.com/bitcoin/coldcards-1778-bitcoin-loss-forces-urgent-seed-phrase-overhaul-286404
+  **What happened:** Coinkite released firmware version 5.6.1 for the Coldcard Mk4 and Mk5 and version 1.5.1Q for the Coldcard Q, both requiring users to generate entirely new seed phrases; the company explicitly warned that existing seeds will remain vulnerable even after the update is installed, and confirmed losses from the late-July entropy-bug exploit have reached 1,778 BTC, the third-largest crypto exploit of 2026.
+  **Why it matters:** The fix is not a software patch — it is a forced migration. Existing seeds cannot be retroactively hardened; the only path forward is to generate a new seed on a different device or vendor and move funds off the old address. The longer the migration is delayed, the larger the on-chain surface that an attacker can probe.
+  **Reader implication:** If you generated a Coldcard seed between July 24 and 31, 2026, treat that wallet as permanently compromised. Generate a new seed on a different device this weekend and move funds in a single transaction to limit the exposure window; verify the destination address on-device before signing.
+  **Tags:** firmware risk, seed-phrase exposure, wallet hygiene
+  **Severity:** Critical
+  **Confirming source:** https://crypto-economy.com/coldcard-enhances-seed-generation-and-coinkite-warns-existing-phrases-remain-unsafe/
+
+- **Address poisoning crossed industrial scale: 270M attempts and $83.8M in losses, with $9.4M drained from 15 Tron holders in one campaign this week** — https://en.coin-turk.com/15-crypto-investors-lose-9-4-million-to-tron-address-poisoning-scam/
+  **What happened:** 15 crypto investors lost a combined $9.4 million in one Tron address-poisoning campaign using look-alike addresses; separately, Bofur Capital lost $2 million to a 0.0002-USDC dust-then-poison pattern following a withdrawal from the Compound lending protocol; industry research published this week tallied 270 million address-poisoning attempts across Ethereum and BNB Smart Chain over two years with at least $83.8 million in confirmed losses.
+  **Why it matters:** Address poisoning is no longer opportunistic. The dust transfer is essentially free to send, the technique requires no wallet compromise, and the failure mode (copying an address from transaction history) is the single most common user behavior in self-custody. Every address you have ever received a transfer from is now a candidate poison target.
+  **Reader implication:** Run a complete scan of the last 90 days of outgoing transactions for any unauthorized dust transfer. For any future transfer above a trivial amount, verify the complete recipient address character-by-character on your hardware wallet's screen before signing; never copy addresses from transaction history for outgoing transfers.
+  **Tags:** address poisoning, wallet hygiene, approval abuse
+  **Severity:** High
+  **Confirming source:** https://cryptorank.io/news/feed/830a1-bofur-capital-address-poisoning-attack
+
+- **Payward, the parent of Kraken, adopted Claude Mythos as AI-driven security — the first major exchange publicly disclosed at that defensive tier** — https://medium.com/coinmonks/2026-cryptos-most-hacked-year-and-the-ai-race-to-defend-it-9ff0a1a17dec
+  **What happened:** Payward, the parent company of Kraken, joined Project Glasswing and adopted Claude Mythos for security operations, becoming one of the first crypto firms publicly disclosed at this defensive tier; coverage framed the move against a year-to-date total of more than $1.2 billion stolen across 164 incidents, the worst year on record.
+  **Why it matters:** Defensive AI has crossed from research to production at a major exchange. Expect custody providers and self-custody vendors to follow within 90 days; the gap between firms with AI-tier monitoring on withdrawal patterns and approval flows and those without will become a material due-diligence criterion for any institutional allocator or cautious individual.
+  **Reader implication:** If you custody with an exchange or hosted wallet service, ask whether they have deployed AI-tier anomaly detection on withdrawal patterns, address-poisoning detection, and approval-flow monitoring. If they cannot answer, treat that as a material counterparty risk; if you self-custody, audit every approval on every wallet and revoke anything older than 30 days.
+  **Tags:** infrastructure concentration, operational security, market structure
+  **Severity:** Structural
+
+- **An AI offensive-tool firm found a Ledger Ethereum app bug that lets a malicious dApp swap the APDU command during approval** — https://cryptorank.io/news/feed/74aa9-ledger-ethereum-app-bug-disclosure-clash
+  **What happened:** TestMachine, an AI offensive-tool firm, identified a Ledger Ethereum app bug that allows a malicious dApp to swap the APDU command during the approval flow so users unknowingly sign unlimited token approvals; Ledger's CTO publicly framed the disclosure as fear-mongering and shipped a quiet fix; Chainalysis has linked the underlying vector to a broader pattern of approval-flow swaps seen in production drains.
+  **Why it matters:** The bug exists at exactly the layer hardware wallets are supposed to defend. A user who reads their hardware wallet's screen and approves an "Approve USDC" prompt can be signing something materially different because the command was swapped mid-flow. The CTO's dismissive response also signals how the AI-to-vendor disclosure pipeline will need to mature as offensive tooling accelerates.
+  **Reader implication:** For any approval above trivial amounts, verify the full contract address and method on your hardware wallet's screen, not just the token and amount. If your Ledger wallet has not been updated since the disclosure, update firmware immediately and audit recent approvals for unlimited allowances you did not intend to grant.
+  **Tags:** approval abuse, firmware risk, operational security
+  **Severity:** High
+
+- **Boltz shut down its Bitcoin bridge after AI-assisted hacks outpaced its small team's defenses** — https://shattered.io/boltz-bitcoin-bridge-ai-hack-shutdown-2026/
+  **What happened:** Boltz shut down its Bitcoin swap bridge on August 3, 2026 after AI-assisted hacks outpaced its small team's defensive capacity; the founders exited the project 10 days later. Coverage framed the shutdown as the first case of a small-team bridge operator conceding the AI offensive-defensive imbalance, with the implication that the gap between small-team and institutional-tier bridge operators has become unbridgeable.
+  **Why it matters:** A small-team bridge cannot match the pace of AI-assisted offensive tooling. This is the operational signal for the entire bridge category: the defensive bar has moved, the teams that cannot clear it will exit, and the survivors will consolidate. Holders using bridges should expect consolidation and a higher operational premium on bridge fees.
+  **Reader implication:** If you use any bridge to move funds between chains, audit the team's defensive posture: do they have AI-tier monitoring, do they publish incident reports, do they use multisig with enforced timelocks on upgrades and treasury movements? If not, treat that bridge as a material counterparty risk and consolidate to one with a published defensive posture.
+  **Tags:** bridge exploit, infrastructure concentration, operational security
+  **Severity:** Structural
+
+
+### Items (raw, archived for completeness)
+- **Maya Protocol Hack Drains $1.7M, CACAO Crashes 88.7%** — https://shattered.io/maya-protocol-hack-cacao-crash-2026/
+  > Flash loan exploit on Maya Protocol with an 88.7% native-token crash; small absolute loss but large relative-impact for protocol users.
+  *Editorial disposition: Folded into the address-poisoning Key development as a counterpoint on DeFi protocol failure modes.*
+
+- **Address Poisoning: $2M Lost Over 7 of 40 Characters** — https://cryptoticker.io/en/address-poisoning-check-wallet-address/
+  > Deep dive on the Bofur Capital incident; seven of forty characters matching is enough to defeat most users' verification habits.
+  *Editorial disposition: Confirming source for the address-poisoning Key development.*
+
+- **Term Labs Loses $8.5M in Governance Exploit** — https://finance.yahoo.com/markets/crypto/articles/another-defi-hack-term-labs-123536364.html
+  > Governance attack funded by Tornado Cash; another in the year's $1.2B+ DeFi loss total.
+  *Editorial disposition: Below the editorial bar as a standalone development — folded into the signal as part of the broader DeFi governance-failure pattern documented by Metaverse Post's August 2026 exploit wave piece.*
+
+- **Bofur Capital loses $2M in address poisoning attack after Compound withdrawal** — https://cryptorank.io/news/feed/830a1-bofur-capital-address-poisoning-attack
+  > Same Bofur Capital incident as Cryptoticker, with the Compound-withdrawal trigger detail.
+  *Editorial disposition: Confirming source for the address-poisoning Key development.*
+
+- **Stablecoin Depeg Risk: Historical Cases, Warning Signs, and Recovery Paths** — https://pro.edgex.exchange/en-US/news/article/stablecoin-depeg-history-ust-usdc-usdt-fdusd
+  > Reference catalog of historical depegs with structural categorization.
+  *Editorial disposition: Folded into the why-it-matters bullet on stablecoin exposure concentration.*
+
+- **Can You Insure Stablecoins Against a Depeg?** — https://stablecoininsider.org/stablecoin-depeg-insurance/
+  > Practical reference on third-party depeg-insurance products and the underlying counterparty risk they transfer rather than eliminate.
+  *Editorial disposition: Folded into the what-to-do-this-week bullet on stablecoin exposure audit.*
+
+- **Stablecoin Depegs Explained: What Really Happens When a Digital Dollar Breaks the Buck** — https://news.bitcoin.com/learning-insights/stablecoin-depegs-explained/
+  > Mechanics explainer with category-level market-cap data for 2026.
+  *Editorial disposition: Below the editorial bar as a standalone development — used as background context for the structural signal on stablecoin risk.*
+
+- **You Approved a Wallet Signature. The Theft Comes Later** — https://www.secureworld.io/industry-news/crypto-wallet-signature-theft
+  > Vocabulary-level explainer distinguishing Permit2 signatures from standard approvals.
+  *Editorial disposition: Below the editorial bar as a standalone development — folded into the approval-abuse and revoke-your-approvals guidance.*
+
+- **GoCaracal Malware Uses Ethereum Smart Contract to Fetch Replacement C2 Address** — https://thehackernews.com/2026/08/gocaracal-malware-uses-ethereum-smart.html
+  > Malware variant uses an Ethereum smart contract to update its command-and-control endpoint without shipping a new binary.
+  *Editorial disposition: Below the editorial bar as a standalone development — folded into the AI-on-both-sides signal as evidence that offensive infrastructure is also going on-chain.*
+
+- **How Scammers Are Draining Crypto Wallets In 2026 Without Ever Asking For Your Seed Phrase** — https://themerkle.com/how-scammers-are-draining-crypto-wallets-in-2026-without-ever-asking-for-your-seed-phrase
+  > Overview of turnkey wallet-drainer kits sold to less technical scammers.
+  *Editorial disposition: Folded into the AI-on-both-sides signal paragraph as the canonical drainer-kit reference.*
+
+- **Wallet Drainers: What You Really Approve on Confirm** — https://cryptoticker.io/en/wallet-drainer-token-approval-signature/
+  > Mechanistic walkthrough of the approval flow that drainer kits exploit.
+  *Editorial disposition: Folded into the approval-abuse and revoke-your-approvals guidance.*
+
+- **Most secure crypto wallets in 2026 (MetaMask)** — https://metamask.io/news/most-secure-crypto-wallets
+  > Vendor-positioned explainer with security-feature checklist.
+  *Editorial disposition: Below the editorial bar — vendor explainer, not a development.*
+
+- **Crypto self-custody security: your 2026 checklist guide (Diamond Pigs)** — https://www.diamondpigs.com/blog/crypto-self-custody-security-checklist-2026
+  > Generic self-custody checklist; below the editorial bar.
+  *Editorial disposition: Dropped from Key developments — generic checklist, not a development.*
+
+- **Coldcard Enhances Seed Generation and Coinkite Warns Existing Phrases Remain Unsafe** — https://crypto-economy.com/coldcard-enhances-seed-generation-and-coinkite-warns-existing-phrases-remain-unsafe/
+  > Crypto Economy's coverage of the Coinkite firmware update with the same 1,778-BTC loss figure.
+  *Editorial disposition: Confirming source for the Coldcard Key development.*
+
+- **What is Etherscan? How to use the Ethereum explorer** — https://crypto.news/what-is-etherscan-ethereum-blockchain-explorer/
+  > Generic Etherscan explainer with embedded approval-revocation pointer.
+  *Editorial disposition: Below the editorial bar — generic explainer, not a development.*
+
+- **Crypto Scams 2026: Common Types and How to Spot Them (Diamond Pigs)** — https://www.diamondpigs.com/blog/crypto-scams-2026
+  > Generic consumer-protection guide on AI-generated scams; no new development.
+  *Editorial disposition: Below the editorial bar — generic explainer, not a development.*
+
+- **Crypto Scams September 2026: The Complete Active Threats List** — https://www.coingabbar.com/en/crypto-blogs-details/crypto-scam-alert-list-active-fraud-schemes-2026
+  > Monthly threat-list roundup echoing the week's primary stories.
+  *Editorial disposition: Below the editorial bar as a standalone development — confirmed-signal echo, not a primary item.*
+
+- **Crypto Phishing in 2026: Risks & How to Manage Them** — https://www.chainupad.com/blog/what-is-phishing-in-crypto/
+  > Generic phishing primer; confirms the 270M address-poisoning figure.
+  *Editorial disposition: Below the editorial bar — generic explainer; the 270M figure folded into the address-poisoning Key development.*
+
+- **What Is a Stablecoin Depeg? Causes and Real Examples (Bitsgap)** — https://bitsgap.com/blog/what-is-a-stablecoin-depeg
+  > Generic stablecoin depeg explainer with 2022–2026 examples.
+  *Editorial disposition: Below the editorial bar — generic explainer, not a development.*
+
+- **Dust Attack and Address Poisoning (DailyCoin)** — https://dailycoin.com/dust-attack-and-address-poisoning-the-tiny-transactions-that-could-cost-you-a-lot
+  > Generic dust-attack explainer.
+  *Editorial disposition: Below the editorial bar — generic explainer, not a development.*
+
+- **CyberLeek Crypto Explained: GTA 6 Links, Risks, Price Hype & Red Flags** — https://www.bleap.finance/en-us/blog/cyberleek-crypto-gta-6-token
+  > CyberLeek / GTA 6 leak-coin summary; same incident as Polygon and IGN pieces.
+  *Editorial disposition: Below the editorial bar — confirms the GTA 6 leak-coin attribution trail but adds no new development.*
+
+- **GTA 6 Leaks Increasingly Seem To Be Just A Big Crypto Scam (Kotaku)** — https://kotaku.com/gta-6-leaks-crypto-scam-2000726671
+  > GTA 6 / CyberLeek coverage with the KuCoin-wallet attribution trail.
+  *Editorial disposition: Below the editorial bar — confirms the paper-trail-to-KYC-exchange lesson without adding a primary development.*
+
+- **August 2026's Exploit Wave: Governance Failures, Protocol Bugs, And A Widening Attack Surface (Metaverse Post)** — https://mpost.io/august-2026s-exploit-wave-governance-failures-protocol-bugs-and-a-widening-attack-surface/
+  > Monthly exploit-wave roundup; flags the $30M H1 2026 physical-coercion figure (37% home invasions).
+  *Editorial disposition: Folded into the AI-on-both-sides signal as the canonical monthly-wave context.*
+
+- **Stablecoin Yield Strategies: Low-Risk to High (Eco)** — https://eco.com/support/en/articles/13313563-stablecoin-yield-strategies-low-risk-to-high
+  > Stablecoin-yield tier catalog with 4.1–11.8% range.
+  *Editorial disposition: Below the editorial bar — generic yield-strategy catalog, not a development.*
+
+- **What Is an EOA? Externally Owned Accounts (Eco)** — https://eco.com/support/en/articles/12005956-what-is-an-eoa-externally-owned-accounts
+  > Generic EOA explainer.
+  *Editorial disposition: Below the editorial bar — generic explainer, not a development.*
+
+- **2026 Crypto's Most-Hacked Year, and the AI Race to Defend It (Coinmonks)** — https://medium.com/coinmonks/2026-cryptos-most-hacked-year-and-the-ai-race-to-defend-it-9ff0a1a17dec
+  > Year-to-date hack tally with the Payward / Claude Mythos adoption detail.
+  *Editorial disposition: Primary source for the AI-defenders Key development.*
+
+- **Stablecoin Competition Moves From Issuing Tokens to Owning Distribution (PYMNTS)** — https://www.pymnts.com/cryptocurrency/2026/stablecoin-competition-moves-from-issuing-tokens-to-owning-distribution/
+  > Structural piece on stablecoin distribution-channel competition.
+  *Editorial disposition: Below the editorial bar — structural explainer, not a primary development for this week.*
+
+- **Cumberland Stablecoin Commentary: August 16** — https://www.cumberland.io/insights/commentary/cumberland-stablecoin-commentary-august-16-2026
+  > Trading-desk note that current drawdowns are not depegs by any reasonable definition.
+  *Editorial disposition: Folded into the stablecoin-concentration bullet as counter-evidence on the no-depeg-but-tight-spread baseline.*
+
+- **When Stablecoins Lose Their $1 Peg: Causes and Risks** — https://www.gncrypto.news/news/when-stablecoins-lose-their-1-peg/
+  > Generic depeg explainer.
+  *Editorial disposition: Below the editorial bar — generic explainer, not a development.*
+
+
+### Related reading
+- **Seed Phrases: What They Are and How People Lose Them** — /guides/seed-phrases-what-they-are-and-how-people-lose-them/
+- **How to Verify a Hardware Wallet Before You Use It** — /guides/verify-hardware-wallet/
+- **Address Poisoning: The Quiet Cousin of Approval Abuse** — /guides/address-poisoning/
+- **The Wallet Safety Checklist** — /tools/wallet-safety-checklist/
