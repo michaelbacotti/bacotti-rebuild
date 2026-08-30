@@ -2,58 +2,6 @@
 
 Latest items from daily link-discovery cron (14-day rolling window). The bithues desk reads every item, groups them by theme, and writes the morning brief below.
 
-## 2026-08-16
-
-### Headline: Phishing Moved Offline This Week: Postal Letters Started Arriving in Switzerland
-The threat surface expanded beyond email and Discord this week. A physical-letter campaign and an impersonator app both targeted the same Trezor-shipper breach data.
-
-### Today's signal
-The week's most under-reported story is the one that has nothing to do with private keys or seed phrases. The Swiss banking standards body BACS responded to reports this week that physical letters demanding a 'Post-Quantum Cryptography Security Update' — with a deadline and the full corporate branding of a major hardware-wallet vendor — arrived at homes in Switzerland. The same data set that powered the Trezor shipper breach last week (13,689 customers) is now powering a physical-mail phishing campaign. The threat actor has your real address, your real purchase history, and your real order number. The letter is indistinguishable from the vendor's actual communications until you read the small print. Separately, an Ethereum seed-phrase scam app was removed from an app store this week after a test drain proved the workflow worked — the app impersonated a legitimate AI-wallet onboarding flow. The combined lesson: the phishing channel expanded this week, and the standard 'verify by clicking through' guidance no longer applies. Email, mail, and app stores are now all part of the same attack surface.
-
-### Why it matters
-- Physical mail bypasses every spam filter and most users' threat models. A letter referencing a real wallet order, a real address, and a real purchase history is qualitatively different from an email — most users do not have a mental model for 'this is a phishing letter.'
-- App-store impersonation bypasses the 'I downloaded it from the official store' assumption that most users treat as a safety signal. The fact that the app made it through review proves that store-trust is not a defense.
-- The Trezor breach data set (last week) is now being actively weaponized. The lag between breach disclosure and phishing-wave launch is days, not months.
-- The 'verify by clicking through' guidance no longer applies when the phishing message references a real address and looks like a real letter. The correct verification path is to open the vendor's site yourself and call their published support number.
-
-### What to do today
-- **Treat any inbound message — email, mail, chat, or app — that demands urgent seed-phrase or firmware action as hostile by default.** Verify by opening the vendor's official site yourself. If a physical letter arrives, call the vendor's published support number (from their official site) and ask whether they sent it. They did not.
-- **Audit your Trezor order history for breach exposure.** If you ordered from Trezor in the last three years, your shipping data is now in active phishing campaigns. Expect a tailored message within two weeks.
-- **Remove any app from your phone that asks for a seed phrase or private key.** No legitimate wallet, exchange, or support workflow requires you to enter a seed phrase in an app. Treat any interface that asks for one as hostile.
-- **Update your verification playbook for physical mail.** Add 'I will not respond to any physical letter about a wallet' to your threat-model list. The correct response is to call the vendor directly.
-
-### Key developments
-- **Physical letters demanding 'Post-Quantum Cryptography Security Updates' arrived at Swiss homes this week** — https://www.zerberos.com/en/crypto-wallet-phishing-by-mail-when-cybercriminals-use-the-postal-service/
-  **What happened:** BACS, the Swiss banking standards body, responded to reports of physical letters arriving at homes demanding a 'Post-Quantum Cryptography Security Update' with a deadline. The letters use the corporate branding of a major hardware-wallet vendor and reference real shipping addresses.
-  **Why it matters:** Physical mail bypasses every spam filter and most users' threat models. The phishing channel expanded this week in ways that standard operational-security checklists do not cover.
-  **Reader implication:** Treat any physical letter about a wallet as hostile by default. Verify by calling the vendor's published support number (from their official site), not by responding to the letter.
-  **Tags:** phishing, operational security, supply-chain attack
-  **Severity:** High
-- **Fieldfisher: How the Coldcard attack actually unfolded, hour by hour** — https://www.fieldfisher.com/en/insights/coinkite-coldcard-hack-what-victims-need-to-know
-  **What happened:** Fieldfisher's deep dive on the attack timeline: first sweep began at 01:31 UTC on July 30, ~594 BTC vanished from ~500 wallets in the first 25 minutes, and the campaign continued in waves. The piece walks victims through what they can and cannot recover.
-  **Why it matters:** The operational detail of the attack (the speed, the wave structure, the seed-phrase generation flaw) is now the canonical reference for understanding how a generation-step compromise plays out in practice.
-  **Reader implication:** Anyone who generated a Coldcard seed during the affected window should assume the worst. Move funds to a new seed on a different device, not a new wallet on the same device.
-  **Tags:** firmware risk, seed-phrase exposure, private-key compromise
-  **Severity:** Critical
-- **The same whale was drained a third time — this time for $25.6M** — https://cryptoadventure.com/crypto-whale-drained-of-25-6m-in-second-major-phishing-attack/
-  **What happened:** The same Ethereum whale address that lost $24M in 2023 and $26M earlier this week was drained again — this time through a malicious token approval that emptied WBTC, cbBTC, LDO, USDS, and CRV before the attacker converted to DAI and ETH. Three different mechanisms, one persistent target.
-  **Why it matters:** The address is the persistent identifier. The attack mechanism rotates. The cure is to break the on-chain link to the address entirely.
-  **Reader implication:** If your wallet address has been hit before, the address is on a target list. A new seed on the same device does not remove you from the list. A new wallet on a different device with no on-chain link does.
-  **Tags:** approval abuse, treasury exposure, phishing
-  **Severity:** Critical
-  **Confirming source:** https://crypto.news/address-poisoning-attacks-drains-100k-dollars-usdt/
-
-### Items (raw, archived for completeness)
-- **List of Reported Scam Companies in 2026 - Part 1 - Crypto Legal** — https://www.cryptolegal.uk/list-of-reported-scam-companies-part-1/
-  > Database article, not a development. *Below the editorial bar — vendor database reference, not a development. Dropped.*
-
-### Related reading
-- **Seed Phrases: What They Are and How People Lose Them** — /guides/seed-phrases-what-they-are-and-how-people-lose-them/
-- **Address Poisoning: The Quiet Cousin of Approval Abuse** — /guides/address-poisoning/
-- **The Wallet Safety Checklist** — /tools/wallet-safety-checklist/
-
----
-
 ## 2026-08-17
 
 ### Headline: The Week Custody Stopped Being a Device Problem
@@ -613,3 +561,17 @@ Three threads converged on ordinary crypto holders this week, and each carried a
 - **How to Verify a Hardware Wallet Before You Use It** — /guides/verify-hardware-wallet/
 - **Address Poisoning: The Quiet Cousin of Approval Abuse** — /guides/address-poisoning/
 - **The Wallet Safety Checklist** — /tools/wallet-safety-checklist/
+
+## 2026-08-30
+
+- **Best Decentralized Crypto Wallets in 2026** — https://cryptonews.com/cryptocurrency/best-decentralized-crypto-wallets/
+  According to our research, Best Wallet and Trezor Safe 5 are the best decentralized wallets in 2026, thanks to their privacy-focused features, robust security, wide coin support, and seamless integration with decentralized applications.
+- **Security Firm Says Predictable Crypto Wallet Seed Phrases Fueled at Least $5.69 Million in Theft** — https://en.bloomingbit.io/feed/news/119244
+  Published 11:16 AM Aug 27, 2026SourceJH Kim · Forecast Trend Report by Period · See more mid- to long-term trend analysis · A flaw in cryptocurrency wallet software left some seed phrases, also known as recovery phrases, vulnerable to prediction, ...
+- **Cosmos EVM Hack: $5.72 Million Drained After Bounty Miss** — https://www.coingabbar.com/en/crypto-currency-news/cosmos-evm-hack-572-million-crypto-exploit-news
+  Cosmos EVM hack drains $5.72 million across six blockchains after Cosmos Labs missed its own bug bounty warning, freezing linked exchange accounts.
+- **How Long Could CyberLeek Go to Prison If Caught?** — https://www.bleap.finance/en-us/blog/how-long-cyberleek-prison-if-caught
+  Cybercrime defendants are increasingly treated as flight risks because they often hold passports, movable crypto assets, and foreign contacts. ... Prison is rarely the end of the financial story. Under 18 U.S.C. § 982, both civil and criminal forfeiture apply, meaning any proceeds from selling stole
+- **Hackers Use Ethereum Smart Contracts to Keep New GoCaracal Malware Connected** — https://gbhackers.com/gocaracal-malware-attack/
+  Dark Caracal-linked operators are using Ethereum smart contracts as a resilient fallback mechanism for a newly identified Go-based malware framework called GoCaracal. Arctic Wolf Labs uncovered the framework while investigating a targeted intrusion ...
+
