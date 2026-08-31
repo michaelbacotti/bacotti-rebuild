@@ -2,139 +2,6 @@
 
 Latest items from daily link-discovery cron (14-day rolling window). The bithues desk reads every item, groups them by theme, and writes the morning brief below.
 
-## 2026-08-17
-
-### Headline: The Week Custody Stopped Being a Device Problem
-Five days of incidents converged on the same lesson: the seams in your custody chain are not in your hardware — they are in every vendor that touches it.
-
-### This week's signal
-The week opened with a single $116M loss tied to a seven-day bug in Coldcard's seed-phrase generation routine, and ended with three more supply-chain attacks on hardware-wallet vendors that had nothing to do with the cryptography at all. The Coldcard story was the headline. The vendor breaches are the longer lesson. Across the five days of coverage, the dominant pattern was not a new attack class — it was the same attackers moving through adjacent layers of the same custody stack: from the device generation step, to the shipping partner that handled the box, to the order-tracking plug-in that processed the warranty card, to the seed-phrase prompt in the chat app that the user thought was their wallet. The cost of trying for the attacker has collapsed; the value of probing the seams has not changed. Every day this week surfaced another seam. The H1 2026 framing — that roughly three-quarters of all losses trace back to private-key or seed-phrase failure — now needs a footnote. It is not just the cryptography being attacked. It is the operations around the cryptography.
-
-### Why it matters
-- The Coldcard bug was a generation-step flaw, not a phishing failure. Wallets created on a Coldcard during the affected window in late July should be considered compromised even when the funds have not yet moved — and the bug demonstrates that "cold storage" is only as strong as the device's entropy source.
-- The week's supply-chain attacks (Trezor's shipper, SafePal's order-tracking plug-in, Bits of Gold's vendor) hit vendors whose product did not change. The threat model for anyone holding a hardware wallet now includes the shipping company, the warranty database, and any third-party plug-in attached to the wallet interface.
-- A single whale lost roughly $25M three times in one week to the same address cluster — proof that persistent target lists survive across both phishing and private-key compromise vectors, and that the cure is to break the on-chain link to the address entirely.
-- Phishing is moving offline: physical letters demanding "Post-Quantum Cryptography Security Updates" reached Switzerland-based users this week, and a seed-phrase scam app was removed after impersonating a legitimate AI-wallet workflow. Email and Discord are no longer the only channels.
-- Bitcoin ETFs pulled $853M during the same window — the largest weekly inflow since April — and stablecoins continue to face the 30-second depeg problem. Capital and risk are both rotating around custody at the same time.
-
-### What to do this week
-- **Audit your Coldcard exposure first.** If you generated a seed on a Coldcard between July 24 and 31, 2026, treat that wallet as compromised. Move funds to a new seed on a different device or vendor — never to a new wallet on the same compromised device. Do this Monday morning, not next month.
-- **Map every vendor that touches your wallet.** Your custody chain now includes the device maker, the shipper, the warranty database, any third-party plug-in, and the chat apps where you receive support. Ask each one: what data do you hold about me, and what is your breach history?
-- **Revoke stale approvals on every wallet that ever touched DeFi.** Approval abuse drained $25M this week. Use revoke.cx or your wallet's approval manager and revoke every unlimited token approval older than 30 days. Do this on a desktop, not mobile.
-- **Verify the full recipient address on-device for any transfer above trivial amounts.** Address poisoning is now showing up in your transaction history before it shows up in your wallet prompt. Match the full address on your hardware wallet's screen, never just the first and last four characters.
-- **Treat any inbound message — email, mail, chat, app — that demands urgent seed-phrase or firmware action as hostile by default.** Verify by opening the vendor's official site yourself; never click through.
-- **Break persistent target lists by changing the wallet, not just the key.** If your wallet address has been hit before, the address is on a list. A new seed on the same device does not remove you from the list — only a new wallet on a different device does.
-
-### Key developments
-
-- **The Coldcard seed-phrase bug drained $116M — and the same wallets are still moving** — https://fortune.com/2026/08/03/bitcoin-owners-rocked-116-million-hack-coldcard-coinkite-exploit/
-  **What happened:** Fortune's on-chain analysis puts 1,816 BTC off the affected addresses; Coinkite shipped a firmware patch but cannot recall devices already in the field. The attack worked because the generation routine shipped a flawed entropy source for a seven-day window in late July. TheBlock followed up with Blockaid's CEO framing the year: roughly three-quarters of H1 2026 losses trace to private-key or seed-phrase failure, not smart-contract bugs.
-  **Why it matters:** Cold storage is the baseline of self-custody; a seed-phrase generation bug at the device level invalidates the entire category for the affected cohort. The lesson generalizes: any device that owns entropy generation owns your funds, and "did everything right" is no longer sufficient if the device shipped a bad generator.
-  **Reader implication:** Wallets generated on a Coldcard during the late-July window should be treated as compromised. Move funds to a new seed on a different device or vendor and never type the original seed anywhere it can be logged. Do not delay; the funds are still moving.
-  **Tags:** firmware risk, seed-phrase exposure, private-key compromise
-  **Severity:** Critical
-  **Confirming source:** https://theblock.co/news/regulation/2026-08-07-coldcard-bitcoin-exploit-crypto-original-sin-private-keys-blockaid-ceo-411160
-
-- **Trezor and SafePal both disclosed supply-chain breaches — and the wallets themselves are fine** — https://cryptoticker.io/en/trezor-shipmonk-data-breach-customer-addresses-leaked/
-  **What happened:** Trezor disclosed that shipping partner ShipMonk (SOC 2 Type II certified) leaked names, phone numbers, and home addresses for 13,689 customers. SafePal disclosed that an order-tracking plug-in exposed order data for 39,798 customers. Bits of Gold, an Israeli vendor, said a vendor breach exposed 200,000 customer records and is part of the same supply-chain wave. None of the three reported compromise of private keys, seed phrases, or wallet assets.
-  **Why it matters:** The wallet worked exactly as designed. The vendor's database did not. The attack vector is now: phishing campaigns that use your leaked shipping address to impersonate a "Post-Quantum Cryptography Security Update" letter demanding action. Switzerland-based users reported exactly this kind of physical letter arriving at homes this week, weeks after Ledger warned about the same tactic in June 2026.
-  **Reader implication:** Audit your threat model beyond the wallet. Anyone who has ordered a hardware wallet in the last three years should expect a tailored phishing message — by mail, by email, or by SMS — referencing their address and order number. Verify by opening the vendor's site yourself; do not click through any inbound link.
-  **Tags:** supply-chain attack, data breach, operational security
-  **Severity:** High
-  **Confirming source:** https://www.coindesk.com/tech/2026/08/16/crypto-wallet-safepal-reveals-a-data-breach-exposing-nearly-40-000-customers-order-info
-
-- **A single whale was drained three times in one week — to roughly $77M total** — https://en.coin-turk.com/phishing-attack-drains-25-6-million-from-crypto-whale-second-loss-tied-to-same-wallet/
-  **What happened:** The same Ethereum address cluster lost $24.2M to phishing in September 2023, $25.6M this week to a malicious token approval, and roughly $25M to an alleged private-key compromise on August 12. Scam Sniffer's analysis links the three losses to a single treasury provider. The mechanism differs each time — approval abuse, then private-key compromise, then approval abuse again — but the target is the same.
-  **Why it matters:** Persistent target lists survive across both phishing and private-key vectors. The attacker does not care which seam they exploit — they only need one. The fact that the same wallet was hit three times in three years shows that the defense of "be careful next time" is structurally insufficient. The address is the persistent identifier; the attack mechanism rotates.
-  **Reader implication:** If your wallet address has been hit before, the address is on a target list. A new seed on the same device does not remove you from the list — only a new wallet on a different device, with no on-chain link to the old address, does. The cure is operational, not cryptographic.
-  **Tags:** approval abuse, private-key compromise, treasury exposure
-  **Severity:** Critical
-
-- **Phishing moved offline: physical letters and impersonator apps joined the channel mix** — https://www.zerberos.com/en/crypto-wallet-phishing-by-mail-when-cybercriminals-use-the-postal-service/
-  **What happened:** BACS, the Swiss banking standards body, responded to reports of physical letters arriving at homes demanding a "Post-Quantum Cryptography Security Update" with a deadline. The same week, an Ethereum seed-phrase scam app was removed from an app store after a test drain proved the workflow worked — the app impersonated a legitimate AI-wallet onboarding flow. Both attacks used data from the Trezor and SafePal breaches to make the messages plausible.
-  **Why it matters:** Email, Discord, and Telegram are no longer the only phishing channels. Physical mail bypasses every spam filter and most users' threat models. App-store impersonation bypasses every "I downloaded it from the official store" assumption. The threat surface expanded this week in ways that standard operational-security checklists do not cover.
-  **Reader implication:** Treat any inbound message — email, mail, chat, app — that demands urgent seed-phrase or firmware action as hostile by default. Verify by opening the vendor's official site yourself; never click through. If a letter arrives referencing a wallet you actually own, call the vendor's published support number (from their official site) and ask whether they sent it. They did not.
-  **Tags:** phishing, approval abuse, operational security
-  **Severity:** High
-  **Confirming source:** https://en.coinotag.com/ethereum-seed-phrase-scam-app-removed-after-test-drain
-
-- **Capital and risk rotated around custody at the same time** — https://247wallst.com/investing/cryptocurrency/2026/08/08/bitcoin-etfs-are-having-their-best-week-since-april-did-the-coldcard-hack-push-853m-into-bitcoin-ets/
-  **What happened:** Bitcoin ETFs pulled $853M during the week of the Coldcard disclosure — the largest weekly inflow since April. The 24/7 Wall St. analysis frames this as a flight from self-custody into regulated wrappers after the bug became public. Separately, CoinSpectator documented a 30-second stablecoin depeg from late July where arbitrage bots, liquidation cascades, and oracle-price lag collided inside a half-minute window.
-  **Why it matters:** The week's data shows two custody paths moving in opposite directions at once. Holders who trust their device are staying self-custody; holders who lost trust are moving into ETFs. The structural question for ordinary holders is whether ETF exposure is the right substitute for self-custody — it trades operational risk for counterparty risk, and the right answer depends on whether you trust the issuer more than you trust your own operational discipline.
-  **Reader implication:** Review your stablecoin exposure by issuer, chain, exchange, and redemption window. If any of the four are concentrated, the 30-second depeg is your tail risk. For ETF allocation, treat the wrapper as a different threat model, not a safer one — and do not move funds into a wrapper as a substitute for fixing the operational gap that exposed you to the bug in the first place.
-  **Tags:** market structure, stablecoin risk, settlement risk
-  **Severity:** Structural
-
-### Items (raw, archived for completeness)
-The following raw items were collected by the daily link-discovery pipeline during the week. The 5 Key developments above are the editorial selection; the rest are archived here with their disposition.
-
-- **Hackers steal over $130M by exploiting bug in offline hardware wallets | TechCrunch** — https://techcrunch.com/2026/08/04/hackers-steal-over-130-million-by-exploiting-bug-in-offline-hardware-walls/
-  > The headline number ($130M) is the campaign-level total; the device-level bug is in the seed-phrase generation routine, which is a fundamentally different failure mode than a phishing attack. *Subsumed into the Coldcard Key development above — same incident, different framing.*
-
-- **Is Bitcoin Self-Custody Dead? Inside The Coldcard Hack | Forbes** — https://www.forbes.com/sites/davidbirnbaum/2026/08/11/is-bitcoin-self-custody-dead-inside-the-coldcard-hack/
-  > The Forbes piece is the long-form companion to the TechCrunch story. It focuses on the industry reaction — whether "cold storage" is still a meaningful category if the device generation step can be backdoored. *Confirming source for the Coldcard Key development.*
-
-- **Bitcoin at Center of $1.2 Billion Crypto Hack Wave Spanning 276 Exploits | CoinotaG** — https://en.coinotag.com/bitcoin-crypto-hack-1-2-billion-276-exploits-2026
-  > 276 hacks in 2026 is the cumulative denominator. The year's running total explains why "this week" keeps happening — the attack volume is structural, not cyclical. *Folded into the signal paragraph as context.*
-
-- **Why the Coldhard hack hurt more than your average crypto hack | Fortune** — https://fortune.com/2026/08/10/bitcoin-coldcard-hack-hardware-wallet-security-seed-phrases/
-  > The "did everything right" framing is the long-form version of the Coldcard story. *Subsumed into the Coldcard Key development.*
-
-- **Coldcard hack: what happened and what victims can do to recover | Fieldfisher** — https://www.fieldfisher.com/en/insights/coinkite-coldcard-hack-what-victims-need-to-know
-  > The Fieldfisher timeline (1:31 UTC start, ~594 BTC in ~25 minutes, ~500 wallets affected in the first wave) is the most useful operational detail of the week. *Subsumed into the Coldcard Key development.*
-
-- **Trezor Warns Of Rising Phishing Attempts Amid Coldcard Hack 2026 | TronWeekly** — https://www.tronweekly.com/trezor-warns-of-rising-phishing-attempts/
-  > Trezor is using the Coldcard incident as a launching pad for a phishing warning — which is the right call. The threat model for anyone who held a Coldcard in the affected window now includes impersonator emails, fake Trezor Suite downloads, and phony firmware update pages. *Folded into the supply-chain Key development.*
-
-- **Whale Loses $26M in Private Key Compromise | Blockchain.News** — https://blockchain.news/flashnews/whale-losess-26m-private-key-compromise
-  > The TLBL-linked wallet and the 15-minute drain window are the operational signatures. Same whale, different framing. *Subsumed into the persistent-target-list Key development.*
-
-- **Crypto Whale Drained Of $25.6M In Second Major Phishing Attack | CryptoAdventure** — https://cryptoadventure.com/crypto-whale-drained-of-25-6m-in-second-major-phishing-attack/
-  > Same whale, same mechanism (approval-phishing), third time on the target list. *Subsumed into the persistent-target-list Key development.*
-
-- **Crypto Investor Loses About $25 Million in Alleged Private Key Compromise | incrypted** — https://incrypted.com/en/crypto-investor-losess-about-25-million-alleged-private-key-compromise/
-  > August 12 transfer of $25M in DAI, WBTC, aUSDC, LDO, sUSDe, and native Ethereum. Scam Sniffer analysts suggest private-key compromise. Same address cluster as the other whale losses this week. *Subsumed into the persistent-target-list Key development.*
-
-- **Breach at Crypto Wallet Company Called 'SafePal' Exposes 39,798 Customers | Gizmodo** — https://gizmodo.com/breach-at-crypto-wallet-company-called-safepal-exposes-39798-customers-2000799138
-  > SafePal's official statement: keys, seed phrases, and crypto assets remain secure; the order-tracking plug-in is the affected surface. *Confirming source for the supply-chain Key development.*
-
-- **Hackers hit a Bits of Gold vendor and swept up 200,000 Israeli crypto customers | Startup Fortune** — https://startupfortune.com/hackers-hit-a-bits-of-gold-vendor-and-swept-up-200000-israeli-crypto-customers/
-  > Bits of Gold frames this as part of the same supply-chain wave that hit SafePal and Trezor. *Confirming source for the supply-chain Key development.*
-
-- **Trezor Says Shipping Partner Breach Exposed Data of Nearly 14,000 Customers | BigGo Finance** — https://finance.biggo.com/news/edb70dd6-a7ff-48d6-964a-bf9c60d25fd7
-  > The first disclosure of the Trezor shipper breach this week. *Subsumed into the supply-chain Key development.*
-
-- **What Is USD1 Stablecoin? A Beginner's Guide | BTCC** — https://www.btcc.com/en-US/caademy/crypto-wiki/altcoin
-  > USD1 is the new entrant in the dollar-pegged stablecoin category. *Below the editorial bar — generic primer, not a new development. Dropped from the Key developments.*
-
-- **Stablecoin Yields: How to Earn on USDT, USDC & DAI Safely | Cobo** — https://www.cobo.com/post/stablecoin-yields
-  > Stablecoin yield explainer. *Below the editorial bar — generic explainer, not a development. Dropped from the Key developments.*
-
-- **What happens when a stablecoin depegs for 30 seconds | CoinSpectator** — https://coinspectator.com/cryptonews/2026/08/09/what-happens-when-a-stablecoin-depegs-for-30-seconds/
-  > The 30-second window is the practical reason exchanges need to handle liquidations carefully — and why the next iteration of risk controls will likely include depeg-buffer timeouts. *Subsumed into the market-structure Key development.*
-
-- **Cryptocurrency Scams — BitPay Support** — https://support.bitpay.com/hc/en-us/articles/360003867971-Cryptocurrency-Scams
-  > Generic BitPay scam-warning copy. *Below the editorial bar — vendor support page, not a development. Dropped from the Key developments.*
-
-- **How to Spot a Crypto Scam Before You Invest | Bright Coding** — https://www.blog.brightcoding.dev/2026/08/14/how-to-spot-a-crypto-scam-before-you-invest
-  > Generic consumer-protection explainer. *Below the editorial bar — generic explainer, not a development. Dropped from the Key developments.*
-
-- **List of Reported Scam Companies in 2026 - Part 1 - Crypto Legal** — https://www.cryptolegal.uk/list-of-reported-scam-companies-part-1/
-  > Database article, not a development. *Below the editorial bar — database reference, not a development. Dropped from the Key developments.*
-
-- **Address poisoning attack drains $100K USDT | crypto.news** — https://crypto.news/address-poisoning-attacks-drains-100k-dollars-usdt/
-  > The 0.005 USDT dust transaction is the giveaway — any address in your history that has sent you a tiny amount that you did not request is a poisoned-address candidate. The fix is to verify the full address on-device before signing. *Subsumed into the supply-chain Key development (same week, same mechanism).*
-
-### Related reading
-- **Cold Wallet vs. Hot Wallet: A Decision Framework** — /guides/cold-wallet-vs-hot-wallet/
-- **Seed Phrases: What They Are and How People Lose Them** — /guides/seed-phrases-what-they-are-and-how-people-lose-them/
-- **The Wallet Safety Checklist** — /tools/wallet-safety-checklist/
-- **How to Verify a Hardware Wallet Before You Use It** — /guides/verify-hardware-wallet/
-- **Address Poisoning: The Quiet Cousin of Approval Abuse** — /guides/address-poisoning/
-
----
-
-
 ## 2026-08-18
 
 - **Crypto hardware wallet owners face fresh security risks after recent spate of personal data thefts | TechCrunch** — https://techcrunch.com/2026/08/17/crypto-hardware-wallet-owners-face-fresh-security-risks-after-recent-spate-of-personal-data-thefts/
@@ -574,4 +441,18 @@ Three threads converged on ordinary crypto holders this week, and each carried a
   Cybercrime defendants are increasingly treated as flight risks because they often hold passports, movable crypto assets, and foreign contacts. ... Prison is rarely the end of the financial story. Under 18 U.S.C. § 982, both civil and criminal forfeiture apply, meaning any proceeds from selling stole
 - **Hackers Use Ethereum Smart Contracts to Keep New GoCaracal Malware Connected** — https://gbhackers.com/gocaracal-malware-attack/
   Dark Caracal-linked operators are using Ethereum smart contracts as a resilient fallback mechanism for a newly identified Go-based malware framework called GoCaracal. Arctic Wolf Labs uncovered the framework while investigating a targeted intrusion ...
+
+
+## 2026-08-31
+
+- **Crypto.com-linked Cronos network halts after Tectonic exploit estimated at $75 million | The Block** — https://www.theblock.co/news/defi/2026-08-30-crypto-com-linked-cronos-network-halts-after-tectonic-exploit-estimated-at-75-million-413069
+  Cronos, the blockchain ecosystem associated with exchange Crypto.com, halted its blockchain after identifying an exploit affecting lending protocol Tectonic, which has roughly $122 million in total value locked.
+- **19 Chrome and Edge Extensions Deliver a Wallet Drainer and Credential-Stealing Payloads | Socket** — https://socket.dev/blog/chrome-edge-extension-wallet-drainer
+  Initially both Chrome and Edge versions of the extension used the same C2 domain, but after the Chrome extension got identified as malware, a new version of the Edge extension was published with an updated C2 domain on August 14th, 2026.
+- **Malicious Firefox extensions are stealing crypto login data​ | Cybernews** — https://cybernews.com/security/malicious-firefox-extensions-crypto-wallets/
+  The campaign, active since at least March 2026, used fake wallets and deceptive sports-score extensions to gain trust. One extension mimicked OKX with a zero in its name and directed users to a phishing page for wallet recovery phrases.
+- **Crypto Wallet Phishing by Letter: the QR Code Scam** — https://cryptoticker.io/en/crypto-wallet-phishing-letter-qr-code/
+  SafePal confirmed a data breach on August 16, 2026: the names, delivery addresses, phone numbers and order details of 39,798 customers were exposed. Seed phrases and private keys were not affected, but the phishing risk is substantial.
+- **Stablecoin Regulations in 2026: GENIUS Act, MiCA, and What Regulatory Clarity Means for Enterprise Adoption** — https://stablecoininsider.org/stablecoin-regulations-in-2026/
+  The GENIUS Act became US law in July 2025, with rules finalizing through 2026. The EU AML package applies from July 2027, harmonizing beneficial-ownership standards. Regulatory clarity is the single biggest unlock for enterprise stablecoin adoption.
 
