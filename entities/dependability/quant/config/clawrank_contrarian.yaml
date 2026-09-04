@@ -1,0 +1,136 @@
+composite:
+  final_score_method: percentile_rank
+  label_thresholds:
+    avoid_max: 30
+    research_candidate_min: 70
+  require_setup_for_research:
+  - breakout
+  - pullback_retest
+  require_trend_for_research: uptrend
+factors:
+  sentiment_catalyst:
+    description: Proxy signals only (no news feed yet). Liquidity, volume health,
+      analyst-target upside.
+    sub_metrics:
+      adv_usd_m:
+        direction: higher
+        field: adv_usd_m
+        floor: 50
+        source: computed
+        weight: 0.4
+      analyst_upside:
+        direction: higher
+        fallback: skip
+        field: target_upside_pct
+        source: yfinance_info
+        weight: 0.3
+      volume_ratio:
+        direction: sweet
+        field: vol_5d_over_20d
+        source: computed
+        sweet_high: 1.5
+        sweet_low: 0.9
+        weight: 0.3
+    weight: 0.1
+  setup_quality:
+    description: "What makes a Research candidate \u2014 setup type + range position\
+      \ + proximity to key levels."
+    sub_metrics:
+      dist_50d_atr:
+        field: dist_to_50d_atr
+        optimal_high: 2
+        optimal_low: 0
+        penalty_above: 5
+        source: computed
+        weight: 0.15
+      range_percentile:
+        field: range_pctile
+        optimal_max: 70
+        optimal_min: 30
+        penalty_above: 90
+        penalty_below: 10
+        source: computed
+        weight: 0.25
+      room_to_resist:
+        field: room_to_resist_atr
+        optimal_high: 5
+        optimal_low: 1
+        source: computed
+        weight: 0.2
+      setup_type:
+        field: setup
+        lookup:
+          breakout: 30
+          continuation: 40
+          mean_reversion: 100
+          pullback_retest: 50
+          range_approach: 70
+          reversal: 95
+          unavailable: 40
+        source: computed
+        weight: 0.4
+    weight: 0.4
+  technical_momentum:
+    description: Price + volume momentum. Inspired by Danelfin Technical subscore
+      (RSI, MA distances, returns).
+    sub_metrics:
+      dist_200d_ma_pct:
+        direction: lower
+        fallback: skip
+        field: dist_200d_ma_pct
+        source: computed
+        weight: 0.1
+      dist_50d_ma_pct:
+        direction: lower
+        field: dist_50d_ma_pct
+        source: computed
+        weight: 0.2
+      rs_20d:
+        direction: lower
+        field: rs_20d_vs_spy
+        source: computed
+        weight: 0.2
+      rs_60d:
+        direction: lower
+        field: rs_60d_vs_spy
+        source: computed
+        weight: 0.2
+      rsi_14:
+        direction: sweet
+        field: rsi_14
+        penalty_above: 80
+        penalty_below: 30
+        source: computed
+        sweet_high: 50
+        sweet_low: 30
+        weight: 0.15
+      trend_slope:
+        direction: lower
+        field: trend_slope_50d
+        source: computed
+        weight: 0.15
+    weight: 0.35
+  volatility_regime:
+    description: "Vol regime suitability \u2014 rewards stable, low-vol setups (fits\
+      \ short-premium bias)."
+    sub_metrics:
+      atr_pct_vs_spy:
+        direction: lower
+        field: atr_pct_minus_spy
+        source: computed
+        weight: 0.3
+      max_dd_60d:
+        direction: lower
+        field: max_dd_60d
+        source: computed
+        weight: 0.3
+      vol_ratio:
+        direction: lower
+        field: vol_20d_over_252d
+        source: computed
+        weight: 0.4
+    weight: 0.15
+normalization:
+  missing_policy: renormalize
+  z_clip: 2.0
+  z_method: winsor

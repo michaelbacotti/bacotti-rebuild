@@ -1,0 +1,70 @@
+# ClawRank-v0 — editable weights + sub-metric list
+# Edit this file to fine-tune; rebuild dashboard to see effect.
+# Last updated: 2026-09-03
+
+# Cross-sectional normalization
+normalization:
+  z_clip: 2.0           # clip z-scores to ±2σ before percentile rank
+  z_method: "winsor"    # winsor | clip — winsor = clip + keep values
+  missing_policy: "renormalize"  # renormalize | fail | skip
+                              # renormalize: scale remaining sub-metrics to keep factor weight constant
+                              # fail: raise
+                              # skip: ticker gets factor score = neutral (50)
+
+# Composite math
+composite:
+  final_score_method: "percentile_rank"  # percentile_rank | z_composite
+  label_thresholds:
+    research_candidate_min: 70   # top 30%
+    avoid_max: 30                # bottom 30%
+  # Overrides the implicit "uptrend + good setup" guard from the dashboard
+  require_trend_for_research: "uptrend"   # uptrend | any
+  require_setup_for_research: ["breakout", "pullback_retest"]
+
+# Factors
+factors:
+  fundamental_health:
+    weight: 0.25
+    description: "Quality + valuation health. Inspired by Danelfin Fundamental subscore."
+    sub_metrics:
+      earnings_yield:    { source: "yfinance_info", field: "trailingEps",     direction: "higher", weight: 0.20, fallback: "skip" }
+      revenue_growth:    { source: "yfinance_info", field: "revenueGrowth",   direction: "higher", weight: 0.20, fallback: "skip" }
+      operating_margin:  { source: "yfinance_info", field: "operatingMargins",direction: "higher", weight: 0.20, fallback: "skip" }
+      debt_to_equity:    { source: "yfinance_info", field: "debtToEquity",    direction: "lower",  weight: 0.20, fallback: "skip" }
+      fcf_yield:         { source: "yfinance_info", field: "fcf_yield", direction: "higher", weight: 0.20, fallback: "skip" }
+
+  technical_momentum:
+    weight: 0.25
+    description: "Price + volume momentum. Inspired by Danelfin Technical subscore (RSI, MA distances, returns)."
+    sub_metrics:
+      rs_60d:            { source: "computed",      field: "rs_60d_vs_spy",   direction: "higher", weight: 0.20 }
+      rs_20d:            { source: "computed",      field: "rs_20d_vs_spy",   direction: "higher", weight: 0.20 }
+      dist_50d_ma_pct:   { source: "computed",      field: "dist_50d_ma_pct", direction: "higher", weight: 0.20 }
+      dist_200d_ma_pct:  { source: "computed",      field: "dist_200d_ma_pct",direction: "higher", weight: 0.10, fallback: "skip" }
+      rsi_14:            { source: "computed",      field: "rsi_14",          direction: "sweet", weight: 0.15, sweet_low: 50, sweet_high: 70, penalty_above: 80, penalty_below: 30 }
+      trend_slope:       { source: "computed",      field: "trend_slope_50d", direction: "higher", weight: 0.15 }
+
+  volatility_regime:
+    weight: 0.15
+    description: "Vol regime suitability — rewards stable, low-vol setups (fits short-premium bias)."
+    sub_metrics:
+      vol_ratio:         { source: "computed",      field: "vol_20d_over_252d", direction: "lower", weight: 0.40 }
+      atr_pct_vs_spy:    { source: "computed",      field: "atr_pct_minus_spy", direction: "lower", weight: 0.30 }
+      max_dd_60d:        { source: "computed",      field: "max_dd_60d",       direction: "lower", weight: 0.30 }
+
+  setup_quality:
+    weight: 0.25
+    description: "What makes a Research candidate — setup type + range position + proximity to key levels."
+    sub_metrics:
+      setup_type:        { source: "computed",      field: "setup",           weight: 0.40, lookup: { breakout: 100, pullback_retest: 95, continuation: 70, reversal: 50, range_approach: 50, mean_reversion: 30, unavailable: 40 } }
+      range_percentile:  { source: "computed",      field: "range_pctile",    weight: 0.25, optimal_min: 30, optimal_max: 70, penalty_above: 90, penalty_below: 10 }
+      dist_50d_atr:      { source: "computed",      field: "dist_to_50d_atr", weight: 0.15, optimal_low: 0, optimal_high: 2, penalty_above: 5 }
+      room_to_resist:    { source: "computed",      field: "room_to_resist_atr", weight: 0.20, optimal_low: 1, optimal_high: 5 }
+
+  sentiment_catalyst:
+    weight: 0.10
+    description: "Proxy signals only (no news feed yet). Liquidity, volume health, analyst-target upside."
+    sub_metrics:
+      adv_usd_m:         { source: "computed",      field: "adv_usd_m",       direction: "higher", weight: 0.40, floor: 50 }
+      volume_ratio:      { source: "computed",      field: "vol_5d_over_20d", direction: "sweet", weight: 0.30, sweet_low: 0.9, sweet_high: 1.5 }
+      analyst_upside:    { source: "yfinance_info", field: "target_upside_pct",direction: "higher", weight: 0.30, fallback: "skip" }
