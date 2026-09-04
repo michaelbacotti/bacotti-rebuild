@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """build_market_dashboard_html.py — Interactive single-file HTML market dashboard.
 
-v2 (2026-09-03): Adds ClawRank factor breakdown per ticker. Replaces the
-"Danelfin = Unavailable" cells with the actual ClawRank composite + factor
-scores + label. Reads from reports/<date>-clawrank.json if present, falls
-back to computing inline if not.
+v3 (2026-09-03): ClawRank score moved to first column. Hover the score to see
+the 5-factor breakdown (Fund / Tech / Vol / Setup / Sent) + label rule that
+fired. Eliminates 5 redundant factor columns from the Stock Shortlist.
+Adds an SVG favicon embedded as data URI (gold "C" on dark rounded square).
 
 Visual language aligned with bacotti-dashboard.html (GitHub-Dark + gold).
 Research only — no trade placement, no broker access, no key exposure.
@@ -241,12 +241,42 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .label-Wa {{ color: var(--yellow); font-weight: 600; }}
 .label-Av {{ color: var(--red); font-weight: 700; }}
 .spark-cell {{ padding: 4px 8px; width: 184px; }}
-.factor-cell {{ padding: 4px 8px; }}
 .factor-bar {{ display: inline-block; width: 56px; height: 8px; background: var(--surface2);
                border-radius: 4px; position: relative; vertical-align: middle; }}
 .factor-bar-fill {{ position: absolute; top: 0; left: 0; height: 100%; border-radius: 4px; }}
 .factor-bar-text {{ margin-left: 6px; font-size: 10px; color: var(--muted); }}
-.score-big {{ font-size: 14px; font-weight: 700; color: var(--gold); }}
+.score-cell {{ position: relative; padding: 4px 10px; cursor: help; }}
+.score-cell:hover {{ background: rgba(212,168,67,0.10); }}
+.score-big {{ font-size: 15px; font-weight: 700; color: var(--gold); }}
+.score-label-pill {{ display: block; font-size: 9px; color: var(--muted);
+                     text-transform: uppercase; letter-spacing: 0.4px;
+                     margin-top: 1px; }}
+.score-label-pill.Rc {{ color: var(--blue); }}
+.score-label-pill.Wa {{ color: var(--yellow); }}
+.score-label-pill.Av {{ color: var(--red); }}
+.popover {{ position: absolute; top: calc(100% + 4px); right: 0;
+            z-index: 1000; background: var(--surface2); border: 1px solid var(--gold);
+            border-radius: 8px; padding: 12px 14px; min-width: 280px;
+            display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            text-align: left; font-size: 11px; color: var(--text); }}
+.score-cell:hover .popover {{ display: block; }}
+.popover-title {{ font-size: 9px; font-weight: 700; color: var(--gold);
+                  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }}
+.popover-row {{ display: grid; grid-template-columns: 130px 70px 30px;
+                align-items: center; gap: 8px; padding: 3px 0;
+                font-size: 10.5px; }}
+.popover-row .name {{ color: var(--muted); }}
+.popover-row .bar {{ width: 70px; height: 6px; background: #0d1117; border-radius: 3px;
+                     position: relative; }}
+.popover-row .bar-fill {{ position: absolute; top: 0; left: 0; height: 100%;
+                          border-radius: 3px; }}
+.popover-row .val {{ color: var(--text); font-weight: 600; text-align: right;
+                     font-variant-numeric: tabular-nums; }}
+.popover-divider {{ height: 1px; background: var(--border); margin: 8px 0; }}
+.popover-rule {{ font-size: 10.5px; color: var(--text); font-style: italic; }}
+.popover-rule strong {{ color: var(--gold); font-style: normal; }}
+.popover-trigger-hint {{ display: block; font-size: 8.5px; color: var(--muted);
+                          margin-top: 4px; text-align: center; opacity: 0.6; }}
 .score-sub {{ font-size: 9px; color: var(--muted); }}
 .unav {{ color: var(--muted); font-style: italic; }}
 .pos {{ color: var(--green); }}
@@ -352,6 +382,88 @@ def factor_bar(value, max_val=100.0, height=8, width=56):
     )
 
 
+# SVG favicon embedded as data URI.
+# Gold serif "C" on dark rounded square — matches the dashboard's gold/dark theme.
+# Slight inner glow on the C from a vertical gradient.
+FAVICON_SVG = (
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
+    "<defs>"
+    "<linearGradient id='bg' x1='0' y1='0' x2='0' y2='1'>"
+    "<stop offset='0' stop-color='#161b22'/>"
+    "<stop offset='1' stop-color='#0d1117'/>"
+    "</linearGradient>"
+    "<linearGradient id='cg' x1='0' y1='0' x2='0' y2='1'>"
+    "<stop offset='0' stop-color='#e6c25a'/>"
+    "<stop offset='1' stop-color='#b88f33'/>"
+    "</linearGradient>"
+    "</defs>"
+    "<rect width='64' height='64' rx='12' fill='url(#bg)' stroke='#d4a843' stroke-width='1.5'/>"
+    "<path d='M 50 22 Q 38 10 24 16 Q 8 22 8 34 Q 8 46 22 50 Q 38 54 50 42' "
+    "stroke='url(#cg)' stroke-width='7' fill='none' stroke-linecap='round'/>"
+    "<circle cx='50' cy='22' r='3.5' fill='#3fb950'/>"
+    "</svg>"
+)
+import urllib.parse as _up
+FAVICON_HREF = "data:image/svg+xml;utf8," + _up.quote(FAVICON_SVG)
+
+
+def score_cell_with_popover(score, label, factors, trend, setup):
+    """First-column cell: score + hover-popover with 5 factor bars + label rule."""
+    if score is None:
+        return '<td class="score-cell" data-val="-1"><span class="unav">—</span></td>'
+    # Determine label pill style + class
+    short = "Wa"
+    if label == "Research candidate": short = "Rc"
+    elif label == "Avoid": short = "Av"
+    elif label == "Watchlist": short = "Wa"
+    # Build factor rows (5 of them)
+    f_rows = []
+    factor_defs = [
+        ("Fundamental Health", factors.get("fundamental_health"), 25),
+        ("Technical Momentum", factors.get("technical_momentum"), 25),
+        ("Volatility Regime",   factors.get("volatility_regime"), 15),
+        ("Setup Quality",        factors.get("setup_quality"), 25),
+        ("Sentiment / Catalyst", factors.get("sentiment_catalyst"), 10),
+    ]
+    for name, val, weight in factor_defs:
+        if val is None:
+            f_rows.append(
+                f'<div class="popover-row"><span class="name">{name}</span>'
+                f'<span class="bar"></span><span class="val">—</span></div>'
+            )
+            continue
+        pct = max(0, min(100, val))
+        color = PAL["gold"] if pct >= 70 else (PAL["blue"] if pct >= 40 else (PAL["yellow"] if pct >= 20 else PAL["red"]))
+        f_rows.append(
+            f'<div class="popover-row"><span class="name">{name} <span style="color:var(--muted);font-size:9px">({weight}%)</span></span>'
+            f'<span class="bar"><span class="bar-fill" style="width:{pct:.0f}%;background:{color};"></span></span>'
+            f'<span class="val">{val:.0f}</span></div>'
+        )
+    # Label rule explanation
+    if label == "Research candidate":
+        rule = f'<strong>Score {score:.0f}</strong> ≥ 70 &nbsp;+&nbsp; trend = {trend} &nbsp;+&nbsp; setup = {setup.replace("_", " ")} &nbsp;→&nbsp; Research candidate'
+    elif label == "Avoid":
+        rule = f'<strong>Score {score:.0f}</strong> ≤ 30 &nbsp;+&nbsp; trend = {trend} &nbsp;→&nbsp; Avoid'
+    else:
+        rule = f'<strong>Score {score:.0f}</strong> &nbsp;+&nbsp; trend = {trend} &nbsp;→&nbsp; Watchlist'
+    popover_html = (
+        '<div class="popover">'
+        '<div class="popover-title">ClawRank Breakdown</div>'
+        + "".join(f_rows) +
+        '<div class="popover-divider"></div>'
+        f'<div class="popover-rule">{rule}</div>'
+        '<span class="popover-trigger-hint">hover to keep visible · click row to pin</span>'
+        '</div>'
+    )
+    return (
+        f'<td class="score-cell" data-val="{score:.2f}">'
+        f'<span class="score-big">{score:.0f}</span>'
+        f'<span class="score-label-pill {short}">{label}</span>'
+        f'{popover_html}'
+        f'</td>'
+    )
+
+
 def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     by_ticker = {r["ticker"]: r for r in rows}
     clawrank_by_ticker = {r["ticker"]: r for r in (clawrank_data or [])}
@@ -364,31 +476,54 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     avoid = sum(1 for kr in clawrank_by_ticker.values() if kr.get("clawrank_label") == "Avoid")
     spy = by_ticker.get("SPY", {})
 
-    # Section 1 — Market & Sectors (compact, no per-row factors here; they're in section 2)
+    # Column index legend (kept consistent for chip filter + sort handlers):
+    # Table 1 (Market & Sectors) — 19 cols
+    #   0 = ClawRank Score (first col)
+    #   1 = Ticker
+    #   2 = Group/Sector
+    #   3 = Price  (chip-filtered here? no — Trend is col 4 below)
+    #   4 = Trend  (chip filter target)
+    #   5..14 = Support, Resistance, %→S, %→R, 20D SD, Ann.Vol, ATR$, Rng%ile, RS v SPY, 60D spark
+    #   15, 16 = 1σ 1d, 1σ 1mo
+    #   17 = Outlook
+    # Table 2 (Stock Shortlist) — 14 cols
+    #   0 = ClawRank Score (first col)
+    #   1 = Ticker
+    #   2 = Sector
+    #   3 = Price
+    #   4 = Trend
+    #   5 = Setup
+    #   6, 7, 8 = RS v SPY, 20D SD, ADV
+    #   9 = 60D spark
+    #   10 = 1σ/2σ/3σ
+    #   11 = Outlook
+
+    # Section 1 — Market & Sectors
     t1 = []
     for t in BENCHMARKS + SECTOR_ETFS:
         if t not in by_ticker: continue
         m = by_ticker[t]
         spark = sparkline_svg(sparkline_data[t], m["sd_20"], m["spot"])
-        def srange(h, k):
-            lo = m["spot"] - k * m["spot"] * m["sd_20"] * math.sqrt(h / TRADING_DAYS)
-            hi = m["spot"] + k * m["spot"] * m["sd_20"] * math.sqrt(h / TRADING_DAYS)
-            return lo, hi
-        s1d = srange(1, 1); s1w = srange(5, 1); s1mo = srange(21, 1)
+        s1d = (m["spot"] - 1 * m["spot"] * m["sd_20"] * math.sqrt(1 / TRADING_DAYS),
+               m["spot"] + 1 * m["spot"] * m["sd_20"] * math.sqrt(1 / TRADING_DAYS))
+        s1mo = (m["spot"] - 1 * m["spot"] * m["sd_20"] * math.sqrt(21 / TRADING_DAYS),
+                m["spot"] + 1 * m["spot"] * m["sd_20"] * math.sqrt(21 / TRADING_DAYS))
         pct_s = m["spot"] / m["support"] - 1
         pct_r = m["resistance"] / m["spot"] - 1
         rng = m["range_pctile"] if m["range_pctile"] is not None else -1
         rs = m["rs_vs_spy"] if m["rs_vs_spy"] is not None else -999
-        # ClawRank cells (if available)
+        # ClawRank data
         kr = clawrank_by_ticker.get(t)
         cr_score = kr.get("clawrank_score") if kr else None
         cr_label = kr.get("clawrank_label", "—") if kr else "—"
-        if cr_label == "Research candidate": lbl_class = "label-Rc"
-        elif cr_label == "Avoid": lbl_class = "label-Av"
-        elif cr_label == "Watchlist": lbl_class = "label-Wa"
-        else: lbl_class = ""
+        factors = {k.replace("clawrank_", ""): kr.get(k) for k in
+                   ("clawrank_fundamental_health", "clawrank_technical_momentum",
+                    "clawrank_volatility_regime", "clawrank_setup_quality",
+                    "clawrank_sentiment_catalyst")} if kr else {}
+        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"])
         t1.append(f"""
         <tr>
+          {score_td}
           <td class="ticker-cell">{m['ticker']}</td>
           <td>{BENCH_GROUP.get(t, SECTOR_GROUP.get(t, ''))}</td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
@@ -405,12 +540,10 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
           <td class="spark-cell">{spark}</td>
           <td data-val="{s1d[0]:.2f}">{s1d[0]:.2f}–{s1d[1]:.2f}</td>
           <td data-val="{s1mo[0]:.2f}">{s1mo[0]:.2f}–{s1mo[1]:.2f}</td>
-          <td class="factor-cell" data-val="{cr_score if cr_score is not None else -1}">{factor_bar(cr_score)}</td>
-          <td class="{lbl_class}" data-val="{cr_label}">{cr_label}</td>
           <td>{outlook_for(m)}</td>
         </tr>""")
 
-    # Section 2 — Stock Shortlist with ClawRank factor breakdown
+    # Section 2 — Stock Shortlist (ClawRank breakdown in popover only)
     t2 = []
     for sym, sector in STOCKS:
         if sym not in by_ticker: continue
@@ -426,21 +559,17 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
                     f'2σ:{s2w_lo:.2f}–{s2w_hi:.2f}  '
                     f'3σ:{s3w_lo:.2f}–{s3w_hi:.2f}')
         rs = m["rs_vs_spy"] if m["rs_vs_spy"] is not None else -999
-        rng = m["range_pctile"] if m["range_pctile"] is not None else -1
         kr = clawrank_by_ticker.get(sym)
         cr_score = kr.get("clawrank_score") if kr else None
         cr_label = kr.get("clawrank_label", "—") if kr else "—"
-        if cr_label == "Research candidate": lbl_class = "label-Rc"
-        elif cr_label == "Avoid": lbl_class = "label-Av"
-        elif cr_label == "Watchlist": lbl_class = "label-Wa"
-        else: lbl_class = ""
-        fund_f = kr.get("clawrank_fundamental_health") if kr else None
-        tech_f = kr.get("clawrank_technical_momentum") if kr else None
-        vol_f = kr.get("clawrank_volatility_regime") if kr else None
-        set_f = kr.get("clawrank_setup_quality") if kr else None
-        sent_f = kr.get("clawrank_sentiment_catalyst") if kr else None
+        factors = {k.replace("clawrank_", ""): kr.get(k) for k in
+                   ("clawrank_fundamental_health", "clawrank_technical_momentum",
+                    "clawrank_volatility_regime", "clawrank_setup_quality",
+                    "clawrank_sentiment_catalyst")} if kr else {}
+        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"])
         t2.append(f"""
         <tr>
+          {score_td}
           <td class="ticker-cell">{m['ticker']}</td>
           <td>{sector}</td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
@@ -451,15 +580,6 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
           <td data-val="{m['adv_usd']/1e6:.0f}">{fmt_adv(m['adv_usd'])}</td>
           <td class="spark-cell">{spark}</td>
           <td>{sig_text}</td>
-          <td class="factor-cell" data-val="{fund_f if fund_f is not None else -1}">{factor_bar(fund_f)}</td>
-          <td class="factor-cell" data-val="{tech_f if tech_f is not None else -1}">{factor_bar(tech_f)}</td>
-          <td class="factor-cell" data-val="{vol_f if vol_f is not None else -1}">{factor_bar(vol_f)}</td>
-          <td class="factor-cell" data-val="{set_f if set_f is not None else -1}">{factor_bar(set_f)}</td>
-          <td class="factor-cell" data-val="{sent_f if sent_f is not None else -1}">{factor_bar(sent_f)}</td>
-          <td class="factor-cell" data-val="{cr_score if cr_score is not None else -1}">
-            <span class="score-big">{f'{cr_score:.0f}' if cr_score is not None else '—'}</span>
-          </td>
-          <td class="{lbl_class}" data-val="{cr_label}">{cr_label}</td>
           <td>{outlook_for(m)}</td>
         </tr>""")
 
@@ -469,8 +589,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
         f'<span><span class="swatch" style="background:{PAL["yellow"]}33;border:1px solid {PAL["yellow"]}"></span>±2σ band</span>'
         f'<span><span class="swatch" style="background:{PAL["blue"]}44;border:1px solid {PAL["blue"]}"></span>±1σ band</span>'
         f'<span><span class="swatch" style="background:{PAL["gold"]}"></span>Price line</span>'
-        '<span><span class="swatch" style="background:var(--gold);width:10px;height:10px;border-radius:50%"></span>ClawRank factor bars (gold ≥70, blue ≥40, yellow ≥20, red &lt;20)</span>'
-        '<span style="margin-left:auto;color:var(--muted)">Sigma = spot ± N·σ·√(h/252) · descriptive only, not predictive</span>'
+        '<span style="margin-left:auto;color:var(--muted)"><strong>Hover any ClawRank score</strong> to see 5-factor breakdown + label rule · Sigma = spot ± N·σ·√(h/252) descriptive only</span>'
         '</div>'
     )
 
@@ -501,6 +620,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Market Dashboard — {as_of.strftime('%Y-%m-%d')}</title>
+<link rel="icon" type="image/svg+xml" href="{FAVICON_HREF}">
 <style>{CSS}</style>
 </head><body>
 <header>
@@ -553,7 +673,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 
 <div class="card">
   <div class="card-header"><div class="dot" style="background:var(--blue)"></div> 1) Market & Sectors (3 benchmarks + 11 sector ETFs)</div>
-  <div class="controls chip-group" data-table="t1" data-col="3">
+  <div class="controls chip-group" data-table="t1" data-col="4">
     <span class="chip active" data-val="">All trends</span>
     <span class="chip" data-val="uptrend">uptrend</span>
     <span class="chip" data-val="downtrend">downtrend</span>
@@ -563,21 +683,21 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
   <div style="overflow-x:auto">
   <table id="t1">
     <thead><tr>
+      <th class="sortable" onclick="sortTable('t1',0,'num')">ClawRank</th>
       <th>Ticker</th><th>Group / Sector</th>
-      <th class="sortable" onclick="sortTable('t1',2,'num')">Price</th>
+      <th class="sortable" onclick="sortTable('t1',3,'num')">Price</th>
       <th>Trend</th>
-      <th class="sortable" onclick="sortTable('t1',4,'num')">Support</th>
-      <th class="sortable" onclick="sortTable('t1',5,'num')">Resistance</th>
+      <th class="sortable" onclick="sortTable('t1',5,'num')">Support</th>
+      <th class="sortable" onclick="sortTable('t1',6,'num')">Resistance</th>
       <th>%→S</th><th>%→R</th>
-      <th class="sortable" onclick="sortTable('t1',8,'num')">20D SD</th>
-      <th class="sortable" onclick="sortTable('t1',9,'num')">Ann.Vol</th>
+      <th class="sortable" onclick="sortTable('t1',9,'num')">20D SD</th>
+      <th class="sortable" onclick="sortTable('t1',10,'num')">Ann.Vol</th>
       <th>ATR$</th>
-      <th class="sortable" onclick="sortTable('t1',11,'num')">Rng%ile</th>
-      <th class="sortable" onclick="sortTable('t1',12,'num')">RS v SPY</th>
+      <th class="sortable" onclick="sortTable('t1',12,'num')">Rng%ile</th>
+      <th class="sortable" onclick="sortTable('t1',13,'num')">RS v SPY</th>
       <th>60D + σ-bands</th>
       <th>1σ 1d</th><th>1σ 1mo</th>
-      <th class="sortable" onclick="sortTable('t1',16,'num')">ClawRank</th>
-      <th>Label</th><th>Outlook</th>
+      <th>Outlook</th>
     </tr></thead>
     <tbody>{''.join(t1)}</tbody>
   </table>
@@ -586,40 +706,35 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 </div>
 
 <div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Stock Shortlist with ClawRank Factor Breakdown (8 names)</div>
-  <div class="controls chip-group" data-table="t2" data-col="16">
-    <span class="chip active" data-val="">All labels</span>
-    <span class="chip" data-val="Research candidate">Research candidate</span>
-    <span class="chip" data-val="Watchlist">Watchlist</span>
-    <span class="chip" data-val="Avoid">Avoid</span>
+  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Stock Shortlist with ClawRank Score (8 names) — <span style="text-transform:none;font-weight:400;color:var(--gold)">hover any score for 5-factor breakdown</span></div>
+  <div class="controls chip-group" data-table="t2" data-col="4">
+    <span class="chip active" data-val="">All trends</span>
+    <span class="chip" data-val="uptrend">uptrend</span>
+    <span class="chip" data-val="downtrend">downtrend</span>
+    <span class="chip" data-val="range">range</span>
+    <span class="chip" data-val="transitioning">transitioning</span>
   </div>
   <div style="overflow-x:auto">
   <table id="t2">
     <thead><tr>
+      <th class="sortable" onclick="sortTable('t2',0,'num')">ClawRank</th>
       <th>Ticker</th><th>Sector</th>
-      <th class="sortable" onclick="sortTable('t2',2,'num')">Price</th>
+      <th class="sortable" onclick="sortTable('t2',3,'num')">Price</th>
       <th>Trend</th><th>Setup</th>
-      <th class="sortable" onclick="sortTable('t2',5,'num')">RS v SPY</th>
-      <th class="sortable" onclick="sortTable('t2',6,'num')">20D SD</th>
-      <th class="sortable" onclick="sortTable('t2',7,'num')">ADV ($M)</th>
+      <th class="sortable" onclick="sortTable('t2',6,'num')">RS v SPY</th>
+      <th class="sortable" onclick="sortTable('t2',7,'num')">20D SD</th>
+      <th class="sortable" onclick="sortTable('t2',8,'num')">ADV ($M)</th>
       <th>60D + σ-bands</th>
       <th>1σ/2σ/3σ (1w)</th>
-      <th class="sortable" onclick="sortTable('t2',10,'num')">Fund</th>
-      <th class="sortable" onclick="sortTable('t2',11,'num')">Tech</th>
-      <th class="sortable" onclick="sortTable('t2',12,'num')">Vol</th>
-      <th class="sortable" onclick="sortTable('t2',13,'num')">Setup</th>
-      <th class="sortable" onclick="sortTable('t2',14,'num')">Sent</th>
-      <th class="sortable" onclick="sortTable('t2',15,'num')">Score</th>
-      <th class="sortable" onclick="sortTable('t2',16,'str')">Label</th>
       <th>Outlook</th>
     </tr></thead>
     <tbody>{''.join(t2)}</tbody>
   </table>
   </div>
   <div class="legend-row">
-    <span><span class="swatch" style="background:var(--blue);width:10px;height:10px;border-radius:50%"></span>Research candidate</span>
-    <span><span class="swatch" style="background:var(--yellow);width:10px;height:10px;border-radius:50%"></span>Watchlist</span>
-    <span><span class="swatch" style="background:var(--red);width:10px;height:10px;border-radius:50%"></span>Avoid</span>
+    <span><span class="swatch" style="background:var(--blue);width:10px;height:10px;border-radius:50%"></span>Research candidate (composite ≥70 + good setup)</span>
+    <span><span class="swatch" style="background:var(--yellow);width:10px;height:10px;border-radius:50%"></span>Watchlist (everything else)</span>
+    <span><span class="swatch" style="background:var(--red);width:10px;height:10px;border-radius:50%"></span>Avoid (composite ≤30 + downtrend)</span>
     <span style="margin-left:auto;color:var(--muted)">Factor weights: Fund 25% / Tech 25% / Vol 15% / Setup 25% / Sent 10%</span>
   </div>
 </div>
