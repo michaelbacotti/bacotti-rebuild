@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Market Dashboard — 2026-09-03</title>
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+  --border: #30363d; --text: #e6edf3; --muted: #7d8590;
+  --gold: #d4a843; --gold-dim: rgba(212,168,67,0.18); --gold-glow: rgba(212,168,67,0.08);
+  --green: #3fb950; --red: #f85149; --yellow: #d29922;
+  --blue: #58a6ff; --purple: #a371f7;
+}
+* { box-sizing: border-box; }
+body { font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+       background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; margin: 0; }
+header { background: linear-gradient(135deg, #1a1510 0%, #161b22 100%);
+          border-bottom: 1px solid rgba(212,168,67,0.3); padding: 18px 24px;
+          display: flex; align-items: center; justify-content: space-between; }
+.header-left h1 { font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: -0.3px; margin: 0; }
+.header-left .subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-badge { background: rgba(212,168,67,0.12); border: 1px solid rgba(212,168,67,0.4);
+                 border-radius: 20px; padding: 4px 12px; font-size: 10px; color: var(--gold);
+                 letter-spacing: 0.5px; font-weight: 600; }
+.header-badge.live { background: rgba(63,185,80,0.12); border-color: rgba(63,185,80,0.4); color: var(--green); }
+.last-updated { font-size: 10px; color: var(--muted); }
+.disclaimer { background: rgba(210,153,34,0.10); color: var(--yellow); padding: 10px 24px;
+              font-size: 11.5px; border-bottom: 1px solid rgba(210,153,34,0.25); }
+.disclaimer strong { color: var(--text); }
+main { padding: 16px 24px; max-width: 1700px; margin: 0 auto; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+         overflow: hidden; margin-bottom: 14px; }
+.card-header { padding: 10px 14px; border-bottom: 1px solid var(--border);
+               display: flex; align-items: center; gap: 8px; font-size: 10px;
+               font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.card-header .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.card-body { padding: 4px 0; }
+.controls { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 14px;
+            border-bottom: 1px solid var(--border); background: rgba(33,38,45,0.4); }
+.chip { padding: 4px 10px; border: 1px solid var(--border); border-radius: 20px;
+        background: var(--surface2); color: var(--muted); cursor: pointer; font-size: 11px;
+        user-select: none; transition: all 0.15s; font-weight: 600; }
+.chip:hover { border-color: var(--gold); color: var(--text); }
+.chip.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+table { width: 100%; border-collapse: collapse; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 12px; text-align: right; border-bottom: 1px solid rgba(48,54,61,0.5);
+         white-space: nowrap; }
+th { background: var(--surface); font-weight: 700; color: var(--muted);
+     cursor: pointer; user-select: none; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.6px;
+     position: sticky; top: 0; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+th.sortable:hover { color: var(--gold); }
+th.sorted-asc::after { content: ' ▲'; color: var(--gold); }
+th.sorted-desc::after { content: ' ▼'; color: var(--gold); }
+tr:hover { background: rgba(212,168,67,0.04); }
+.ticker-cell { font-weight: 700; color: var(--gold); letter-spacing: 0.3px; }
+.trend-pill { display: inline-block; padding: 2px 8px; border-radius: 10px;
+               font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+.label-Rc { color: var(--blue); font-weight: 700; }
+.label-Wa { color: var(--yellow); font-weight: 600; }
+.label-Av { color: var(--red); font-weight: 700; }
+.spark-cell { padding: 4px 8px; width: 184px; }
+.unav { color: var(--muted); font-style: italic; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+.dq { background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.25);
+      border-radius: 8px; padding: 12px 16px; font-size: 11.5px; color: var(--text); margin-top: 14px; }
+.dq h3 { margin: 0 0 8px 0; font-size: 11px; font-weight: 700; color: var(--red);
+         text-transform: uppercase; letter-spacing: 0.6px; }
+.dq code { background: var(--surface2); padding: 1px 6px; border-radius: 3px;
+           color: var(--gold); font-size: 10.5px; }
+.composite { font-size: 11px; color: var(--muted); padding: 10px 14px;
+              border-top: 1px solid var(--border); background: rgba(33,38,45,0.4); }
+.composite strong { color: var(--text); }
+.composite .badge-gold { background: var(--gold-dim); color: var(--gold);
+                          padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px; padding: 14px; border-bottom: 1px solid var(--border); background: rgba(13,17,23,0.5); }
+.kpi { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+        padding: 10px 12px; }
+.kpi-label { font-size: 9px; color: var(--muted); text-transform: uppercase;
+              letter-spacing: 0.6px; margin-bottom: 4px; font-weight: 700; }
+.kpi-value { font-size: 16px; font-weight: 700; color: var(--text); }
+.kpi-sub { font-size: 9px; color: var(--muted); margin-top: 2px; }
+.kpi.gold .kpi-value { color: var(--gold); }
+.kpi.green .kpi-value { color: var(--green); }
+.kpi.red .kpi-value { color: var(--red); }
+.kpi.blue .kpi-value { color: var(--blue); }
+footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
+          display: flex; justify-content: space-between; align-items: center; }
+.footer-text { font-size: 10px; color: var(--muted); }
+.footer-text span { color: var(--gold); }
+.legend-row { display: flex; gap: 14px; padding: 8px 14px; font-size: 10px;
+               color: var(--muted); background: var(--surface2); border-top: 1px solid var(--border); }
+.legend-row .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+                       margin-right: 4px; vertical-align: middle; }
+</style>
+</head><body>
+<header>
+  <div class="header-left">
+    <h1>Market Dashboard — September 03, 2026</h1>
+    <div class="subtitle">Daily Market & Sector Research · September 03, 2026 · Universe: 3 benchmarks + 11 sector ETFs + 8 stocks (no expansion)</div>
+  </div>
+  <div class="header-right">
+    <span class="header-badge live">RESEARCH</span>
+    <span class="last-updated">Updated Sep 03, 2026 · 18:47 UTC-04:00</span>
+  </div>
+</header>
+<div class="disclaimer">
+  <strong>Research output only — NOT a recommendation to buy, sell, or hold any security.</strong>
+  Sigma bands and 1w ranges are <strong>descriptive</strong> (spot ± N·σ·√(h/252)), not predictions or targets.
+  Danelfin columns are Unavailable this run (see DQ note).
+</div>
+<main>
+
+<!-- KPI strip -->
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — 22 instruments</div>
+  <div class="kpi-row">
+    <div class="kpi gold">
+      <div class="kpi-label">SPY Spot</div>
+      <div class="kpi-value">$773.17</div>
+      <div class="kpi-sub">RS baseline</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Uptrend / Downtrend</div>
+      <div class="kpi-value">13 <span style="color:var(--muted);font-size:11px">/</span> 5</div>
+      <div class="kpi-sub">4 transitioning</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Beating SPY (20D)</div>
+      <div class="kpi-value">7 <span style="color:var(--muted);font-size:11px">/</span> 14</div>
+      <div class="kpi-sub">beating / lagging</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">Research Candidates</div>
+      <div class="kpi-value">2</div>
+      <div class="kpi-sub">uptrend + breakout/pullback + RS≥0</div>
+    </div>
+    <div class="kpi" style="--y:var(--yellow)">
+      <div class="kpi-label">Watchlist</div>
+      <div class="kpi-value" style="color:var(--yellow)">15</div>
+      <div class="kpi-sub">constructive but no trigger</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Avoid</div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-sub">downtrend + RS &lt; −5%</div>
+    </div>
+  </div>
+</div>
+
+<!-- Market & Sectors -->
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--blue)"></div> 1) Market & Sectors (3 benchmarks + 11 sector ETFs)</div>
+  <div class="controls chip-group" data-table="t1" data-col="3">
+    <span class="chip active" data-val="">All trends</span>
+    <span class="chip" data-val="uptrend">uptrend</span>
+    <span class="chip" data-val="downtrend">downtrend</span>
+    <span class="chip" data-val="range">range</span>
+    <span class="chip" data-val="transitioning">transitioning</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table id="t1">
+    <thead><tr>
+      <th>Ticker</th><th>Group / Sector</th>
+      <th class="sortable" onclick="sortTable('t1',2,'num')">Price</th>
+      <th>Trend</th>
+      <th class="sortable" onclick="sortTable('t1',4,'num')">Support</th>
+      <th class="sortable" onclick="sortTable('t1',5,'num')">Resistance</th>
+      <th>%→S</th><th>%→R</th>
+      <th class="sortable" onclick="sortTable('t1',8,'num')">20D SD</th>
+      <th class="sortable" onclick="sortTable('t1',9,'num')">Ann.Vol</th>
+      <th>ATR$</th><th>ATR%</th>
+      <th class="sortable" onclick="sortTable('t1',12,'num')">Rng%ile</th>
+      <th class="sortable" onclick="sortTable('t1',13,'num')">RS v SPY</th>
+      <th>60D + σ-bands</th>
+      <th>1σ 1d</th><th>1σ 1w</th><th>1σ 1mo</th>
+      <th>Danelfin</th><th>Outlook</th>
+    </tr></thead>
+    <tbody>
+        <tr>
+          <td class="ticker-cell">SPY</td>
+          <td>Broad Mkt</td>
+          <td data-val="773.17">$773.17</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="759.48">$759.48</td>
+          <td data-val="779.37">$779.37</td>
+          <td class="pos" data-val="0.0180">+1.80%</td>
+          <td class="pos" data-val="0.0080">+0.80%</td>
+          <td data-val="0.00521">0.521%</td>
+          <td data-val="0.08278">8.28%</td>
+          <td data-val="5.30">$5.30</td>
+          <td data-val="0.00685">0.69%</td>
+          <td data-val="68.82851864808302">69</td>
+          <td class="" data-val="0.0000">+0.00%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="17.5" width="72.0" height="-14.2" fill="#f8514922"/><rect x="108.0" y="15.1" width="72.0" height="-9.5" fill="#d2992233"/><rect x="108.0" y="12.7" width="72.0" height="-4.7" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,31.2 6.1,28.8 9.2,21.1 12.2,23.8 15.3,29.3 18.3,25.9 21.4,27.3 24.4,33.6 27.5,33.8 30.5,33.2 33.6,36.3 36.6,29.3 39.7,25.9 42.7,26.5 45.8,27.0 48.8,23.2 51.9,25.3 54.9,26.7 58.0,23.0 61.0,21.1 64.1,24.5 67.1,22.9 70.2,21.1 73.2,23.6 76.3,27.9 79.3,28.6 82.4,25.0 85.4,25.5 88.5,30.9 91.5,30.5 94.6,30.4 97.6,29.4 100.7,36.1 103.7,28.9 106.8,25.7 109.8,19.5 112.9,11.4 115.9,12.3 119.0,13.0 122.0,10.3 125.1,10.4 128.1,11.9 131.2,10.7 134.2,7.6 137.3,8.5 140.3,10.6 143.4,13.7 146.4,12.8 149.5,16.6 152.5,14.7 155.6,16.0 158.6,14.6 161.7,14.5 164.7,11.6 167.8,12.6 170.8,13.9 173.9,17.0 176.9,15.0 180.0,10.3"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="10.3" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="772.92">772.92–773.42</td>
+          <td data-val="772.60">772.60–773.74</td>
+          <td data-val="772.01">772.01–774.33</td>
+          <td class="unav">Unavail</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">QQQ</td>
+          <td>Tech</td>
+          <td data-val="717.67">$717.67</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td data-val="702.70">$702.70</td>
+          <td data-val="734.58">$734.58</td>
+          <td class="pos" data-val="0.0213">+2.13%</td>
+          <td class="pos" data-val="0.0236">+2.36%</td>
+          <td data-val="0.00852">0.852%</td>
+          <td data-val="0.13531">13.53%</td>
+          <td data-val="8.09">$8.09</td>
+          <td data-val="0.01128">1.13%</td>
+          <td data-val="46.95724093566804">47</td>
+          <td class="pos" data-val="0.0075">+0.75%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="24.3" width="72.0" height="-13.8" fill="#f8514922"/><rect x="108.0" y="22.0" width="72.0" height="-9.2" fill="#d2992233"/><rect x="108.0" y="19.7" width="72.0" height="-4.6" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,26.4 3.1,17.6 6.1,16.1 9.2,7.6 12.2,12.9 15.3,15.6 18.3,8.8 21.4,9.8 24.4,19.0 27.5,20.1 30.5,17.9 33.6,21.6 36.6,15.0 39.7,10.4 42.7,14.6 45.8,19.3 48.8,15.5 51.9,20.5 54.9,19.8 58.0,15.3 61.0,14.5 64.1,19.7 67.1,16.7 70.2,17.4 73.2,21.8 76.3,25.8 79.3,25.6 82.4,20.7 85.4,22.1 88.5,27.1 91.5,30.0 94.6,30.8 97.6,33.3 100.7,38.4 103.7,30.3 106.8,28.6 109.8,24.0 112.9,15.1 115.9,17.6 119.0,18.6 122.0,15.4 125.1,16.2 128.1,17.1 131.2,15.2 134.2,12.0 137.3,12.4 140.3,12.9 143.4,17.5 146.4,18.0 149.5,20.0 152.5,19.0 155.6,21.7 158.6,20.1 161.7,19.8 164.7,16.2 167.8,17.9 170.8,17.8 173.9,21.2 176.9,20.6 180.0,17.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="717.28">717.28–718.06</td>
+          <td data-val="716.81">716.81–718.53</td>
+          <td data-val="715.90">715.90–719.44</td>
+          <td class="unav">Unavail</td>
+          <td>Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">IWM</td>
+          <td>Small Cap</td>
+          <td data-val="295.19">$295.19</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td data-val="289.97">$289.97</td>
+          <td data-val="305.18">$305.18</td>
+          <td class="pos" data-val="0.0180">+1.80%</td>
+          <td class="pos" data-val="0.0338">+3.38%</td>
+          <td data-val="0.00807">0.807%</td>
+          <td data-val="0.12814">12.81%</td>
+          <td data-val="2.92">$2.92</td>
+          <td data-val="0.00990">0.99%</td>
+          <td data-val="34.31955393347927">34</td>
+          <td class="neg" data-val="-0.0336">-3.36%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="30.4" width="72.0" height="-19.2" fill="#f8514922"/><rect x="108.0" y="27.2" width="72.0" height="-12.8" fill="#d2992233"/><rect x="108.0" y="24.0" width="72.0" height="-6.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,27.2 6.1,23.8 9.2,21.6 12.2,25.0 15.3,27.9 18.3,20.3 21.4,16.8 24.4,20.7 27.5,18.8 30.5,15.8 33.6,14.6 36.6,15.8 39.7,13.8 42.7,15.3 45.8,17.6 48.8,15.9 51.9,19.5 54.9,23.1 58.0,18.1 61.0,19.8 64.1,23.1 67.1,21.7 70.2,20.1 73.2,20.3 76.3,22.4 79.3,24.7 82.4,19.0 85.4,22.7 88.5,25.0 91.5,26.2 94.6,23.9 97.6,23.3 100.7,29.7 103.7,24.3 106.8,26.2 109.8,19.4 112.9,12.1 115.9,14.7 119.0,16.7 122.0,12.3 125.1,14.4 128.1,13.1 131.2,10.7 134.2,9.7 137.3,7.6 140.3,8.9 143.4,14.1 146.4,12.1 149.5,17.5 152.5,14.4 155.6,17.1 158.6,15.4 161.7,15.8 164.7,14.6 167.8,20.1 170.8,22.5 173.9,27.0 176.9,22.4 180.0,20.8"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="20.8" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="295.04">295.04–295.34</td>
+          <td data-val="294.85">294.85–295.53</td>
+          <td data-val="294.50">294.50–295.88</td>
+          <td class="unav">Unavail</td>
+          <td>Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLB</td>
+          <td>Materials</td>
+          <td data-val="52.62">$52.62</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="51.75">$51.75</td>
+          <td data-val="54.19">$54.19</td>
+          <td class="pos" data-val="0.0168">+1.68%</td>
+          <td class="pos" data-val="0.0298">+2.98%</td>
+          <td data-val="0.00974">0.974%</td>
+          <td data-val="0.15458">15.46%</td>
+          <td data-val="0.79">$0.79</td>
+          <td data-val="0.01506">1.51%</td>
+          <td data-val="35.65571399760174">36</td>
+          <td class="neg" data-val="-0.0235">-2.35%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="27.2" width="72.0" height="-23.3" fill="#f8514922"/><rect x="108.0" y="23.3" width="72.0" height="-15.6" fill="#d2992233"/><rect x="108.0" y="19.4" width="72.0" height="-7.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,26.1 6.1,18.9 9.2,16.4 12.2,14.8 15.3,20.1 18.3,21.7 21.4,23.1 24.4,28.8 27.5,26.6 30.5,21.4 33.6,23.3 36.6,30.4 39.7,29.1 42.7,27.7 45.8,20.2 48.8,20.4 51.9,23.9 54.9,34.2 58.0,33.4 61.0,28.7 64.1,31.0 67.1,30.5 70.2,31.6 73.2,28.7 76.3,31.4 79.3,35.2 82.4,34.6 85.4,29.2 88.5,33.2 91.5,25.8 94.6,24.9 97.6,17.7 100.7,22.2 103.7,23.0 106.8,32.1 109.8,27.7 112.9,20.2 115.9,15.4 119.0,18.9 122.0,13.7 125.1,11.3 128.1,10.8 131.2,15.8 134.2,17.9 137.3,16.1 140.3,18.4 143.4,21.9 146.4,16.3 149.5,17.0 152.5,8.5 155.6,8.2 158.6,8.2 161.7,7.6 164.7,10.9 167.8,11.3 170.8,15.0 173.9,19.7 176.9,13.0 180.0,15.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="15.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="52.59">52.59–52.65</td>
+          <td data-val="52.55">52.55–52.69</td>
+          <td data-val="52.47">52.47–52.77</td>
+          <td class="unav">Unavail</td>
+          <td>Uptrend w/ healthy pullback near 50D</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLC</td>
+          <td>Comm Services</td>
+          <td data-val="113.38">$113.38</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="109.89">$109.89</td>
+          <td data-val="114.29">$114.29</td>
+          <td class="pos" data-val="0.0317">+3.17%</td>
+          <td class="pos" data-val="0.0080">+0.80%</td>
+          <td data-val="0.01024">1.024%</td>
+          <td data-val="0.16261">16.26%</td>
+          <td data-val="1.54">$1.54</td>
+          <td data-val="0.01354">1.35%</td>
+          <td data-val="79.29458981845704">79</td>
+          <td class="pos" data-val="0.0214">+2.14%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="21.0" width="72.0" height="-21.0" fill="#f8514922"/><rect x="108.0" y="16.5" width="72.0" height="-16.5" fill="#d2992233"/><rect x="108.0" y="12.0" width="72.0" height="-9.0" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,16.7 3.1,12.4 6.1,14.2 9.2,12.2 12.2,11.7 15.3,23.7 18.3,22.7 21.4,32.7 24.4,31.1 27.5,34.0 30.5,37.7 33.6,35.4 36.6,28.8 39.7,31.7 42.7,21.6 45.8,22.2 48.8,19.8 51.9,16.7 54.9,22.7 58.0,18.6 61.0,14.3 64.1,14.5 67.1,15.0 70.2,7.6 73.2,10.4 76.3,18.1 79.3,17.5 82.4,20.5 85.4,23.7 88.5,38.4 91.5,34.9 94.6,29.6 97.6,21.9 100.7,22.5 103.7,33.8 106.8,27.4 109.8,15.4 112.9,12.7 115.9,17.2 119.0,16.1 122.0,15.8 125.1,13.5 128.1,15.7 131.2,19.6 134.2,10.8 137.3,9.2 140.3,17.4 143.4,18.8 146.4,15.5 149.5,18.0 152.5,15.2 155.6,11.7 158.6,8.3 161.7,10.5 164.7,15.2 167.8,9.1 170.8,15.0 173.9,17.2 176.9,11.3 180.0,7.6"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="7.6" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="113.31">113.31–113.45</td>
+          <td data-val="113.22">113.22–113.54</td>
+          <td data-val="113.04">113.04–113.72</td>
+          <td class="unav">Unavail</td>
+          <td>Trend extension; new 20D high</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLE</td>
+          <td>Energy</td>
+          <td data-val="64.62">$64.62</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="57.11">$57.11</td>
+          <td data-val="65.52">$65.52</td>
+          <td class="pos" data-val="0.1315">+13.15%</td>
+          <td class="pos" data-val="0.0139">+1.39%</td>
+          <td data-val="0.01376">1.376%</td>
+          <td data-val="0.21848">21.85%</td>
+          <td data-val="1.15">$1.15</td>
+          <td data-val="0.01787">1.79%</td>
+          <td data-val="89.29852174741339">89</td>
+          <td class="pos" data-val="0.0536">+5.36%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="15.5" width="72.0" height="-13.4" fill="#f8514922"/><rect x="108.0" y="13.2" width="72.0" height="-8.9" fill="#d2992233"/><rect x="108.0" y="11.0" width="72.0" height="-4.5" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,24.8 3.1,27.6 6.1,26.5 9.2,31.6 12.2,32.0 15.3,33.8 18.3,36.0 21.4,35.3 24.4,34.3 27.5,36.5 30.5,35.2 33.6,35.9 36.6,36.5 39.7,37.7 42.7,38.4 45.8,37.4 48.8,37.6 51.9,33.8 54.9,31.4 58.0,33.4 61.0,32.7 64.1,28.6 67.1,28.0 70.2,29.2 73.2,27.9 76.3,26.2 79.3,25.6 82.4,24.1 85.4,22.4 88.5,21.9 91.5,21.3 94.6,24.5 97.6,26.5 100.7,23.8 103.7,23.0 106.8,21.5 109.8,23.4 112.9,24.1 115.9,27.1 119.0,25.0 122.0,26.7 125.1,19.9 128.1,18.0 131.2,17.8 134.2,17.7 137.3,15.6 140.3,13.9 143.4,11.1 146.4,11.4 149.5,11.0 152.5,11.2 155.6,12.6 158.6,15.2 161.7,14.3 164.7,14.6 167.8,13.6 170.8,10.4 173.9,8.4 176.9,7.6 180.0,8.8"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="8.8" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="64.56">64.56–64.68</td>
+          <td data-val="64.49">64.49–64.75</td>
+          <td data-val="64.36">64.36–64.88</td>
+          <td class="unav">Unavail</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLF</td>
+          <td>Financials</td>
+          <td data-val="58.56">$58.56</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="56.91">$56.91</td>
+          <td data-val="58.60">$58.60</td>
+          <td class="pos" data-val="0.0290">+2.90%</td>
+          <td class="pos" data-val="0.0007">+0.07%</td>
+          <td data-val="0.00742">0.742%</td>
+          <td data-val="0.11783">11.78%</td>
+          <td data-val="0.60">$0.60</td>
+          <td data-val="0.01022">1.02%</td>
+          <td data-val="97.63330572001905">98</td>
+          <td class="neg" data-val="-0.0151">-1.51%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="13.9" width="72.0" height="-12.7" fill="#f8514922"/><rect x="108.0" y="11.8" width="72.0" height="-8.5" fill="#d2992233"/><rect x="108.0" y="9.7" width="72.0" height="-4.2" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,36.5 6.1,33.0 9.2,32.0 12.2,28.1 15.3,29.6 18.3,31.9 21.4,31.3 24.4,30.4 27.5,31.2 30.5,32.5 33.6,31.9 36.6,31.2 39.7,31.7 42.7,26.0 45.8,21.9 48.8,19.4 51.9,19.8 54.9,25.1 58.0,22.3 61.0,21.5 64.1,19.7 67.1,19.2 70.2,17.3 73.2,16.4 76.3,18.8 79.3,19.9 82.4,19.5 85.4,19.8 88.5,20.9 91.5,18.5 94.6,15.8 97.6,12.2 100.7,16.7 103.7,15.2 106.8,15.5 109.8,13.3 112.9,10.9 115.9,10.3 119.0,11.2 122.0,12.2 125.1,11.2 128.1,11.3 131.2,10.7 134.2,9.0 137.3,9.5 140.3,12.3 143.4,11.1 146.4,12.8 149.5,15.4 152.5,12.8 155.6,9.2 158.6,8.8 161.7,9.0 164.7,10.9 167.8,9.8 170.8,11.7 173.9,14.2 176.9,11.9 180.0,7.6"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="7.6" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="58.53">58.53–58.59</td>
+          <td data-val="58.50">58.50–58.62</td>
+          <td data-val="58.43">58.43–58.69</td>
+          <td class="unav">Unavail</td>
+          <td>Trend extension; new 20D high</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLI</td>
+          <td>Industrials</td>
+          <td data-val="174.56">$174.56</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="171.62">$171.62</td>
+          <td data-val="187.41">$187.41</td>
+          <td class="pos" data-val="0.0171">+1.71%</td>
+          <td class="pos" data-val="0.0736">+7.36%</td>
+          <td data-val="0.00766">0.766%</td>
+          <td data-val="0.12166">12.17%</td>
+          <td data-val="2.24">$2.24</td>
+          <td data-val="0.01284">1.28%</td>
+          <td data-val="18.619384739673023">19</td>
+          <td class="neg" data-val="-0.0639">-6.39%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="36.8" width="72.0" height="-14.7" fill="#f8514922"/><rect x="108.0" y="34.4" width="72.0" height="-9.8" fill="#d2992233"/><rect x="108.0" y="31.9" width="72.0" height="-4.9" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,28.4 6.1,26.5 9.2,21.9 12.2,19.8 15.3,20.2 18.3,17.8 21.4,16.2 24.4,22.9 27.5,19.1 30.5,11.9 33.6,17.3 36.6,14.4 39.7,9.9 42.7,13.3 45.8,12.3 48.8,9.3 51.9,15.1 54.9,18.7 58.0,17.5 61.0,16.0 64.1,18.8 67.1,18.7 70.2,19.4 73.2,19.2 76.3,20.6 79.3,22.9 82.4,21.9 85.4,21.6 88.5,15.9 91.5,14.6 94.6,13.6 97.6,14.9 100.7,25.6 103.7,22.4 106.8,19.8 109.8,13.7 112.9,7.8 115.9,7.9 119.0,10.8 122.0,10.0 125.1,11.1 128.1,9.0 131.2,8.7 134.2,8.9 137.3,7.6 140.3,7.9 143.4,12.9 146.4,15.9 149.5,19.9 152.5,19.0 155.6,21.3 158.6,22.4 161.7,18.9 164.7,21.7 167.8,24.7 170.8,28.4 173.9,32.8 176.9,32.7 180.0,29.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="29.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="174.48">174.48–174.64</td>
+          <td data-val="174.37">174.37–174.75</td>
+          <td data-val="174.17">174.17–174.95</td>
+          <td class="unav">Unavail</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLK</td>
+          <td>Technology</td>
+          <td data-val="185.97">$185.97</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td data-val="178.82">$178.82</td>
+          <td data-val="191.75">$191.75</td>
+          <td class="pos" data-val="0.0400">+4.00%</td>
+          <td class="pos" data-val="0.0311">+3.11%</td>
+          <td data-val="0.01348">1.348%</td>
+          <td data-val="0.21402">21.40%</td>
+          <td data-val="3.19">$3.19</td>
+          <td data-val="0.01714">1.71%</td>
+          <td data-val="55.29774127310062">55</td>
+          <td class="pos" data-val="0.0158">+1.58%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="24.1" width="72.0" height="-18.2" fill="#f8514922"/><rect x="108.0" y="21.1" width="72.0" height="-12.1" fill="#d2992233"/><rect x="108.0" y="18.0" width="72.0" height="-6.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,26.3 3.1,18.4 6.1,16.4 9.2,8.0 12.2,14.5 15.3,15.2 18.3,8.4 21.4,7.6 24.4,17.2 27.5,18.5 30.5,16.7 33.6,20.9 36.6,15.7 39.7,9.5 42.7,15.4 45.8,21.5 48.8,17.9 51.9,23.2 54.9,20.5 58.0,15.8 61.0,15.2 64.1,20.7 67.1,17.9 70.2,20.3 73.2,25.2 76.3,27.6 79.3,27.4 82.4,21.3 85.4,21.9 88.5,24.1 91.5,27.2 94.6,29.1 97.6,33.0 100.7,38.4 103.7,27.4 106.8,27.8 109.8,24.6 112.9,13.9 115.9,15.1 119.0,15.8 122.0,12.6 125.1,14.6 128.1,14.9 131.2,11.5 134.2,9.2 137.3,10.1 140.3,9.8 143.4,15.4 146.4,17.8 149.5,18.5 152.5,18.2 155.6,22.2 158.6,20.1 161.7,18.8 164.7,11.8 167.8,15.4 170.8,14.4 173.9,17.8 176.9,17.9 180.0,15.0"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="15.0" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="185.81">185.81–186.13</td>
+          <td data-val="185.62">185.62–186.32</td>
+          <td data-val="185.25">185.25–186.69</td>
+          <td class="unav">Unavail</td>
+          <td>Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLP</td>
+          <td>Consumer Staples</td>
+          <td data-val="85.26">$85.26</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="84.01">$84.01</td>
+          <td data-val="87.47">$87.47</td>
+          <td class="pos" data-val="0.0149">+1.49%</td>
+          <td class="pos" data-val="0.0259">+2.59%</td>
+          <td data-val="0.00918">0.918%</td>
+          <td data-val="0.14566">14.57%</td>
+          <td data-val="1.02">$1.02</td>
+          <td data-val="0.01200">1.20%</td>
+          <td data-val="36.127177189427336">36</td>
+          <td class="neg" data-val="-0.0449">-4.49%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="34.1" width="72.0" height="-27.5" fill="#f8514922"/><rect x="108.0" y="29.6" width="72.0" height="-18.3" fill="#d2992233"/><rect x="108.0" y="25.0" width="72.0" height="-9.2" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,19.0 3.1,20.3 6.1,17.1 9.2,19.1 12.2,18.5 15.3,29.7 18.3,31.9 21.4,38.4 24.4,29.4 27.5,25.2 30.5,28.1 33.6,23.6 36.6,25.6 39.7,33.2 42.7,31.9 45.8,22.0 48.8,27.2 51.9,22.7 54.9,25.5 58.0,32.5 61.0,27.1 64.1,24.3 67.1,31.2 70.2,30.9 73.2,17.2 76.3,20.8 79.3,22.7 82.4,27.4 85.4,25.5 88.5,32.4 91.5,27.0 94.6,19.8 97.6,9.8 100.7,8.1 103.7,19.2 106.8,21.6 109.8,22.7 112.9,19.7 115.9,20.0 119.0,21.3 122.0,21.2 125.1,22.2 128.1,23.7 131.2,21.4 134.2,16.1 137.3,15.5 140.3,23.8 143.4,18.5 146.4,12.9 149.5,20.0 152.5,16.1 155.6,7.6 158.6,13.0 161.7,14.5 164.7,21.4 167.8,19.3 170.8,22.0 173.9,20.5 176.9,18.8 180.0,20.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="20.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="85.21">85.21–85.31</td>
+          <td data-val="85.15">85.15–85.37</td>
+          <td data-val="85.03">85.03–85.49</td>
+          <td class="unav">Unavail</td>
+          <td>Uptrend w/ healthy pullback near 50D</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLRE</td>
+          <td>Real Estate</td>
+          <td data-val="44.25">$44.25</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="43.56">$43.56</td>
+          <td data-val="45.47">$45.47</td>
+          <td class="pos" data-val="0.0157">+1.57%</td>
+          <td class="pos" data-val="0.0275">+2.75%</td>
+          <td data-val="0.00776">0.776%</td>
+          <td data-val="0.12315">12.31%</td>
+          <td data-val="0.49">$0.49</td>
+          <td data-val="0.01100">1.10%</td>
+          <td data-val="36.05267490372916">36</td>
+          <td class="neg" data-val="-0.0656">-6.56%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="45.3" width="72.0" height="-27.9" fill="#f8514922"/><rect x="108.0" y="40.7" width="72.0" height="-18.6" fill="#d2992233"/><rect x="108.0" y="36.0" width="72.0" height="-9.3" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,21.4 3.1,22.3 6.1,16.4 9.2,21.4 12.2,19.9 15.3,35.2 18.3,36.7 21.4,34.5 24.4,26.1 27.5,27.9 30.5,26.8 33.6,18.0 36.6,22.3 39.7,34.4 42.7,32.3 45.8,25.6 48.8,30.9 51.9,22.7 54.9,32.8 58.0,31.7 61.0,28.7 64.1,25.3 67.1,28.3 70.2,27.2 73.2,15.0 76.3,15.6 79.3,18.1 82.4,18.5 85.4,21.1 88.5,21.9 91.5,8.4 94.6,10.9 97.6,7.6 100.7,8.2 103.7,17.2 106.8,20.3 109.8,18.8 112.9,18.9 115.9,18.5 119.0,23.8 122.0,21.5 125.1,29.4 128.1,33.7 131.2,28.1 134.2,19.6 137.3,17.6 140.3,23.5 143.4,26.3 146.4,21.4 149.5,20.2 152.5,20.2 155.6,16.8 158.6,16.4 161.7,20.0 164.7,25.8 167.8,28.3 170.8,33.3 173.9,34.2 176.9,38.4 180.0,31.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="31.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="44.23">44.23–44.27</td>
+          <td data-val="44.20">44.20–44.30</td>
+          <td data-val="44.15">44.15–44.35</td>
+          <td class="unav">Unavail</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLU</td>
+          <td>Utilities</td>
+          <td data-val="43.03">$43.03</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="41.86">$41.86</td>
+          <td data-val="44.65">$44.65</td>
+          <td class="pos" data-val="0.0280">+2.80%</td>
+          <td class="pos" data-val="0.0376">+3.76%</td>
+          <td data-val="0.00893">0.893%</td>
+          <td data-val="0.14184">14.18%</td>
+          <td data-val="0.60">$0.60</td>
+          <td data-val="0.01401">1.40%</td>
+          <td data-val="41.935404480832176">42</td>
+          <td class="neg" data-val="-0.0789">-7.89%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="41.1" width="72.0" height="-17.5" fill="#f8514922"/><rect x="108.0" y="38.2" width="72.0" height="-11.7" fill="#d2992233"/><rect x="108.0" y="35.3" width="72.0" height="-5.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,25.0 3.1,24.6 6.1,20.9 9.2,19.3 12.2,16.9 15.3,21.5 18.3,19.2 21.4,19.5 24.4,16.8 27.5,13.3 30.5,10.9 33.6,8.2 36.6,9.6 39.7,14.8 42.7,19.1 45.8,11.6 48.8,15.1 51.9,12.0 54.9,14.6 58.0,16.4 61.0,14.3 64.1,11.9 67.1,12.1 70.2,15.7 73.2,13.8 76.3,16.1 79.3,17.8 82.4,18.0 85.4,10.3 88.5,8.3 91.5,7.6 94.6,12.2 97.6,13.4 100.7,18.1 103.7,20.0 106.8,22.3 109.8,22.2 112.9,24.1 115.9,27.6 119.0,29.7 122.0,27.9 125.1,31.6 128.1,27.8 131.2,26.2 134.2,24.7 137.3,22.6 140.3,23.6 143.4,24.8 146.4,24.8 149.5,26.7 152.5,34.3 155.6,30.9 158.6,30.2 161.7,28.7 164.7,31.2 167.8,34.6 170.8,38.4 173.9,35.9 176.9,35.1 180.0,32.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="32.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="43.01">43.01–43.05</td>
+          <td data-val="42.98">42.98–43.08</td>
+          <td data-val="42.92">42.92–43.14</td>
+          <td class="unav">Unavail</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLV</td>
+          <td>Health Care</td>
+          <td data-val="173.26">$173.26</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="162.92">$162.92</td>
+          <td data-val="176.60">$176.60</td>
+          <td class="pos" data-val="0.0635">+6.35%</td>
+          <td class="pos" data-val="0.0193">+1.93%</td>
+          <td data-val="0.01172">1.172%</td>
+          <td data-val="0.18598">18.60%</td>
+          <td data-val="2.65">$2.65</td>
+          <td data-val="0.01529">1.53%</td>
+          <td data-val="75.58472471175071">76</td>
+          <td class="pos" data-val="0.0171">+1.71%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="17.6" width="72.0" height="-14.3" fill="#f8514922"/><rect x="108.0" y="15.2" width="72.0" height="-9.5" fill="#d2992233"/><rect x="108.0" y="12.8" width="72.0" height="-4.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,34.4 3.1,32.9 6.1,33.3 9.2,34.3 12.2,34.3 15.3,36.9 18.3,38.4 21.4,37.7 24.4,35.2 27.5,33.8 30.5,31.1 33.6,25.6 36.6,25.1 39.7,27.6 42.7,26.5 45.8,21.6 48.8,23.7 51.9,20.8 54.9,23.3 58.0,23.4 61.0,25.0 64.1,24.3 67.1,28.0 70.2,28.0 73.2,23.9 76.3,24.7 79.3,26.9 82.4,25.7 85.4,26.7 88.5,24.3 91.5,23.0 94.6,22.0 97.6,17.5 100.7,18.7 103.7,21.8 106.8,23.0 109.8,23.4 112.9,23.5 115.9,21.1 119.0,20.8 122.0,19.3 125.1,16.1 128.1,16.6 131.2,16.1 134.2,16.1 137.3,17.3 140.3,17.7 143.4,14.6 146.4,7.6 149.5,11.4 152.5,8.8 155.6,8.7 158.6,8.0 161.7,10.1 164.7,12.4 167.8,12.9 170.8,13.6 173.9,12.3 176.9,10.8 180.0,10.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="10.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="173.13">173.13–173.39</td>
+          <td data-val="172.97">172.97–173.55</td>
+          <td data-val="172.67">172.67–173.85</td>
+          <td class="unav">Unavail</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XLY</td>
+          <td>Consumer Disc.</td>
+          <td data-val="116.46">$116.46</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="114.25">$114.25</td>
+          <td data-val="120.44">$120.44</td>
+          <td class="pos" data-val="0.0193">+1.93%</td>
+          <td class="pos" data-val="0.0342">+3.42%</td>
+          <td data-val="0.01060">1.060%</td>
+          <td data-val="0.16835">16.83%</td>
+          <td data-val="1.50">$1.50</td>
+          <td data-val="0.01290">1.29%</td>
+          <td data-val="35.70271749312246">36</td>
+          <td class="neg" data-val="-0.0062">-0.62%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="27.3" width="72.0" height="-20.6" fill="#f8514922"/><rect x="108.0" y="23.9" width="72.0" height="-13.7" fill="#d2992233"/><rect x="108.0" y="20.5" width="72.0" height="-6.9" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,25.3 3.1,17.5 6.1,16.6 9.2,11.1 12.2,11.5 15.3,19.7 18.3,15.1 21.4,21.2 24.4,24.5 27.5,20.9 30.5,25.7 33.6,22.8 36.6,15.2 39.7,14.7 42.7,12.5 45.8,15.2 48.8,12.7 51.9,14.4 54.9,20.2 58.0,15.9 61.0,14.8 64.1,18.2 67.1,18.6 70.2,15.5 73.2,14.6 76.3,19.9 79.3,22.2 82.4,21.4 85.4,23.8 88.5,38.4 91.5,36.6 94.6,32.7 97.6,28.1 100.7,30.5 103.7,28.3 106.8,18.0 109.8,12.1 112.9,11.9 115.9,11.0 119.0,12.5 122.0,7.6 125.1,8.1 128.1,9.3 131.2,13.0 134.2,11.5 137.3,12.2 140.3,16.2 143.4,17.3 146.4,11.1 149.5,16.4 152.5,12.7 155.6,11.9 158.6,12.9 161.7,15.1 164.7,18.6 167.8,14.9 170.8,16.7 173.9,22.2 176.9,21.5 180.0,17.0"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.0" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="116.38">116.38–116.54</td>
+          <td data-val="116.29">116.29–116.63</td>
+          <td data-val="116.10">116.10–116.82</td>
+          <td class="unav">Unavail</td>
+          <td>Uptrend w/ healthy pullback near 50D</td>
+        </tr></tbody>
+  </table>
+  </div>
+  <div class="legend-row"><span><span class="swatch" style="background:#f8514922;border:1px solid #f85149"></span>±3σ band</span><span><span class="swatch" style="background:#d2992233;border:1px solid #d29922"></span>±2σ band</span><span><span class="swatch" style="background:#58a6ff44;border:1px solid #58a6ff"></span>±1σ band</span><span><span class="swatch" style="background:#d4a843"></span>Price line</span><span style="margin-left:auto;color:var(--muted)">Sigma = spot ± N·σ·√(h/252) · descriptive only, not predictive</span></div>
+</div>
+
+<!-- Stock shortlist -->
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Stock Shortlist (sorted: Research → Watchlist → Avoid)</div>
+  <div class="controls chip-group" data-table="t2" data-col="19">
+    <span class="chip active" data-val="">All labels</span>
+    <span class="chip" data-val="Research candidate">Research candidate</span>
+    <span class="chip" data-val="Watchlist">Watchlist</span>
+    <span class="chip" data-val="Avoid">Avoid</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table id="t2">
+    <thead><tr>
+      <th>Ticker</th><th>Sector</th>
+      <th class="sortable" onclick="sortTable('t2',2,'num')">Price</th>
+      <th>Trend</th><th>Setup</th>
+      <th>Support</th><th>Resistance</th>
+      <th class="sortable" onclick="sortTable('t2',7,'num')">RS v SPY</th>
+      <th class="sortable" onclick="sortTable('t2',8,'num')">20D SD</th>
+      <th class="sortable" onclick="sortTable('t2',9,'num')">Ann.Vol</th>
+      <th>ATR$</th><th>Rng%ile</th>
+      <th class="sortable" onclick="sortTable('t2',12,'num')">ADV ($M)</th>
+      <th>60D + σ-bands</th>
+      <th>1σ/2σ/3σ (1w)</th>
+      <th>AI</th><th>Tech</th><th>Fund</th><th>Sent</th><th>LR</th>
+      <th class="sortable" onclick="sortTable('t2',19,'str')">Label</th><th>Outlook</th>
+    </tr></thead>
+    <tbody>
+        <tr>
+          <td class="ticker-cell">NVDA</td>
+          <td>Mega Tech</td>
+          <td data-val="228.45">$228.45</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>breakout</td>
+          <td data-val="207.25">$207.25</td>
+          <td data-val="230.47">$230.47</td>
+          <td class="pos" data-val="0.1289">+12.89%</td>
+          <td data-val="0.02904">2.904%</td>
+          <td data-val="0.46092">46.09%</td>
+          <td data-val="6.83">$6.83</td>
+          <td data-val="91.30058498593063">91</td>
+          <td data-val="28022912063">$28,023M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="23.5" width="72.0" height="-23.5" fill="#f8514922"/><rect x="108.0" y="18.2" width="72.0" height="-18.2" fill="#d2992233"/><rect x="108.0" y="12.9" width="72.0" height="-10.7" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,30.1 3.1,26.5 6.1,26.2 9.2,20.4 12.2,24.5 15.3,26.7 18.3,21.8 21.4,23.5 24.4,30.4 27.5,31.2 30.5,33.8 33.6,36.4 36.6,34.5 39.7,30.3 42.7,32.4 45.8,34.6 48.8,34.0 51.9,32.9 54.9,27.1 58.0,28.2 61.0,21.6 64.1,27.6 67.1,20.9 70.2,20.4 73.2,24.5 76.3,28.2 79.3,27.8 82.4,24.6 85.4,20.7 88.5,23.4 91.5,24.9 94.6,33.2 97.6,32.8 100.7,38.4 103.7,34.4 106.8,29.8 109.8,25.1 112.9,20.8 115.9,15.0 119.0,15.2 122.0,11.2 125.1,16.3 128.1,16.4 131.2,11.1 134.2,10.1 137.3,10.2 140.3,10.3 143.4,14.6 146.4,16.3 149.5,16.9 152.5,18.6 155.6,23.6 158.6,19.9 161.7,22.7 164.7,7.9 167.8,16.3 170.8,13.7 173.9,16.4 176.9,10.8 180.0,7.6"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="7.6" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:227.52–229.38  2σ:226.58–230.32  3σ:225.65–231.25</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Rc" data-val="Research candidate">Research candidate</td>
+          <td>Trend extension; new 20D high</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">MSFT</td>
+          <td>Mega Tech</td>
+          <td data-val="510.12">$510.12</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td data-val="477.15">$477.15</td>
+          <td data-val="517.78">$517.78</td>
+          <td class="pos" data-val="0.0884">+8.84%</td>
+          <td data-val="0.01392">1.392%</td>
+          <td data-val="0.22102">22.10%</td>
+          <td data-val="10.03">$10.03</td>
+          <td data-val="81.14686806397945">81</td>
+          <td data-val="11682928412">$11,683M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="12.3" width="72.0" height="-8.2" fill="#f8514922"/><rect x="108.0" y="10.9" width="72.0" height="-5.5" fill="#d2992233"/><rect x="108.0" y="9.6" width="72.0" height="-2.7" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,29.9 3.1,31.2 6.1,31.2 9.2,29.4 12.2,30.6 15.3,33.4 18.3,33.3 21.4,35.7 24.4,34.4 27.5,36.0 30.5,38.4 33.6,34.6 36.6,35.4 39.7,34.6 42.7,32.4 45.8,31.2 48.8,31.9 51.9,31.5 54.9,32.6 58.0,32.4 61.0,32.2 64.1,31.1 67.1,32.3 70.2,30.2 73.2,29.2 76.3,30.6 79.3,28.9 82.4,29.8 85.4,31.2 88.5,32.9 91.5,32.9 94.6,31.5 97.6,30.7 100.7,31.2 103.7,19.6 106.8,16.9 109.8,12.5 112.9,11.5 115.9,12.6 119.0,10.2 122.0,10.2 125.1,9.0 128.1,9.4 131.2,11.6 134.2,10.8 137.3,11.0 140.3,13.9 143.4,13.7 146.4,13.2 149.5,13.8 152.5,13.4 155.6,12.6 158.6,11.8 161.7,10.9 164.7,9.2 167.8,7.6 170.8,8.8 173.9,10.0 176.9,10.8 180.0,8.2"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="8.2" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:509.12–511.12  2σ:508.12–512.12  3σ:507.12–513.12</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Wa" data-val="Watchlist">Watchlist</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">XOM</td>
+          <td>Energy</td>
+          <td data-val="162.21">$162.21</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td data-val="151.53">$151.53</td>
+          <td data-val="168.64">$168.64</td>
+          <td class="neg" data-val="-0.0091">-0.91%</td>
+          <td data-val="0.01648">1.648%</td>
+          <td data-val="0.26154">26.15%</td>
+          <td data-val="3.38">$3.38</td>
+          <td data-val="62.41968178603629">62</td>
+          <td data-val="2279393840">$2,279M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="19.8" width="72.0" height="-16.5" fill="#f8514922"/><rect x="108.0" y="17.1" width="72.0" height="-11.0" fill="#d2992233"/><rect x="108.0" y="14.3" width="72.0" height="-5.5" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,23.5 3.1,27.6 6.1,27.2 9.2,33.5 12.2,32.5 15.3,33.6 18.3,36.6 21.4,36.0 24.4,34.7 27.5,37.6 30.5,36.9 33.6,37.9 36.6,38.4 39.7,37.8 42.7,38.2 45.8,37.4 48.8,38.1 51.9,32.7 54.9,33.2 58.0,37.0 61.0,35.5 64.1,29.8 67.1,29.2 70.2,29.8 73.2,28.3 76.3,26.8 79.3,25.8 82.4,22.4 85.4,19.6 88.5,17.1 91.5,17.0 94.6,19.2 97.6,21.0 100.7,17.2 103.7,17.0 106.8,18.6 109.8,18.9 112.9,20.1 115.9,22.5 119.0,19.2 122.0,21.0 125.1,14.1 128.1,14.1 131.2,14.1 134.2,15.3 137.3,13.8 140.3,12.4 143.4,8.2 146.4,9.0 149.5,7.6 152.5,8.6 155.6,9.7 158.6,13.2 161.7,15.7 164.7,17.5 167.8,17.2 170.8,12.9 173.9,9.2 176.9,9.6 180.0,11.6"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="11.6" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:161.83–162.59  2σ:161.46–162.96  3σ:161.08–163.34</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Wa" data-val="Watchlist">Watchlist</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">JPM</td>
+          <td>Financials</td>
+          <td data-val="362.06">$362.06</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td data-val="350.37">$350.37</td>
+          <td data-val="366.50">$366.50</td>
+          <td class="neg" data-val="-0.0105">-1.05%</td>
+          <td data-val="0.00862">0.862%</td>
+          <td data-val="0.13682">13.68%</td>
+          <td data-val="5.25">$5.25</td>
+          <td data-val="72.47364477776853">72</td>
+          <td data-val="1947454543">$1,947M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="14.4" width="72.0" height="-10.3" fill="#f8514922"/><rect x="108.0" y="12.7" width="72.0" height="-6.9" fill="#d2992233"/><rect x="108.0" y="11.0" width="72.0" height="-3.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,36.0 6.1,32.1 9.2,32.8 12.2,26.3 15.3,25.0 18.3,29.6 21.4,26.1 24.4,24.7 27.5,25.0 30.5,24.1 33.6,27.5 36.6,27.3 39.7,28.4 42.7,24.7 45.8,24.5 48.8,22.7 51.9,21.9 54.9,26.6 58.0,23.9 61.0,23.4 64.1,24.4 67.1,19.8 70.2,17.6 73.2,19.7 76.3,20.8 79.3,22.1 82.4,18.6 85.4,16.9 88.5,16.0 91.5,14.2 94.6,12.5 97.6,11.9 100.7,18.8 103.7,15.5 106.8,14.9 109.8,14.5 112.9,11.8 115.9,10.8 119.0,12.5 122.0,11.8 125.1,10.5 128.1,9.3 131.2,7.6 134.2,8.7 137.3,8.8 140.3,9.9 143.4,8.6 146.4,11.9 149.5,15.1 152.5,15.1 155.6,12.4 158.6,12.2 161.7,12.3 164.7,13.6 167.8,11.7 170.8,12.6 173.9,13.2 176.9,12.5 180.0,9.3"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="9.3" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:361.62–362.50  2σ:361.18–362.94  3σ:360.74–363.38</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Wa" data-val="Watchlist">Watchlist</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">LLY</td>
+          <td>Healthcare</td>
+          <td data-val="1159.60">$1,159.60</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td>range approach</td>
+          <td data-val="1137.50">$1,137.50</td>
+          <td data-val="1292.65">$1,292.65</td>
+          <td class="neg" data-val="-0.0384">-3.84%</td>
+          <td data-val="0.02096">2.096%</td>
+          <td data-val="0.33271">33.27%</td>
+          <td data-val="36.25">$36.25</td>
+          <td data-val="14.244261752068665">14</td>
+          <td data-val="3057524074">$3,058M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="40.5" width="72.0" height="-24.8" fill="#f8514922"/><rect x="108.0" y="36.3" width="72.0" height="-16.5" fill="#d2992233"/><rect x="108.0" y="32.2" width="72.0" height="-8.3" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,32.0 3.1,27.8 6.1,32.6 9.2,33.2 12.2,34.4 15.3,36.2 18.3,38.4 21.4,37.8 24.4,37.0 27.5,35.3 30.5,33.5 33.6,19.8 36.6,16.1 39.7,21.3 42.7,22.6 45.8,18.8 48.8,21.2 51.9,15.2 54.9,18.5 58.0,18.3 61.0,23.1 64.1,24.3 67.1,29.3 70.2,28.6 73.2,26.4 76.3,24.8 79.3,30.2 82.4,25.4 85.4,27.5 88.5,23.6 91.5,21.9 94.6,21.6 97.6,17.7 100.7,19.5 103.7,28.9 106.8,29.9 109.8,34.6 112.9,35.5 115.9,26.3 119.0,22.6 122.0,23.6 125.1,15.8 128.1,18.7 131.2,17.8 134.2,19.7 137.3,24.6 140.3,24.1 143.4,16.8 146.4,7.6 149.5,13.7 152.5,11.8 155.6,13.2 158.6,15.5 161.7,23.0 164.7,25.3 167.8,25.5 170.8,28.6 173.9,28.0 176.9,28.0 180.0,28.1"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="28.1" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:1156.18–1163.02  2σ:1152.75–1166.45  3σ:1149.33–1169.87</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Wa" data-val="Watchlist">Watchlist</td>
+          <td>Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">AAPL</td>
+          <td>Mega Tech</td>
+          <td data-val="328.21">$328.21</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>breakout</td>
+          <td data-val="300.57">$300.57</td>
+          <td data-val="330.81">$330.81</td>
+          <td class="neg" data-val="-0.0581">-5.81%</td>
+          <td data-val="0.01205">1.205%</td>
+          <td data-val="0.19137">19.14%</td>
+          <td data-val="6.49">$6.49</td>
+          <td data-val="91.40209344194797">91</td>
+          <td data-val="12329614959">$12,330M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="18.9" width="72.0" height="-11.3" fill="#f8514922"/><rect x="108.0" y="17.0" width="72.0" height="-7.5" fill="#d2992233"/><rect x="108.0" y="15.1" width="72.0" height="-3.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,30.6 3.1,28.7 6.1,30.8 9.2,28.3 12.2,27.0 15.3,28.5 18.3,27.6 21.4,28.0 24.4,29.3 27.5,29.9 30.5,38.4 33.6,34.3 36.6,35.3 39.7,31.7 42.7,29.3 45.8,22.5 48.8,20.6 51.9,21.6 54.9,20.3 58.0,18.9 61.0,19.3 64.1,18.4 67.1,19.6 70.2,13.5 73.2,10.8 76.3,10.6 79.3,14.0 82.4,13.4 85.4,14.3 88.5,16.3 91.5,10.9 94.6,9.1 97.6,7.6 100.7,8.5 103.7,10.7 106.8,22.4 109.8,25.0 112.9,22.2 115.9,21.4 119.0,20.7 122.0,20.3 125.1,22.7 128.1,24.3 131.2,25.6 134.2,24.1 137.3,23.8 140.3,24.0 143.4,21.9 146.4,18.6 149.5,21.2 152.5,22.2 155.6,21.7 158.6,21.9 161.7,20.2 164.7,19.7 167.8,17.3 170.8,18.6 173.9,14.7 176.9,14.8 180.0,13.2"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="13.2" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:327.65–328.77  2σ:327.10–329.32  3σ:326.54–329.88</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Wa" data-val="Watchlist">Watchlist</td>
+          <td>Trend extension; new 20D high</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">CAT</td>
+          <td>Industrials</td>
+          <td data-val="800.14">$800.14</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td>mean reversion</td>
+          <td data-val="771.39">$771.39</td>
+          <td data-val="887.91">$887.91</td>
+          <td class="neg" data-val="-0.0536">-5.36%</td>
+          <td data-val="0.01841">1.841%</td>
+          <td data-val="0.29229">29.23%</td>
+          <td data-val="24.86">$24.86</td>
+          <td data-val="24.67388451821653">25</td>
+          <td data-val="2019140075">$2,019M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="41.0" width="72.0" height="-9.6" fill="#f8514922"/><rect x="108.0" y="39.4" width="72.0" height="-6.4" fill="#d2992233"/><rect x="108.0" y="37.8" width="72.0" height="-3.2" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,30.1 3.1,25.6 6.1,24.2 9.2,21.7 12.2,20.5 15.3,19.3 18.3,16.1 21.4,12.2 24.4,16.3 27.5,15.2 30.5,8.4 33.6,14.8 36.6,11.0 39.7,7.6 42.7,15.5 45.8,18.5 48.8,17.8 51.9,21.0 54.9,20.2 58.0,21.2 61.0,19.7 64.1,22.0 67.1,21.8 70.2,23.8 73.2,27.8 76.3,27.5 79.3,29.2 82.4,26.5 85.4,26.5 88.5,26.0 91.5,26.6 94.6,28.3 97.6,31.8 100.7,38.1 103.7,35.2 106.8,34.6 109.8,32.9 112.9,27.9 115.9,28.5 119.0,30.0 122.0,31.6 125.1,32.1 128.1,31.5 131.2,30.2 134.2,30.3 137.3,30.1 140.3,27.4 143.4,31.8 146.4,34.4 149.5,34.5 152.5,33.2 155.6,35.0 158.6,35.0 161.7,33.8 164.7,34.4 167.8,36.2 170.8,36.5 173.9,38.4 176.9,37.0 180.0,36.2"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="36.2" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:798.06–802.22  2σ:795.99–804.29  3σ:793.91–806.37</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Av" data-val="Avoid">Avoid</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="ticker-cell">HD</td>
+          <td>Consumer Disc.</td>
+          <td data-val="318.07">$318.07</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td>mean reversion</td>
+          <td data-val="315.21">$315.21</td>
+          <td data-val="358.36">$358.36</td>
+          <td class="neg" data-val="-0.0883">-8.83%</td>
+          <td data-val="0.01384">1.384%</td>
+          <td data-val="0.21962">21.96%</td>
+          <td data-val="7.62">$7.62</td>
+          <td data-val="6.6280794291691505">7</td>
+          <td data-val="1247844594">$1,248M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="46.0" width="72.0" height="-17.8" fill="#f8514922"/><rect x="108.0" y="45.3" width="72.0" height="-13.6" fill="#d2992233"/><rect x="108.0" y="41.9" width="72.0" height="-6.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,37.8 3.1,32.3 6.1,30.4 9.2,29.3 12.2,23.7 15.3,31.1 18.3,25.9 21.4,31.8 24.4,33.5 27.5,19.2 30.5,17.6 33.6,14.6 36.6,13.1 39.7,11.6 42.7,13.0 45.8,7.6 48.8,13.2 51.9,17.4 54.9,24.4 58.0,22.4 61.0,18.9 64.1,23.7 67.1,23.2 70.2,20.3 73.2,15.2 76.3,22.3 79.3,26.8 82.4,28.0 85.4,28.1 88.5,33.3 91.5,26.9 94.6,24.5 97.6,18.0 100.7,22.8 103.7,26.6 106.8,27.7 109.8,21.4 112.9,15.0 115.9,11.2 119.0,14.1 122.0,9.3 125.1,13.1 128.1,10.2 131.2,18.8 134.2,20.1 137.3,22.3 140.3,23.1 143.4,23.4 146.4,18.1 149.5,25.7 152.5,24.8 155.6,23.4 158.6,23.1 161.7,25.4 164.7,30.3 167.8,29.0 170.8,30.9 173.9,37.1 176.9,38.1 180.0,38.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="38.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:317.45–318.69  2σ:316.83–319.31  3σ:316.21–319.93</td>
+          <td class="unav">U</td><td class="unav">U</td><td class="unav">U</td>
+          <td class="unav">U</td><td class="unav">U</td>
+          <td class="label-Av" data-val="Avoid">Avoid</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr></tbody>
+  </table>
+  </div>
+  <div class="legend-row">
+    <span><span class="swatch" style="background:var(--blue);width:10px;height:10px;border-radius:50%"></span>Research candidate</span>
+    <span><span class="swatch" style="background:var(--yellow);width:10px;height:10px;border-radius:50%"></span>Watchlist</span>
+    <span><span class="swatch" style="background:var(--red);width:10px;height:10px;border-radius:50%"></span>Avoid</span>
+    <span style="margin-left:auto"><span class="swatch" style="background:var(--muted);width:10px;height:10px;border-radius:2px"></span>U = Danelfin Unavailable</span>
+  </div>
+</div>
+
+<!-- Composite weights -->
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--purple)"></div> 3) Transparent Composite Weights</div>
+  <div class="card-body" style="padding:0">
+  <table>
+    <thead><tr><th>Component</th><th>Source</th><th style="text-align:right">Weight</th><th style="text-align:right">Cap</th></tr></thead>
+    <tbody>
+      <tr><td>Trend</td><td>50D MA + slope vs SPY</td><td style="text-align:right">30%</td><td style="text-align:right">—</td></tr>
+      <tr><td>Support / Resistance</td><td>20D high/low</td><td style="text-align:right">25%</td><td style="text-align:right">—</td></tr>
+      <tr><td>Volatility</td><td>20D realized vol</td><td style="text-align:right">15%</td><td style="text-align:right">—</td></tr>
+      <tr><td>Liquidity</td><td>20D mean ($vol)</td><td style="text-align:right">10%</td><td style="text-align:right">—</td></tr>
+      <tr><td>Freshness</td><td>Data age</td><td style="text-align:right">10%</td><td style="text-align:right">—</td></tr>
+      <tr><td>Risk penalty</td><td>Subtraction</td><td style="text-align:right">10%</td><td style="text-align:right">up to −20</td></tr>
+      <tr><td><span class="badge-gold">Danelfin (modulator)</span></td>
+          <td>apirest.danelfin.com · <code style="background:var(--surface2);padding:1px 6px;border-radius:3px;color:var(--gold)">x-api-key</code> header</td>
+          <td style="text-align:right"><span class="badge-gold">10%</span></td>
+          <td style="text-align:right"><span class="badge-gold">capped</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="composite">
+    <strong>Label rules:</strong>
+    <span class="badge-gold">Research candidate</span> = uptrend AND setup ∈ &#123;breakout, pullback_retest&#125; AND range percentile ≥ 30 AND RS vs SPY ≥ 0 ·
+    <span style="color:var(--red);font-weight:600">Avoid</span> = downtrend AND RS vs SPY &lt; −5% ·
+    <span style="color:var(--yellow);font-weight:600">Watchlist</span> = everything else.
+    When Danelfin is unavailable, its 10% weight is redistributed to <strong>Freshness</strong> (never silently dropped).
+  </div>
+</div>
+
+<!-- DQ note -->
+<div class="dq">
+  <h3>Data-Quality Note</h3>
+  <p><strong>Danelfin (all 5 columns × 22 rows = 110 cells): Unavailable.</strong>
+  The Danelfin API gateway at <code>apirest.danelfin.com</code> uses <code>x-api-key</code> header auth
+  (confirmed via Danelfin public docs and Brave search). The stored <code>DANELFIN_API_KEY</code> value
+  is correct, but the secret's egress allow-list is set to <code>api.danelfin.com</code>, which the
+  OpenClaw gateway proxy rejects at egress (HTTP 403) because the actual API host is
+  <code>apirest.danelfin.com</code>. <strong>One-tap fix:</strong> edit the secret's host allow-list in
+  the operator UI to <code>apirest.danelfin.com</code> (value unchanged). All Danelfin cells then populate.</p>
+  <p><strong>Sigma ranges:</strong> descriptive only (spot ± N·σ·√(h/252)); not predictions or targets.
+  <strong>Support / resistance:</strong> 20D high/low — no volume-profile overlay this run.
+  <strong>Sample sizes:</strong> 20-session rolling windows on ~6mo yfinance daily bars; no <code>insufficient</code> cases.</p>
+  <p><strong>No trade placement</strong>, no broker access, no position sizing, no scheduling,
+  no universe expansion, no key exposure.</p>
+</div>
+</main>
+<footer>
+  <div class="footer-text">Generated Sep 03, 2026 · 18:47 UTC-04:00 by <span>dependability-quant</span> · research only</div>
+  <div class="footer-text">yfinance · chart_structure (lib) · Danelfin (Unavail)</div>
+</footer>
+<script>
+function sortTable(tableId, colIdx, type) {
+  const tbl = document.getElementById(tableId);
+  const tbody = tbl.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const ths = tbl.querySelectorAll('th');
+  const cur = ths[colIdx];
+  const asc = !cur.classList.contains('sorted-asc');
+  ths.forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+  cur.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
+  rows.sort((a, b) => {
+    let av = a.children[colIdx].dataset.val;
+    let bv = b.children[colIdx].dataset.val;
+    if (av === undefined || av === '') av = a.children[colIdx].textContent.trim();
+    if (bv === undefined || bv === '') bv = b.children[colIdx].textContent.trim();
+    if (type === 'num') {
+      av = parseFloat(av); bv = parseFloat(bv);
+      if (isNaN(av)) av = asc ? 1e18 : -1e18;
+      if (isNaN(bv)) bv = asc ? 1e18 : -1e18;
+      return asc ? av - bv : bv - av;
+    }
+    return asc ? String(av).localeCompare(String(bv))
+               : String(bv).localeCompare(String(av));
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.chip-group').forEach(group => {
+    const tableId = group.dataset.table;
+    const col = parseInt(group.dataset.col);
+    let active = [];
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.dataset.val;
+        if (val === '') {
+          active = [];
+          group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+        } else {
+          group.querySelector('.chip[data-val=""]').classList.remove('active');
+          if (chip.classList.toggle('active')) active.push(val);
+          else active = active.filter(a => a !== val);
+        }
+        const tbl = document.getElementById(tableId);
+        tbl.querySelectorAll('tbody tr').forEach(r => {
+          const v = r.children[col].textContent.trim();
+          r.style.display = (!active.length || active.includes(v)) ? '' : 'none';
+        });
+      });
+    });
+  });
+});
+</script>
+</body></html>
