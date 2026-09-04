@@ -32,19 +32,72 @@ WINDOW = 20
 # Same universe as dashboard
 BENCHMARKS = ["SPY", "QQQ", "IWM"]
 SECTOR_ETFS = ["XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLRE", "XLU", "XLV", "XLY"]
-STOCKS = [
-    ("AAPL", "Mega Tech"), ("MSFT", "Mega Tech"), ("NVDA", "Mega Tech"),
-    ("JPM",  "Financials"), ("LLY",  "Healthcare"), ("XOM",  "Energy"),
-    ("HD",   "Consumer Disc."), ("CAT",  "Industrials"),
-]
+
+# --- Sector-leader candidates (per Mike's 2026-09-03 21:42 EDT directive) ---
+# For each sector ETF, list 2-3 candidate mega-caps. The dashboard picks the
+# highest-ClawRank-scoring candidate per sector for Table 2 ("Stock Shortlist"
+# is now "Sector Leaders"). Expanding from 8 hardcoded names to 26 candidates
+# so every sector is represented and the table self-selects by score.
+SECTOR_LEADERS = {
+    "XLK":  ["MSFT", "NVDA", "AAPL"],   # Technology
+    "XLF":  ["JPM", "BAC", "GS"],       # Financials
+    "XLE":  ["XOM", "CVX"],             # Energy
+    "XLV":  ["LLY", "UNH", "JNJ"],      # Health Care
+    "XLI":  ["CAT", "HON", "DE"],       # Industrials
+    "XLY":  ["HD", "AMZN", "TSLA"],     # Consumer Disc.
+    "XLP":  ["PG", "KO", "WMT"],        # Consumer Staples
+    "XLC":  ["META", "GOOGL"],          # Comm Services
+    "XLB":  ["LIN", "FCX"],             # Materials
+    "XLRE": ["AMT", "PLD"],             # Real Estate
+    "XLU":  ["NEE", "SO"],              # Utilities
+}
+
+# Flatten to (ticker, sector_etf, sector_name) tuples
+STOCKS = []
 SECTOR_GROUP = {
     "XLB": "Materials", "XLC": "Comm Services", "XLE": "Energy", "XLF": "Financials",
     "XLI": "Industrials", "XLK": "Technology", "XLP": "Consumer Staples",
     "XLRE": "Real Estate", "XLU": "Utilities", "XLV": "Health Care", "XLY": "Consumer Disc.",
 }
+for etf, candidates in SECTOR_LEADERS.items():
+    sector_name = SECTOR_GROUP[etf]
+    for ticker in candidates:
+        STOCKS.append((ticker, etf, sector_name))
+
+# Legacy list-of-pairs for backward-compat callers (e.g., dashboard Table 2)
+# Each entry: (ticker, sector_name)
+STOCKS_BY_SECTOR = [(t, sec) for (t, _etf, sec) in STOCKS]
+
 BENCH_GROUP = {"SPY": "Broad Mkt", "QQQ": "Tech", "IWM": "Small Cap"}
 ETF_SET = set(BENCHMARKS + SECTOR_ETFS)
-ALL_TICKERS = BENCHMARKS + SECTOR_ETFS + [t for t, _ in STOCKS]
+ALL_TICKERS = BENCHMARKS + SECTOR_ETFS + [t for t, _, _ in STOCKS]
+
+
+def pick_top_by_sector(clawrank_data):
+    """Given a list of ClawRank rows, return one row per sector ETF — the
+    highest-scoring candidate. If no candidate has a score for a sector, skip.
+    Result is ordered by sector score descending (best sector first).
+    """
+    if not clawrank_data:
+        return []
+    by_ticker = {r["ticker"]: r for r in clawrank_data}
+    picks = []
+    for etf, candidates in SECTOR_LEADERS.items():
+        ranked = [by_ticker[t] for t in candidates if t in by_ticker
+                  and by_ticker[t].get("clawrank_score") is not None]
+        if not ranked:
+            continue
+        best = max(ranked, key=lambda r: r.get("clawrank_score") or -1)
+        picks.append({
+            "sector_etf": etf,
+            "sector_name": SECTOR_GROUP[etf],
+            "ticker": best["ticker"],
+            "all_candidates": [(t, by_ticker.get(t, {}).get("clawrank_score"))
+                                for t in candidates if t in by_ticker],
+            **best,
+        })
+    picks.sort(key=lambda r: -(r.get("clawrank_score") or -1))
+    return picks
 
 
 def fetch_history(tickers, period="6mo"):

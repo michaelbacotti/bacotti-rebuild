@@ -221,15 +221,30 @@ def composite(factor_scores: Dict[str, List[float]],
 
 def label_from(final_scores: List[float], trends: List[str], setups: List[str],
                cfg: Dict[str, Any]) -> List[str]:
-    """Apply label rules."""
-    rc_min = cfg.get("research_candidate_min", 70)
-    av_max = cfg.get("avoid_max", 30)
+    """Apply label rules.
+
+    Reads thresholds from either ``cfg['label_thresholds']`` (preferred) or the
+    top-level ``cfg`` (legacy). A empty ``require_setup_for_research`` list is
+    treated as ``"any setup"`` (i.e., do not constrain by setup type).
+    """
+    th = cfg.get("label_thresholds", {}) if isinstance(cfg.get("label_thresholds"), dict) else {}
+    rc_min = th.get("research_candidate_min", cfg.get("research_candidate_min", 70))
+    av_max = th.get("avoid_max", cfg.get("avoid_max", 30))
     require_trend = cfg.get("require_trend_for_research", "uptrend")
-    require_setup = set(cfg.get("require_setup_for_research", ["breakout", "pullback_retest"]))
+    require_setup = cfg.get("require_setup_for_research", ["breakout", "pullback_retest"])
+    # Empty list → "any setup" (do not constrain). Backwards-compat: missing
+    # key defaults to ["breakout", "pullback_retest"] which is the old behavior.
+    if not require_setup:
+        setup_predicate = lambda _s: True
+    else:
+        setup_set = set(require_setup)
+        setup_predicate = lambda s: s in setup_set
     out = []
     for i, s in enumerate(final_scores):
-        if s >= rc_min and (require_trend == "any" or (i < len(trends) and trends[i] == require_trend)) \
-                and (i < len(setups) and setups[i] in require_setup):
+        trend_ok = (require_trend == "any"
+                    or (i < len(trends) and trends[i] == require_trend))
+        setup_ok = i < len(setups) and setup_predicate(setups[i])
+        if s >= rc_min and trend_ok and setup_ok:
             out.append("Research candidate")
         elif s <= av_max and i < len(trends) and trends[i] == "downtrend":
             out.append("Avoid")

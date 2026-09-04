@@ -3,10 +3,9 @@ composite:
   label_thresholds:
     avoid_max: 30
     research_candidate_min: 70
-  require_setup_for_research:
-  - breakout
+  require_setup_for_research: []
   - pullback_retest
-  require_trend_for_research: uptrend
+  require_trend_for_research: "any"   # uptrend | any
 factors:
   sentiment_catalyst:
     description: Proxy signals only (no news feed yet). Liquidity, volume health,

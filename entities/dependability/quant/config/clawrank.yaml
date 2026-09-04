@@ -18,8 +18,11 @@ composite:
     research_candidate_min: 70   # top 30%
     avoid_max: 30                # bottom 30%
   # Overrides the implicit "uptrend + good setup" guard from the dashboard
-  require_trend_for_research: "uptrend"   # uptrend | any
-  require_setup_for_research: ["breakout", "pullback_retest"]
+  # Score-only label rule (per Mike's 2026-09-03 directive): don't gate Research
+  # candidate on trend/setup — those factors are already baked into the score
+  # via Technical Momentum + Setup Quality.
+  require_trend_for_research: "any"   # uptrend | any
+  require_setup_for_research: []
 
 # Factors
 factors:

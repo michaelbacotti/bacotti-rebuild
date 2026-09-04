@@ -26,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
 from build_clawrank_features import (  # noqa: E402
     fetch_history, get_series, compute_features_for, ALL_TICKERS, ETF_SET,
     BENCHMARKS, SECTOR_ETFS, STOCKS, SECTOR_GROUP, BENCH_GROUP,
+    SECTOR_LEADERS, pick_top_by_sector,
 )
 from clawrank import rank, load_config  # noqa: E402
 
@@ -210,7 +211,8 @@ header {{ background: linear-gradient(135deg, #1a1510 0%, #161b22 100%);
 .disclaimer strong {{ color: var(--text); }}
 main {{ padding: 16px 24px; max-width: 1700px; margin: 0 auto; }}
 .card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-         overflow: hidden; margin-bottom: 14px; }}
+         overflow: visible; margin-bottom: 14px; }}
+.card-header {{ overflow: hidden; }}
 .card-header {{ padding: 10px 14px; border-bottom: 1px solid var(--border);
                display: flex; align-items: center; gap: 8px; font-size: 10px;
                font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }}
@@ -247,6 +249,7 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .factor-bar-text {{ margin-left: 6px; font-size: 10px; color: var(--muted); }}
 .score-cell {{ position: relative; padding: 4px 10px; cursor: help; }}
 .score-cell:hover {{ background: rgba(212,168,67,0.10); }}
+.score-cell:hover .popover {{ display: block; }}
 .score-big {{ font-size: 15px; font-weight: 700; color: var(--gold); }}
 .score-label-pill {{ display: block; font-size: 9px; color: var(--muted);
                      text-transform: uppercase; letter-spacing: 0.4px;
@@ -254,12 +257,11 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .score-label-pill.Rc {{ color: var(--blue); }}
 .score-label-pill.Wa {{ color: var(--yellow); }}
 .score-label-pill.Av {{ color: var(--red); }}
-.popover {{ position: absolute; top: calc(100% + 4px); right: 0;
+.popover {{ position: absolute; top: calc(100% + 4px); left: 0;
             z-index: 1000; background: var(--surface2); border: 1px solid var(--gold);
             border-radius: 8px; padding: 12px 14px; min-width: 280px;
             display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             text-align: left; font-size: 11px; color: var(--text); }}
-.score-cell:hover .popover {{ display: block; }}
 .popover-title {{ font-size: 9px; font-weight: 700; color: var(--gold);
                   text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }}
 .popover-row {{ display: grid; grid-template-columns: 130px 70px 30px;
@@ -341,6 +343,7 @@ function sortTable(tableId, colIdx, type) {
   rows.forEach(r => tbody.appendChild(r));
 }
 document.addEventListener('DOMContentLoaded', () => {
+  // --- Chip filter groups (trend / label) ---
   document.querySelectorAll('.chip-group').forEach(group => {
     const tableId = group.dataset.table;
     const col = parseInt(group.dataset.col);
@@ -365,6 +368,70 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+  // --- Viewport-aware popover positioning ---
+  // .card has overflow:visible so popovers can escape; CSS anchors them
+  // by default to the LEFT. We add flip classes when the cell is near the
+  // right edge (anchor right) or bottom edge (anchor above).
+  function positionPopover(pop) {
+    const cell = pop.closest('.score-cell');
+    if (!cell) return;
+    const rect = cell.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    // First measure (popover must be visible for accurate size)
+    pop.style.left = '0px';
+    pop.style.top = '0px';
+    pop.style.visibility = 'hidden';
+    pop.style.display = 'block';
+    const pw = pop.offsetWidth, ph = pop.offsetHeight;
+    pop.style.visibility = '';
+    // Horizontal: prefer to anchor at cell.left; flip right if it would overflow
+    let left = rect.left;
+    if (left + pw > vw - 8) {
+      // Anchor right edge of popover to right edge of cell
+      left = rect.right - pw;
+      if (left < 8) left = 8;  // also clamp
+    }
+    // Vertical: prefer below; flip above if it would overflow bottom
+    let top = rect.bottom + 6;
+    if (top + ph > vh - 8) {
+      top = rect.top - ph - 6;
+      if (top < 8) top = 8;
+    }
+    pop.style.position = 'fixed';
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+  }
+  let activePop = null;
+  document.querySelectorAll('.score-cell').forEach(cell => {
+    const pop = cell.querySelector('.popover');
+    if (!pop) return;
+    let hideTimer = null;
+    cell.addEventListener('mouseenter', () => {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      if (activePop && activePop !== pop) activePop.style.display = 'none';
+      positionPopover(pop);
+      activePop = pop;
+    });
+    cell.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => {
+        pop.style.display = 'none';
+        if (activePop === pop) activePop = null;
+      }, 120);
+    });
+    pop.addEventListener('mouseenter', () => {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    });
+    pop.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => {
+        pop.style.display = 'none';
+        if (activePop === pop) activePop = null;
+      }, 120);
+    });
+  });
+  // Reposition on scroll/resize
+  window.addEventListener('scroll', () => { if (activePop) positionPopover(activePop); }, true);
+  window.addEventListener('resize', () => { if (activePop) positionPopover(activePop); });
 });
 """
 
@@ -452,7 +519,7 @@ def score_cell_with_popover(score, label, factors, trend, setup):
         + "".join(f_rows) +
         '<div class="popover-divider"></div>'
         f'<div class="popover-rule">{rule}</div>'
-        '<span class="popover-trigger-hint">hover to keep visible · click row to pin</span>'
+        '<span class="popover-trigger-hint">hover any score to inspect factors</span>'
         '</div>'
     )
     return (
@@ -543,9 +610,12 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
           <td>{outlook_for(m)}</td>
         </tr>""")
 
-    # Section 2 — Stock Shortlist (ClawRank breakdown in popover only)
+    # Section 2 — Sector Leaders (one stock per sector, highest ClawRank score)
+    # Picks the highest-scoring candidate from each sector's candidate list.
+    sector_picks = pick_top_by_sector(list(clawrank_data) if clawrank_data else [])
     t2 = []
-    for sym, sector in STOCKS:
+    for pick in sector_picks:
+        sym = pick["ticker"]
         if sym not in by_ticker: continue
         m = by_ticker[sym]
         spark = sparkline_svg(sparkline_data[sym], m["sd_20"], m["spot"])
@@ -559,19 +629,21 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
                     f'2σ:{s2w_lo:.2f}–{s2w_hi:.2f}  '
                     f'3σ:{s3w_lo:.2f}–{s3w_hi:.2f}')
         rs = m["rs_vs_spy"] if m["rs_vs_spy"] is not None else -999
-        kr = clawrank_by_ticker.get(sym)
-        cr_score = kr.get("clawrank_score") if kr else None
-        cr_label = kr.get("clawrank_label", "—") if kr else "—"
-        factors = {k.replace("clawrank_", ""): kr.get(k) for k in
+        cr_score = pick.get("clawrank_score")
+        cr_label = pick.get("clawrank_label", "—")
+        factors = {k.replace("clawrank_", ""): pick.get(k) for k in
                    ("clawrank_fundamental_health", "clawrank_technical_momentum",
                     "clawrank_volatility_regime", "clawrank_setup_quality",
-                    "clawrank_sentiment_catalyst")} if kr else {}
+                    "clawrank_sentiment_catalyst")}
         score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"])
+        # Show alternate candidates in the score-cell title attribute
+        alts = ", ".join(f"{t}={s:.0f}" if s is not None else f"{t}=—"
+                         for t, s in pick.get("all_candidates", []) if t != sym)
         t2.append(f"""
         <tr>
           {score_td}
           <td class="ticker-cell">{m['ticker']}</td>
-          <td>{sector}</td>
+          <td>{pick['sector_name']} <span style="color:var(--muted);font-size:10px">({pick['sector_etf']})</span></td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
           <td>{trend_badge(m['trend'])}</td>
           <td>{m['setup'].replace('_', ' ')}</td>
@@ -580,7 +652,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
           <td data-val="{m['adv_usd']/1e6:.0f}">{fmt_adv(m['adv_usd'])}</td>
           <td class="spark-cell">{spark}</td>
           <td>{sig_text}</td>
-          <td>{outlook_for(m)}</td>
+          <td title="Other sector candidates: {alts}">{outlook_for(m)}</td>
         </tr>""")
 
     band_legend = (
@@ -706,7 +778,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 </div>
 
 <div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Stock Shortlist with ClawRank Score (8 names) — <span style="text-transform:none;font-weight:400;color:var(--gold)">hover any score for 5-factor breakdown</span></div>
+  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Sector Leaders (one highest-scoring stock per sector, sorted by ClawRank) — <span style="text-transform:none;font-weight:400;color:var(--gold)">hover any score for 5-factor breakdown</span></div>
   <div class="controls chip-group" data-table="t2" data-col="4">
     <span class="chip active" data-val="">All trends</span>
     <span class="chip" data-val="uptrend">uptrend</span>
@@ -732,9 +804,9 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
   </table>
   </div>
   <div class="legend-row">
-    <span><span class="swatch" style="background:var(--blue);width:10px;height:10px;border-radius:50%"></span>Research candidate (composite ≥70 + good setup)</span>
-    <span><span class="swatch" style="background:var(--yellow);width:10px;height:10px;border-radius:50%"></span>Watchlist (everything else)</span>
-    <span><span class="swatch" style="background:var(--red);width:10px;height:10px;border-radius:50%"></span>Avoid (composite ≤30 + downtrend)</span>
+    <span><span class="swatch" style="background:var(--blue);width:10px;height:10px;border-radius:50%"></span>Research candidate (composite ≥70)</span>
+    <span><span class="swatch" style="background:var(--yellow);width:10px;height:10px;border-radius:50%"></span>Watchlist (30–70)</span>
+    <span><span class="swatch" style="background:var(--red);width:10px;height:10px;border-radius:50%"></span>Avoid (composite ≤30)</span>
     <span style="margin-left:auto;color:var(--muted)">Factor weights: Fund 25% / Tech 25% / Vol 15% / Setup 25% / Sent 10%</span>
   </div>
 </div>
