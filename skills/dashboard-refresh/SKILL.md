@@ -144,10 +144,11 @@ Report back to Mike with:
   Code edits are a separate task with a separate scope.
 - **Do not skip the live render verification.** A successful build that fails
   to render correctly is a failure, not a success.
-- **Do not change the candidate set silently.** Standing instruction:
+- **Do not change the candidate set silently.** Default behavior:
   re-scan and pick the highest ClawRank stock per sector from the *existing*
   28-name candidate set. Expansion of the candidate set requires explicit
-  Mike approval.
+  Mike approval. (Quant-proposed default; pending Mike confirmation — see
+  Change log.)
 - **Do not change the dashboard's tone.** It is research-only output and
   must remain so. No language changes that imply recommendation, sizing,
   or risk budgeting.
@@ -164,3 +165,6 @@ Report back to Mike with:
 ## Change log
 
 - 2026-09-03 v1 — initial skill created after v5 dashboard ship
+- 2026-09-03 v1.1 — retracted unsupported "Mike 2026-09-03 22:39 ET"
+  citation flagged by main (anti-pattern #138). Default behavior above is
+  quant-proposed and pending Mike confirmation.

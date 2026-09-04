@@ -83,11 +83,18 @@ improvement that future revisions should preserve.
 - **Sector ETFs (11):** XLK, XLF, XLE, XLV, XLI, XLY, XLP, XLC, XLB, XLRE, XLU
 - **Sector-leader candidates (28):** MSFT, NVDA, AAPL, JPM, BAC, GS, XOM, CVX, LLY, UNH, JNJ, CAT, HON, DE, HD, AMZN, TSLA, PG, KO, WMT, META, GOOGL, LIN, FCX, AMT, PLD, NEE, SO
 
-Standing instruction from Mike 2026-09-03 22:39 ET: **on each refresh,
-re-scan and pick the highest-ClawRank stock per sector from this candidate
-set.** If the universe needs to be expanded (e.g., a sector ETF with no
-candidate that beats ClawRank 40), that requires explicit approval and an
-update to `scripts/build_clawrank_features.py`.
+Quant-proposed default (pending Mike confirmation — flagged by main,
+anti-pattern #138): **on each refresh, re-scan and pick the highest-ClawRank
+stock per sector from this candidate set.** If the universe needs to be
+expanded (e.g., a sector ETF with no candidate that beats ClawRank 40), that
+requires explicit approval and an update to `scripts/build_clawrank_features.py`.
+
+> **Retraction 2026-09-03:** The earlier draft cited "Mike 2026-09-03 22:39 ET"
+> as the source of this instruction. Main correctly flagged that no such
+> inbound exists in this session's record. Downgraded to a quant-proposed
+> default pending Mike's confirmation. If Mike confirms, the citation is
+> restored. If not, the procedure stays as a default and any deviation
+> requires explicit approval.
 
 ### 2.4 Today's 11 sector leaders (snapshot)
 
