@@ -160,17 +160,31 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
     spot = float(closes.iloc[-1])
 
     # ----- Trend (used for dashboard labels) -----
+    # Priority: short-term momentum + price-vs-MA50 + 5d direction. The old
+    # rule relied only on MA50 slope (10-day change in MA) which is noisy and
+    # misclassified names like META (recent 5-day +3% rally but MA still
+    # lagging, so old rule called it "downtrend") and QQQ (mixed signals
+    # called "transitioning" when it was really range-bound).
     ma = closes.rolling(50).mean()
     ma_now = float(ma.iloc[-1]) if not pd.isna(ma.iloc[-1]) else None
-    ma_prev = float(ma.iloc[-10]) if len(ma) >= 10 and not pd.isna(ma.iloc[-10]) else ma_now
-    slope = (ma_now - ma_prev) if ma_now is not None else 0
+    ma20 = float(closes.tail(20).mean())
+    ret_5d = (closes.iloc[-1] / closes.iloc[-6] - 1) if len(closes) >= 6 else 0
+    ret_20d = (closes.iloc[-1] / closes.iloc[-26] - 1) if len(closes) >= 26 else 0
+    above_ma50 = ma_now is not None and spot > ma_now
+    above_ma20 = spot > ma20
+    # Classification logic:
+    #   uptrend    — price above both MAs and short-term momentum positive
+    #   downtrend  — price below both MAs and short-term momentum negative
+    #   range      — price hugging MAs and momentum small in both directions
+    #   transitioning — anything else (e.g., above MA50 but below MA20, or
+    #                   below MA50 but recent 5d/20d momentum positive)
     if ma_now is None:
         trend = "n/a"
-    elif spot > ma_now and slope > 0:
+    elif above_ma50 and above_ma20 and ret_5d > -0.005 and ret_20d > 0:
         trend = "uptrend"
-    elif spot < ma_now and slope < 0:
+    elif not above_ma50 and not above_ma20 and ret_5d < 0.005 and ret_20d < 0:
         trend = "downtrend"
-    elif abs(slope) < (closes.std() * 0.001):
+    elif abs(ret_20d) < 0.03 and abs(ret_5d) < 0.01:
         trend = "range"
     else:
         trend = "transitioning"

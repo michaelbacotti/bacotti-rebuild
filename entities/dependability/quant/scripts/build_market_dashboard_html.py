@@ -68,22 +68,25 @@ def compute_metrics(closes, highs, lows, vols, spy_close, ticker):
     ma = c.rolling(50).mean()
     ma_now = float(ma.iloc[-1]) if not pd.isna(ma.iloc[-1]) else None
     ma_prev = float(ma.iloc[-10]) if len(ma) >= 10 and not pd.isna(ma.iloc[-10]) else ma_now
-    slope = (ma_now - ma_prev) if ma_now is not None else 0
+    # Compute the 20-day return and 5-day return for the new trend logic
+    ma20 = float(c.tail(20).mean())
+    ret_5d = float(c.iloc[-1] / c.iloc[-6] - 1) if len(c) >= 6 else 0
+    ret_20d = float(c.iloc[-1] / c.iloc[-26] - 1) if len(c) >= 26 else 0
+    above_ma50 = ma_now is not None and spot > ma_now
+    above_ma20 = spot > ma20
     if ma_now is None:
         trend = "n/a"
-    elif spot > ma_now and slope > 0:
+    elif above_ma50 and above_ma20 and ret_5d > -0.005 and ret_20d > 0:
         trend = "uptrend"
-    elif spot < ma_now and slope < 0:
+    elif not above_ma50 and not above_ma20 and ret_5d < 0.005 and ret_20d < 0:
         trend = "downtrend"
-    elif abs(slope) < (c.std() * 0.001):
+    elif abs(ret_20d) < 0.03 and abs(ret_5d) < 0.01:
         trend = "range"
     else:
         trend = "transitioning"
     ma20 = float(c.tail(WINDOW).mean())
     hi20 = float(c.tail(WINDOW).max())
     lo20 = float(c.tail(WINDOW).min())
-    ret_5d = float(c.iloc[-1] / c.iloc[-6] - 1) if len(c) >= 6 else 0
-    ret_20d = float(c.iloc[-1] / c.iloc[-26] - 1) if len(c) >= 26 else 0
     if spot >= hi20 and ret_5d > 0:
         setup = "breakout"
     elif spot > ma_now and abs(spot / ma_now - 1) < 0.02:
@@ -314,6 +317,29 @@ footer {{ max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
                color: var(--muted); background: var(--surface2); border-top: 1px solid var(--border); flex-wrap: wrap; }}
 .legend-row .swatch {{ display: inline-block; width: 10px; height: 10px; border-radius: 2px;
                        margin-right: 4px; vertical-align: middle; }}
+.glossary-link {{ color: var(--gold); text-decoration: none; border-bottom: 1px dotted var(--gold); }}
+.glossary-link:hover {{ color: var(--text); border-bottom-color: var(--text); }}
+.header-glossary-link {{ color: inherit; text-decoration: none; border-bottom: 1px dotted var(--border);
+                         display: inline-block; }}
+.header-glossary-link:hover {{ color: var(--gold); border-bottom-color: var(--gold); }}
+.glossary {{ background: var(--surface); border: 1px solid var(--border);
+             border-radius: 10px; padding: 24px 28px; margin: 28px auto; max-width: 1400px; }}
+.glossary h2 {{ color: var(--gold); font-size: 18px; margin: 0 0 4px 0; font-weight: 600; }}
+.glossary-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+                  gap: 18px; margin-top: 18px; }}
+.glossary-entry {{ background: var(--surface2); border: 1px solid var(--border);
+                   border-radius: 8px; padding: 14px 16px; scroll-margin-top: 20px; }}
+.glossary-entry h3 {{ color: var(--gold); font-size: 13px; margin: 0 0 8px 0;
+                      border-bottom: 1px solid var(--border); padding-bottom: 6px; }}
+.glossary-entry p {{ font-size: 11.5px; line-height: 1.55; color: var(--text); margin: 6px 0; }}
+.glossary-entry ul {{ font-size: 11.5px; line-height: 1.55; color: var(--text); margin: 6px 0; padding-left: 18px; }}
+.glossary-entry code {{ background: #0d1117; color: var(--green); padding: 1px 5px;
+                         border-radius: 3px; font-size: 10.5px; }}
+.glossary-entry em {{ color: var(--muted); font-style: italic; }}
+.back-link {{ display: inline-block; color: var(--muted); font-size: 11px;
+              margin-right: 6px; text-decoration: none; }}
+.back-link:hover {{ color: var(--gold); }}
+.glossary-entry:target {{ border-color: var(--gold); background: rgba(212, 168, 67, 0.05); }}
 """
 
 JS = """
@@ -666,7 +692,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     )
 
     last_updated = as_of.strftime("%b %d, %Y · %H:%M %Z")
-    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: 3 benchmarks + 11 sector ETFs + 8 stocks (no expansion)"
+    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} sector-leader candidates"
 
     # ClawRank factor table
     factor_table_rows = []
@@ -697,7 +723,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 </head><body>
 <header>
   <div class="header-left">
-    <h1>Market Dashboard — {as_of.strftime('%B %d, %Y')}</h1>
+    <h1>Market Dashboard — {as_of.strftime('%B %d, %Y')} <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated {as_of.strftime('%H:%M %Z').strip()}</span></h1>
     <div class="subtitle">{subtitle}</div>
   </div>
   <div class="header-right">
@@ -713,7 +739,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 <main>
 
 <div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — 22 instruments</div>
+  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — {len(rows)} instruments ({len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} sector leaders)</div>
   <div class="kpi-row">
     <div class="kpi gold">
       <div class="kpi-label">SPY Spot</div>
@@ -723,22 +749,22 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     <div class="kpi {'green' if uptrend > downtrend else 'red'}">
       <div class="kpi-label">Uptrend / Downtrend</div>
       <div class="kpi-value">{uptrend} <span style="color:var(--muted);font-size:11px">/</span> {downtrend}</div>
-      <div class="kpi-sub">{transitions} transitioning</div>
+      <div class="kpi-sub">{transitions} transitioning{', ' + str(sum(1 for r in rows if r['trend']=='range')) + ' range' if any(r['trend']=='range' for r in rows) else ''}</div>
     </div>
     <div class="kpi blue">
       <div class="kpi-label">ClawRank Research</div>
       <div class="kpi-value">{research}</div>
-      <div class="kpi-sub">composite ≥70 + good setup</div>
+      <div class="kpi-sub">composite ≥ 70</div>
     </div>
     <div class="kpi" style="--y:var(--yellow)">
       <div class="kpi-label">Watchlist</div>
       <div class="kpi-value" style="color:var(--yellow)">{watchlist}</div>
-      <div class="kpi-sub">composite 30–70</div>
+      <div class="kpi-sub">composite 30 – 70</div>
     </div>
     <div class="kpi red">
       <div class="kpi-label">ClawRank Avoid</div>
       <div class="kpi-value">{avoid}</div>
-      <div class="kpi-sub">composite ≤30 + downtrend</div>
+      <div class="kpi-sub">composite ≤ 30</div>
     </div>
   </div>
 </div>
@@ -755,21 +781,24 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
   <div style="overflow-x:auto">
   <table id="t1">
     <thead><tr>
-      <th class="sortable" onclick="sortTable('t1',0,'num')">ClawRank</th>
-      <th>Ticker</th><th>Group / Sector</th>
-      <th class="sortable" onclick="sortTable('t1',3,'num')">Price</th>
-      <th>Trend</th>
-      <th class="sortable" onclick="sortTable('t1',5,'num')">Support</th>
-      <th class="sortable" onclick="sortTable('t1',6,'num')">Resistance</th>
-      <th>%→S</th><th>%→R</th>
-      <th class="sortable" onclick="sortTable('t1',9,'num')">20D SD</th>
-      <th class="sortable" onclick="sortTable('t1',10,'num')">Ann.Vol</th>
-      <th>ATR$</th>
-      <th class="sortable" onclick="sortTable('t1',12,'num')">Rng%ile</th>
-      <th class="sortable" onclick="sortTable('t1',13,'num')">RS v SPY</th>
-      <th>60D + σ-bands</th>
-      <th>1σ 1d</th><th>1σ 1mo</th>
-      <th>Outlook</th>
+      <th class="sortable" onclick="sortTable('t1',0,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
+      <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+      <th><a href="#glossary-group-sector" class="header-glossary-link">Group / Sector</a></th>
+      <th class="sortable" onclick="sortTable('t1',3,'num')"><a href="#glossary-price" class="header-glossary-link">Price</a></th>
+      <th><a href="#glossary-trend" class="header-glossary-link">Trend</a></th>
+      <th class="sortable" onclick="sortTable('t1',5,'num')"><a href="#glossary-support" class="header-glossary-link">Support</a></th>
+      <th class="sortable" onclick="sortTable('t1',6,'num')"><a href="#glossary-resistance" class="header-glossary-link">Resistance</a></th>
+      <th><a href="#glossary-pct-to-support" class="header-glossary-link">%→S</a></th>
+      <th><a href="#glossary-pct-to-resistance" class="header-glossary-link">%→R</a></th>
+      <th class="sortable" onclick="sortTable('t1',9,'num')"><a href="#glossary-20d-sd" class="header-glossary-link">20D SD</a></th>
+      <th class="sortable" onclick="sortTable('t1',10,'num')"><a href="#glossary-ann-vol" class="header-glossary-link">Ann.Vol</a></th>
+      <th><a href="#glossary-atr" class="header-glossary-link">ATR$</a></th>
+      <th class="sortable" onclick="sortTable('t1',12,'num')"><a href="#glossary-rng-percentile" class="header-glossary-link">Rng%ile</a></th>
+      <th class="sortable" onclick="sortTable('t1',13,'num')"><a href="#glossary-rs-vs-spy" class="header-glossary-link">RS v SPY</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">60D + σ-bands</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">1σ 1d</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">1σ 1mo</a></th>
+      <th><a href="#glossary-outlook" class="header-glossary-link">Outlook</a></th>
     </tr></thead>
     <tbody>{''.join(t1)}</tbody>
   </table>
@@ -789,16 +818,18 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
   <div style="overflow-x:auto">
   <table id="t2">
     <thead><tr>
-      <th class="sortable" onclick="sortTable('t2',0,'num')">ClawRank</th>
-      <th>Ticker</th><th>Sector</th>
-      <th class="sortable" onclick="sortTable('t2',3,'num')">Price</th>
-      <th>Trend</th><th>Setup</th>
-      <th class="sortable" onclick="sortTable('t2',6,'num')">RS v SPY</th>
-      <th class="sortable" onclick="sortTable('t2',7,'num')">20D SD</th>
-      <th class="sortable" onclick="sortTable('t2',8,'num')">ADV ($M)</th>
-      <th>60D + σ-bands</th>
-      <th>1σ/2σ/3σ (1w)</th>
-      <th>Outlook</th>
+      <th class="sortable" onclick="sortTable('t2',0,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
+      <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+      <th><a href="#glossary-group-sector" class="header-glossary-link">Sector</a></th>
+      <th class="sortable" onclick="sortTable('t2',3,'num')"><a href="#glossary-price" class="header-glossary-link">Price</a></th>
+      <th><a href="#glossary-trend" class="header-glossary-link">Trend</a></th>
+      <th><a href="#glossary-setup-quality" class="header-glossary-link">Setup</a></th>
+      <th class="sortable" onclick="sortTable('t2',6,'num')"><a href="#glossary-rs-vs-spy" class="header-glossary-link">RS v SPY</a></th>
+      <th class="sortable" onclick="sortTable('t2',7,'num')"><a href="#glossary-20d-sd" class="header-glossary-link">20D SD</a></th>
+      <th class="sortable" onclick="sortTable('t2',8,'num')"><a href="#glossary-adv" class="header-glossary-link">ADV ($M)</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">60D + σ-bands</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">1σ/2σ/3σ (1w)</a></th>
+      <th><a href="#glossary-outlook" class="header-glossary-link">Outlook</a></th>
     </tr></thead>
     <tbody>{''.join(t2)}</tbody>
   </table>
@@ -817,16 +848,17 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
   <table>
     <thead><tr><th>Factor</th><th>Source</th><th style="text-align:right">Weight</th><th style="text-align:right">Cap</th></tr></thead>
     <tbody>
-      <tr><td>Fundamental Health</td><td>yfinance .info — earnings yield, revenue growth, op margin, D/E, FCF yield</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td>Technical Momentum</td><td>RS vs SPY (20D/60D), MA distances, RSI(14), trend slope</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td>Volatility Regime</td><td>20D/252D vol ratio, ATR% vs SPY, 60D max drawdown</td><td style="text-align:right"><span class="badge-gold">15%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td>Setup Quality</td><td>Dashboard setup type + range percentile + proximity to MA/resistance</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td>Sentiment / Catalyst</td><td>ADV, 5D/20D volume ratio, analyst-target upside (stocks only)</td><td style="text-align:right"><span class="badge-gold">10%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-fundamental-health" class="glossary-link">Fundamental Health</a></td><td>yfinance .info — earnings yield, revenue growth, op margin, D/E, FCF yield (stocks only; ETFs skip)</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-technical-momentum" class="glossary-link">Technical Momentum</a></td><td>RS vs SPY (20D/60D), MA distances, RSI(14), trend slope</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-volatility-regime" class="glossary-link">Volatility Regime</a></td><td>20D/252D vol ratio, ATR% vs SPY, 60D max drawdown</td><td style="text-align:right"><span class="badge-gold">15%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a></td><td>Setup type (breakout / pullback / continuation / range / reversal) + range percentile + proximity to MA/resistance</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-sentiment-catalyst" class="glossary-link">Sentiment / Catalyst</a></td><td>ADV, 5D/20D volume ratio, analyst-target upside (stocks only)</td><td style="text-align:right"><span class="badge-gold">10%</span></td><td style="text-align:right">—</td></tr>
       <tr><td colspan="4" style="font-size:10.5px;color:var(--muted);padding-top:14px">
         <strong>Label rules:</strong>
-        <span class="badge-gold">Research candidate</span> = composite ≥ 70 AND trend = uptrend AND setup ∈ &#123;breakout, pullback_retest&#125;
-        <span style="color:var(--red);font-weight:600">Avoid</span> = composite ≤ 30 AND trend = downtrend
-        <span style="color:var(--yellow);font-weight:600">Watchlist</span> = everything else
+        <span class="badge-gold">Research candidate</span> = composite ≥ 70
+        <span style="color:var(--yellow);font-weight:600">Watchlist</span> = 30 ≤ composite &lt; 70
+        <span style="color:var(--red);font-weight:600">Avoid</span> = composite &lt; 30
+        <span style="display:block;margin-top:6px;color:var(--muted);font-style:italic">Trend + setup factors are already baked into the composite (via Technical Momentum + Setup Quality) so the label rule is score-only. See <a href="#glossary-label-rule" class="glossary-link">label rule glossary</a>.</span>
       </td></tr>
     </tbody>
   </table>
@@ -853,6 +885,269 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
   <div class="footer-text">Generated {last_updated} by <span>dependability-quant</span> · research only</div>
   <div class="footer-text">yfinance · chart_structure (lib) · <span>ClawRank-v0</span></div>
 </footer>
+
+<aside class="glossary" id="glossary">
+  <h2>📖 Glossary &amp; Methodology</h2>
+  <p style="color:var(--muted);font-size:11px;margin-top:0">
+    Click any <a href="#" class="glossary-link">term</a> in the tables above to jump to its glossary entry.
+    Hover any score to see the 5-factor breakdown for that row.
+  </p>
+
+  <div class="glossary-grid">
+    <div class="glossary-entry" id="glossary-fundamental-health">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Fundamental Health (Factor 1, 25%)</h3>
+      <p><strong>What it measures:</strong> The financial health and valuation of the underlying company.</p>
+      <p><strong>Inputs:</strong> From <code>yfinance .info</code>: earnings yield (EPS/price), revenue growth
+      (year-over-year), operating margin, debt-to-equity ratio, free-cash-flow yield.</p>
+      <p><strong>Who gets scored:</strong> Individual stocks only. ETFs (sector, benchmark) correctly skip
+      this factor because they don't have company-level fundamentals — they get a neutral 50.</p>
+      <p><strong>What a high score means:</strong> Cheap (high earnings yield), growing, profitable, low debt,
+      strong FCF generation.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-technical-momentum">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Technical Momentum (Factor 2, 25%)</h3>
+      <p><strong>What it measures:</strong> How the price is moving relative to itself and the market.</p>
+      <p><strong>Inputs:</strong> Relative Strength vs SPY over 20D and 60D windows, distance from 50-day
+      moving average, RSI(14), 50-day trend slope.</p>
+      <p><strong>What a high score means:</strong> Outperforming the broad market, price above its 50-day
+      MA, RSI in a healthy range (not overbought), and the trend is rolling over to higher highs.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-volatility-regime">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Volatility Regime (Factor 3, 15%)</h3>
+      <p><strong>What it measures:</strong> The current volatility environment — whether it's elevated,
+      compressed, or normal.</p>
+      <p><strong>Inputs:</strong> Ratio of 20-day realized volatility to 1-year (252-day) realized volatility,
+      Average True Range as a percentage vs SPY's ATR%, and the 60-day maximum drawdown.</p>
+      <p><strong>What a high score means:</strong> Volatility is compressed (calm) vs its own history, the
+      instrument is less volatile than SPY in absolute terms, and it hasn't suffered a recent drawdown.
+      These conditions often precede directional breakouts.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-setup-quality">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Setup Quality (Factor 4, 25%)</h3>
+      <p><strong>What it measures:</strong> Whether the current price action matches a recognizable,
+      tradable chart pattern.</p>
+      <p><strong>Setup types:</strong></p>
+      <ul>
+        <li><strong>Breakout</strong> — price making a new 20-day high with positive 5-day momentum</li>
+        <li><strong>Pullback / Retest</strong> — uptrend with price pulling back to MA50 or MA20 (often
+        high-probability entry in an uptrend)</li>
+        <li><strong>Continuation</strong> — uptrend above both MAs with smaller retracements</li>
+        <li><strong>Range approach</strong> — trading sideways, no clear trend; setups still possible at
+        range extremes</li>
+        <li><strong>Reversal</strong> — downtrend showing first signs of base-building</li>
+        <li><strong>Mean reversion</strong> — extreme move likely to revert to the mean</li>
+      </ul>
+      <p><strong>What a high score means:</strong> Active setup in a direction with momentum alignment;
+      or a high range percentile (price near the top of its 20-day range, useful for breakout setups).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-sentiment-catalyst">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Sentiment / Catalyst (Factor 5, 10%)</h3>
+      <p><strong>What it measures:</strong> Trading activity and consensus expectations.</p>
+      <p><strong>Inputs:</strong> Average Daily Volume in dollars, ratio of 5-day average volume to
+      20-day average volume (rising volume = interest), and analyst price-target upside (stocks only).</p>
+      <p><strong>What a high score means:</strong> Heavy trading activity relative to peers, accelerating
+      volume (institutions piling in or distributing), and analyst targets implying upside from current
+      price.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-trend">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Trend (4-state classification)</h3>
+      <p><strong>Uptrend</strong> — price above both MA50 and MA20, 5-day and 20-day momentum positive.</p>
+      <p><strong>Downtrend</strong> — price below both MA50 and MA20, 5-day and 20-day momentum negative.</p>
+      <p><strong>Range</strong> — price hugging its MAs and 20-day return inside ±3%, 5-day inside ±1%.</p>
+      <p><strong>Transitioning</strong> — anything else (mixed signals: above one MA but below the other,
+      or recent momentum diverging from the slower trend).</p>
+      <p><strong>Examples today:</strong> SPY 765 above MA50 755 but below MA20 769 → <em>transitioning</em>
+      (rangebound near the highs, not a clean uptrend). QQQ 709 below both MAs but +7% over 20 days →
+      <em>transitioning</em> (bearish MA posture, bullish recent momentum).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-label-rule">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Label rule (Research / Watchlist / Avoid)</h3>
+      <p><strong>Score-only, not trend-gated.</strong> The ClawRank label is the composite score bucketed:</p>
+      <ul>
+        <li><span class="badge-gold">Research candidate</span> — composite ≥ 70</li>
+        <li><span style="color:var(--yellow);font-weight:600">Watchlist</span> — 30 ≤ composite &lt; 70</li>
+        <li><span style="color:var(--red);font-weight:600">Avoid</span> — composite &lt; 30</li>
+      </ul>
+      <p><strong>Why score-only?</strong> Trend and setup are already inside the composite via the
+      Technical Momentum and Setup Quality factors. Gating the label on trend/setup AGAIN would
+      double-count and demote fundamentally strong names that happen to be in a transition (e.g.,
+      JPM, XLE). The score already reflects the underlying signal.</p>
+      <p><strong>Backtest context:</strong> ClawRank's score-based label is a transparency layer — not a
+      trade signal. The 2-year backtest showed IC = −0.011 (t-stat −0.31), no significant 20-day
+      forward-return edge. See <code>reports/2026-09-03-clawrank-backtest.md</code>.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-sigma-bands">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Sigma bands (1σ 1d / 1σ 1mo)</h3>
+      <p><strong>What they are:</strong> Descriptive price ranges based on recent realized volatility,
+      not predictions or targets.</p>
+      <p><strong>Formula:</strong> <code>spot ± 1·σ·√(h/252)</code> where σ is the 20-day rolling daily
+      standard deviation (annualized) and h is the holding period in trading days (1 for 1-day, 21 for
+      1-month).</p>
+      <p><strong>How to read them:</strong> A name with σ = 1%/day has a 1-day 1σ band of roughly ±1%
+      around spot, and a 1-month 1σ band of roughly ±4.6%. About 68% of the time, the next-day close
+      should land inside that band (assuming returns are normal — they aren't, but it's a useful
+      rough guide).</p>
+      <p><strong>Not:</strong> Bollinger Bands, options-pricing implied moves, or trade signals.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-support-resistance">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Support / Resistance</h3>
+      <p>The 20-day low and 20-day high, used as crude short-term support and resistance levels. The
+      <strong>%→S</strong> and <strong>%→R</strong> columns show how far the current price is from each
+      level.</p>
+      <p><strong>Not:</strong> A magic number where price will bounce. These are descriptive, not
+      predictive. Use them as orientation, not as entry/exit triggers.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-rs-vs-spy">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> RS v SPY (Relative Strength)</h3>
+      <p>The ratio of the instrument's return to SPY's return over the same window. +5% means the
+      instrument outperformed SPY by 5 percentage points over the period. Used to find leadership
+      (sectors or stocks that are stronger than the broad market, often where the next big move
+      starts).</p>
+      <p><strong>Today:</strong> XLE +6.10% (energy leading), XLRE −9.75% (real estate lagging).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-adv">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> ADV ($M)</h3>
+      <p>Average Daily Volume in millions of dollars. Higher = more liquid = easier to enter/exit
+      without moving the price. Used as a sentiment/catalyst input (heavier volume = more institutional
+      interest).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-volatility-metrics">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Volatility metrics</h3>
+      <p><strong>20D SD:</strong> 20-day rolling standard deviation of daily returns (annualized).
+      Recent realized volatility.</p>
+      <p><strong>Ann.Vol:</strong> Annualized volatility computed from the full available history.
+      The "normal" volatility for this name.</p>
+      <p><strong>ATR$:</strong> Average True Range in dollars. The typical daily high-low range, in
+      cash terms. Useful for sizing stops.</p>
+      <p><strong>Rng%ile:</strong> Where today's price sits within the 20-day range, as a percentile
+      (0 = at the low, 100 = at the high). Values near 100 suggest breakouts; values near 0 suggest
+      breakdowns or mean-reversion setups.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-sector-leaders">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Sector Leaders (Table 2)</h3>
+      <p>For each of the 11 sector ETFs, the table shows the highest-ClawRank-scoring candidate from
+      a 2-3 name mega-cap shortlist. Sorted by score descending so the best sector-wide setup is at
+      the top.</p>
+      <p><strong>Candidate map:</strong> XLK→MSFT/NVDA/AAPL, XLF→JPM/BAC/GS, XLE→XOM/CVX,
+      XLV→LLY/UNH/JNJ, XLI→CAT/HON/DE, XLY→HD/AMZN/TSLA, XLP→PG/KO/WMT, XLC→META/GOOGL,
+      XLB→LIN/FCX, XLRE→AMT/PLD, XLU→NEE/SO.</p>
+      <p><strong>Hover the Outlook column</strong> to see the alternate candidates' scores
+      ("Other sector candidates: JPM=90, GS=42") — full transparency on what was considered.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-price">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Price</h3>
+      <p>The most recent closing price from the daily history. For intraday context this is the prior
+      session close (we only pull end-of-day data). Used as the anchor for all σ-band calculations
+      and percentage distances.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-ticker">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Ticker</h3>
+      <p>The exchange ticker symbol. For sector ETFs the underlying index is implied by the symbol
+      (XLK = Technology Select Sector SPDR, XLF = Financial Select Sector SPDR, etc.).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-group-sector">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Group / Sector</h3>
+      <p>Broad classification: "Broad Mkt", "Tech", "Small Cap" for benchmarks; the GICS sector
+      name ("Materials", "Financials", "Health Care", etc.) for sector ETFs and stocks. Helps
+      quickly identify where each name fits in the market structure.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-support">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Support</h3>
+      <p>The lowest low over the last 20 trading days. Used as a crude short-term support level. The
+      %→S column shows how far above support the current price is. See <a href="#glossary-support-resistance" class="glossary-link">Support / Resistance</a> for caveats.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-resistance">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Resistance</h3>
+      <p>The highest high over the last 20 trading days. Used as a crude short-term resistance level.
+      The %→R column shows how far below resistance the current price is. See <a href="#glossary-support-resistance" class="glossary-link">Support / Resistance</a> for caveats.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-pct-to-support">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> %→S (percent to support)</h3>
+      <p>Percentage distance from the current price to the 20-day low (support), expressed as a
+      positive number. A value of +1.86% means the price is 1.86% above the recent low. Higher
+      values mean the price has travelled further away from support (often stronger short-term
+      momentum); values near 0 mean the price is testing support.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-pct-to-resistance">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> %→R (percent to resistance)</h3>
+      <p>Percentage distance from the current price to the 20-day high (resistance), expressed as a
+      positive number. A value of +3.57% means the price would need to rally 3.57% to make a new
+      20-day high. Higher values = more upside room before hitting resistance.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-20d-sd">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> 20D SD (20-day standard deviation)</h3>
+      <p>The standard deviation of daily returns over the last 20 trading days, <em>annualized</em>
+      (multiplied by √252). This is the "recent realized volatility" — what the name has been
+      actually doing lately, not the long-term average. A ClawRank volatility factor (25%) uses
+      this directly.</p>
+      <p><strong>Today:</strong> SPY 0.46% (extremely calm — broad market compressed),
+      SO 1.5%+ (volatile utilities), NVDA 2.0%+ (tech mega-cap with elevated short-term vol).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-ann-vol">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Ann.Vol (annualized volatility)</h3>
+      <p>Standard deviation of daily returns over the full available history, annualized. This is the
+      "normal" volatility for the name — its long-term baseline. Pair this with 20D SD to see if
+      the name is currently <em>calmer or more volatile than usual</em>.</p>
+      <p><strong>Today:</strong> XLE 21.55% (highest — energy is volatile by nature),
+      SPY 7.37% (calmest — broad-market index).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-atr">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> ATR$ (Average True Range in dollars)</h3>
+      <p>14-day Average True Range expressed in dollars per share. The typical daily high-low range.
+      Useful for sizing stops: "I'll risk 1× ATR$ per share if I'm wrong". Also useful for options
+      premium sanity-checks.</p>
+      <p>Example: NVDA at $180 with ATR$ $5.18 means NVDA typically moves about $5 in either
+      direction each day.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-rng-percentile">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Rng%ile (range percentile)</h3>
+      <p>Where today's close sits within the 20-day high/low range, on a 0-100 scale. 100 = at the
+      20-day high (potential breakout), 0 = at the 20-day low (potential breakdown or reversal
+      setup). Values in the middle indicate choppy, directionless action.</p>
+      <p>This is one of the inputs to the <a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a> factor.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-outlook">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Outlook</h3>
+      <p>A one-line qualitative read combining trend + setup + ClawRank label:</p>
+      <ul>
+        <li><strong>Bullish continuation</strong> — uptrend + breakout/pullback setup + Research candidate</li>
+        <li><strong>Mean reversion candidate</strong> — uptrend that has pulled back to MA, RS still positive</li>
+        <li><strong>Range-bound</strong> — flat trend, watch for range extremes</li>
+        <li><strong>Caution</strong> — downtrend + low RS, even if score is high</li>
+        <li><strong>Avoid</strong> — low score and downtrend</li>
+      </ul>
+      <p>Not a recommendation — just a structured summary of what the dashboard's quantitative
+      factors are saying together.</p>
+    </div>
+
+  </div>
+</aside>
+
+<footer>
 <script>{JS}</script>
 </body></html>"""
     return html

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-03T21:48:21.653649-04:00",
+  "as_of": "2026-09-03T22:05:08.039981-04:00",
   "universe": 42,
   "factors": {
     "fundamental_health": 0.25,
@@ -11,7 +11,7 @@
   "tickers": [
     {
       "ticker": "SPY",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "pullback_retest",
       "spot": 765.1599731445312,
       "rs_60d_vs_spy": 0.0,
@@ -57,7 +57,7 @@
     },
     {
       "ticker": "QQQ",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 709.239990234375,
       "rs_60d_vs_spy": -0.04462924401329682,
@@ -149,7 +149,7 @@
     },
     {
       "ticker": "XLB",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "continuation",
       "spot": 52.95000076293945,
       "rs_60d_vs_spy": 0.024756866393128796,
@@ -287,7 +287,7 @@
     },
     {
       "ticker": "XLF",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "pullback_retest",
       "spot": 57.65999984741211,
       "rs_60d_vs_spy": 0.0743951664639102,
@@ -425,7 +425,7 @@
     },
     {
       "ticker": "XLP",
-      "trend": "uptrend",
+      "trend": "range",
       "setup": "pullback_retest",
       "spot": 85.52999877929688,
       "rs_60d_vs_spy": -0.005477478605461217,
@@ -471,7 +471,7 @@
     },
     {
       "ticker": "XLRE",
-      "trend": "range",
+      "trend": "downtrend",
       "setup": "range_approach",
       "spot": 43.72999954223633,
       "rs_60d_vs_spy": -0.0419045656889343,
@@ -494,7 +494,7 @@
       "clawrank_volatility_regime": 41.5,
       "clawrank_setup_quality": 19.5,
       "clawrank_sentiment_catalyst": 2.4,
-      "clawrank_label": "Watchlist",
+      "clawrank_label": "Avoid",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": null,
         "technical_momentum.rs_60d": -0.0419045656889343,
@@ -759,7 +759,7 @@
     },
     {
       "ticker": "AAPL",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 324.9599914550781,
       "rs_60d_vs_spy": 0.042576865603192626,
@@ -811,7 +811,7 @@
     },
     {
       "ticker": "JPM",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 356.2200012207031,
       "rs_60d_vs_spy": 0.10990595765044975,
@@ -828,7 +828,7 @@
       "room_to_resist_atr": 1.960334727205591,
       "adv_usd_m": 1946.797065298783,
       "vol_5d_over_20d": 1.0185672414667657,
-      "earnings_yield": 0.06655999078869802,
+      "earnings_yield": 0.06549323429356073,
       "revenue_growth": 0.304,
       "operating_margin": 0.50394,
       "debt_to_equity": null,
@@ -863,7 +863,7 @@
     },
     {
       "ticker": "BAC",
-      "trend": "uptrend",
+      "trend": "range",
       "setup": "pullback_retest",
       "spot": 62.599998474121094,
       "rs_60d_vs_spy": 0.132166033900178,
@@ -915,7 +915,7 @@
     },
     {
       "ticker": "GS",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 1004.4199829101562,
       "rs_60d_vs_spy": -0.07392359884153654,
@@ -1071,7 +1071,7 @@
     },
     {
       "ticker": "LLY",
-      "trend": "transitioning",
+      "trend": "downtrend",
       "setup": "range_approach",
       "spot": 1160.0799560546875,
       "rs_60d_vs_spy": -0.025579728316400985,
@@ -1100,7 +1100,7 @@
       "clawrank_volatility_regime": 9.8,
       "clawrank_setup_quality": 26.8,
       "clawrank_sentiment_catalyst": 75.6,
-      "clawrank_label": "Watchlist",
+      "clawrank_label": "Avoid",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": 0.01070137637938029,
         "technical_momentum.rs_60d": -0.025579728316400985,
@@ -1123,7 +1123,7 @@
     },
     {
       "ticker": "UNH",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 399.6600036621094,
       "rs_60d_vs_spy": -0.052086898577826224,
@@ -1192,7 +1192,7 @@
       "room_to_resist_atr": 1.101427985744377,
       "adv_usd_m": 1714.355245852661,
       "vol_5d_over_20d": 1.0486769476543247,
-      "earnings_yield": 0.031648560264650544,
+      "earnings_yield": 0.03128520136379347,
       "revenue_growth": 0.066,
       "operating_margin": 0.2919,
       "debt_to_equity": 0.57709,
@@ -1227,7 +1227,7 @@
     },
     {
       "ticker": "CAT",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "mean_reversion",
       "spot": 792.280029296875,
       "rs_60d_vs_spy": -0.16981646639412262,
@@ -1256,7 +1256,7 @@
       "clawrank_volatility_regime": 97.6,
       "clawrank_setup_quality": 7.3,
       "clawrank_sentiment_catalyst": 63.4,
-      "clawrank_label": "Avoid",
+      "clawrank_label": "Watchlist",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": 0.013727410453655154,
         "technical_momentum.rs_60d": -0.16981646639412262,
@@ -1383,7 +1383,7 @@
     },
     {
       "ticker": "HD",
-      "trend": "transitioning",
+      "trend": "downtrend",
       "setup": "mean_reversion",
       "spot": 318.510009765625,
       "rs_60d_vs_spy": -0.006677309385894059,
@@ -1400,7 +1400,7 @@
       "room_to_resist_atr": 5.229314426484166,
       "adv_usd_m": 1256.980383529342,
       "vol_5d_over_20d": 0.9251006224407612,
-      "earnings_yield": 0.04483375580725991,
+      "earnings_yield": 0.04489654818234011,
       "revenue_growth": 0.057,
       "operating_margin": 0.12858,
       "debt_to_equity": 3.80261,
@@ -1412,7 +1412,7 @@
       "clawrank_volatility_regime": 43.9,
       "clawrank_setup_quality": 2.4,
       "clawrank_sentiment_catalyst": 34.1,
-      "clawrank_label": "Watchlist",
+      "clawrank_label": "Avoid",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": 0.033915641812004994,
         "technical_momentum.rs_60d": -0.006677309385894059,
@@ -1435,7 +1435,7 @@
     },
     {
       "ticker": "AMZN",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "pullback_retest",
       "spot": 254.97999572753906,
       "rs_60d_vs_spy": 0.004709925823332295,
@@ -1487,7 +1487,7 @@
     },
     {
       "ticker": "TSLA",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 357.010009765625,
       "rs_60d_vs_spy": -0.16209924049171254,
@@ -1539,7 +1539,7 @@
     },
     {
       "ticker": "PG",
-      "trend": "transitioning",
+      "trend": "uptrend",
       "setup": "breakout",
       "spot": 147.63999938964844,
       "rs_60d_vs_spy": -0.017585924760342486,
@@ -1591,7 +1591,7 @@
     },
     {
       "ticker": "KO",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 88.23999786376953,
       "rs_60d_vs_spy": 0.07428784261181565,
@@ -1643,7 +1643,7 @@
     },
     {
       "ticker": "WMT",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "reversal",
       "spot": 106.08999633789062,
       "rs_60d_vs_spy": -0.14975352914614515,
@@ -1672,7 +1672,7 @@
       "clawrank_volatility_regime": 0.0,
       "clawrank_setup_quality": 34.1,
       "clawrank_sentiment_catalyst": 73.2,
-      "clawrank_label": "Avoid",
+      "clawrank_label": "Watchlist",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": 0.008260896951702065,
         "technical_momentum.rs_60d": -0.14975352914614515,
@@ -1695,7 +1695,7 @@
     },
     {
       "ticker": "META",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 592.8499755859375,
       "rs_60d_vs_spy": -0.022347472658881484,
@@ -1747,7 +1747,7 @@
     },
     {
       "ticker": "GOOGL",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 337.1199951171875,
       "rs_60d_vs_spy": -0.10717825206720744,
@@ -1776,7 +1776,7 @@
       "clawrank_volatility_regime": 100.0,
       "clawrank_setup_quality": 29.3,
       "clawrank_sentiment_catalyst": 80.5,
-      "clawrank_label": "Avoid",
+      "clawrank_label": "Watchlist",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": 0.00541123463587904,
         "technical_momentum.rs_60d": -0.10717825206720744,
@@ -1799,7 +1799,7 @@
     },
     {
       "ticker": "LIN",
-      "trend": "downtrend",
+      "trend": "transitioning",
       "setup": "range_approach",
       "spot": 487.45001220703125,
       "rs_60d_vs_spy": -0.06392034376851596,
@@ -1828,7 +1828,7 @@
       "clawrank_volatility_regime": 65.9,
       "clawrank_setup_quality": 48.8,
       "clawrank_sentiment_catalyst": 24.4,
-      "clawrank_label": "Avoid",
+      "clawrank_label": "Watchlist",
       "clawrank_breakdown": {
         "fundamental_health.fcf_yield": 0.018718506521314824,
         "technical_momentum.rs_60d": -0.06392034376851596,
@@ -1851,7 +1851,7 @@
     },
     {
       "ticker": "FCX",
-      "trend": "uptrend",
+      "trend": "transitioning",
       "setup": "continuation",
       "spot": 73.93000030517578,
       "rs_60d_vs_spy": 0.1216919369945888,
