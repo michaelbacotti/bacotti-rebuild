@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Market Dashboard — 2026-09-07</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27bg%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23161b22%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230d1117%27/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%27cg%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23e6c25a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23b88f33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2712%27%20fill%3D%27url%28%23bg%29%27%20stroke%3D%27%23d4a843%27%20stroke-width%3D%271.5%27/%3E%3Cpath%20d%3D%27M%2050%2022%20Q%2038%2010%2024%2016%20Q%208%2022%208%2034%20Q%208%2046%2022%2050%20Q%2038%2054%2050%2042%27%20stroke%3D%27url%28%23cg%29%27%20stroke-width%3D%277%27%20fill%3D%27none%27%20stroke-linecap%3D%27round%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2722%27%20r%3D%273.5%27%20fill%3D%27%233fb950%27/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+  --border: #30363d; --text: #e6edf3; --muted: #7d8590;
+  --gold: #d4a843; --gold-dim: rgba(212,168,67,0.18);
+  --green: #3fb950; --red: #f85149; --yellow: #d29922;
+  --blue: #58a6ff; --purple: #a371f7;
+}
+* { box-sizing: border-box; }
+body { font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+       background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; margin: 0; }
+header { background: linear-gradient(135deg, #1a1510 0%, #161b22 100%);
+          border-bottom: 1px solid rgba(212,168,67,0.3); padding: 18px 24px;
+          display: flex; align-items: center; justify-content: space-between; }
+.header-left h1 { font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: -0.3px; margin: 0; }
+.header-left .subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-badge { background: rgba(212,168,67,0.12); border: 1px solid rgba(212,168,67,0.4);
+                 border-radius: 20px; padding: 4px 12px; font-size: 10px; color: var(--gold);
+                 letter-spacing: 0.5px; font-weight: 600; }
+.header-badge.live { background: rgba(63,185,80,0.12); border-color: rgba(63,185,80,0.4); color: var(--green); }
+.last-updated { font-size: 10px; color: var(--muted); }
+.disclaimer { background: rgba(210,153,34,0.10); color: var(--yellow); padding: 10px 24px;
+              font-size: 11.5px; border-bottom: 1px solid rgba(210,153,34,0.25); }
+.disclaimer strong { color: var(--text); }
+main { padding: 16px 24px; max-width: 1700px; margin: 0 auto; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+         overflow: visible; margin-bottom: 14px; }
+.card-header { overflow: hidden; }
+.card-header { padding: 10px 14px; border-bottom: 1px solid var(--border);
+               display: flex; align-items: center; gap: 8px; font-size: 10px;
+               font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.card-header .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.card-body { padding: 4px 0; }
+.controls { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 14px;
+            border-bottom: 1px solid var(--border); background: rgba(33,38,45,0.4); }
+.chip { padding: 4px 10px; border: 1px solid var(--border); border-radius: 20px;
+        background: var(--surface2); color: var(--muted); cursor: pointer; font-size: 11px;
+        user-select: none; transition: all 0.15s; font-weight: 600; }
+.chip:hover { border-color: var(--gold); color: var(--text); }
+.chip.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+table { width: 100%; border-collapse: collapse; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 12px; text-align: right; border-bottom: 1px solid rgba(48,54,61,0.5);
+         white-space: nowrap; }
+th { background: var(--surface); font-weight: 700; color: var(--muted);
+     cursor: pointer; user-select: none; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.6px;
+     position: sticky; top: 0; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+th.sortable:hover { color: var(--gold); }
+th.sorted-asc::after { content: ' ▲'; color: var(--gold); }
+th.sorted-desc::after { content: ' ▼'; color: var(--gold); }
+tr:hover { background: rgba(212,168,67,0.04); }
+.ticker-cell { font-weight: 700; color: var(--gold); letter-spacing: 0.3px; }
+.trend-pill { display: inline-block; padding: 2px 8px; border-radius: 10px;
+               font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+.label-Rc { color: var(--blue); font-weight: 700; }
+.label-Wa { color: var(--yellow); font-weight: 600; }
+.label-Av { color: var(--red); font-weight: 700; }
+.spark-cell { padding: 4px 8px; width: 184px; }
+.factor-bar { display: inline-block; width: 56px; height: 8px; background: var(--surface2);
+               border-radius: 4px; position: relative; vertical-align: middle; }
+.factor-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 4px; }
+.factor-bar-text { margin-left: 6px; font-size: 10px; color: var(--muted); }
+.score-cell { position: relative; padding: 4px 10px; cursor: help; }
+.score-cell:hover { background: rgba(212,168,67,0.10); }
+.score-cell:hover .popover { display: block; }
+.score-big { font-size: 15px; font-weight: 700; color: var(--gold); }
+.score-label-pill { display: block; font-size: 9px; color: var(--muted);
+                     text-transform: uppercase; letter-spacing: 0.4px;
+                     margin-top: 1px; }
+.score-label-pill.Rc { color: var(--blue); }
+.score-label-pill.Wa { color: var(--yellow); }
+.score-label-pill.Av { color: var(--red); }
+.popover { position: absolute; top: calc(100% + 4px); left: 0;
+            z-index: 1000; background: var(--surface2); border: 1px solid var(--gold);
+            border-radius: 8px; padding: 12px 14px; min-width: 280px;
+            display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            text-align: left; font-size: 11px; color: var(--text); }
+.popover-title { font-size: 9px; font-weight: 700; color: var(--gold);
+                  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+.popover-row { display: grid; grid-template-columns: 130px 70px 30px;
+                align-items: center; gap: 8px; padding: 3px 0;
+                font-size: 10.5px; }
+.popover-row .name { color: var(--muted); }
+.popover-row .bar { width: 70px; height: 6px; background: #0d1117; border-radius: 3px;
+                     position: relative; }
+.popover-row .bar-fill { position: absolute; top: 0; left: 0; height: 100%;
+                          border-radius: 3px; }
+.popover-row .val { color: var(--text); font-weight: 600; text-align: right;
+                     font-variant-numeric: tabular-nums; }
+.popover-divider { height: 1px; background: var(--border); margin: 8px 0; }
+.popover-rule { font-size: 10.5px; color: var(--text); font-style: italic; }
+.popover-rule strong { color: var(--gold); font-style: normal; }
+.popover-trigger-hint { display: block; font-size: 8.5px; color: var(--muted);
+                          margin-top: 4px; text-align: center; opacity: 0.6; }
+.score-sub { font-size: 9px; color: var(--muted); }
+.unav { color: var(--muted); font-style: italic; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+.dq { background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.25);
+      border-radius: 8px; padding: 12px 16px; font-size: 11.5px; color: var(--text); margin-top: 14px; }
+.dq h3 { margin: 0 0 8px 0; font-size: 11px; font-weight: 700; color: var(--red);
+         text-transform: uppercase; letter-spacing: 0.6px; }
+.dq code { background: var(--surface2); padding: 1px 6px; border-radius: 3px;
+           color: var(--gold); font-size: 10.5px; }
+.composite { font-size: 11px; color: var(--muted); padding: 10px 14px;
+              border-top: 1px solid var(--border); background: rgba(33,38,45,0.4); }
+.composite strong { color: var(--text); }
+.composite .badge-gold { background: var(--gold-dim); color: var(--gold);
+                          padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px; padding: 14px; border-bottom: 1px solid var(--border); background: rgba(13,17,23,0.5); }
+.kpi { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+        padding: 10px 12px; }
+.kpi-label { font-size: 9px; color: var(--muted); text-transform: uppercase;
+              letter-spacing: 0.6px; margin-bottom: 4px; font-weight: 700; }
+.kpi-value { font-size: 16px; font-weight: 700; color: var(--text); }
+.kpi-sub { font-size: 9px; color: var(--muted); margin-top: 2px; }
+.kpi.gold .kpi-value { color: var(--gold); }
+.kpi.green .kpi-value { color: var(--green); }
+.kpi.red .kpi-value { color: var(--red); }
+.kpi.blue .kpi-value { color: var(--blue); }
+footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
+          display: flex; justify-content: space-between; align-items: center; }
+.footer-text { font-size: 10px; color: var(--muted); }
+.footer-text span { color: var(--gold); }
+.legend-row { display: flex; gap: 14px; padding: 8px 14px; font-size: 10px;
+               color: var(--muted); background: var(--surface2); border-top: 1px solid var(--border); flex-wrap: wrap; }
+.legend-row .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+                       margin-right: 4px; vertical-align: middle; }
+.glossary-link { color: var(--gold); text-decoration: none; border-bottom: 1px dotted var(--gold); }
+.glossary-link:hover { color: var(--text); border-bottom-color: var(--text); }
+.header-glossary-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--border);
+                         display: inline-block; }
+.header-glossary-link:hover { color: var(--gold); border-bottom-color: var(--gold); }
+.glossary { background: var(--surface); border: 1px solid var(--border);
+             border-radius: 10px; padding: 24px 28px; margin: 28px auto; max-width: 1400px; }
+.glossary h2 { color: var(--gold); font-size: 18px; margin: 0 0 4px 0; font-weight: 600; }
+.glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+                  gap: 18px; margin-top: 18px; }
+.glossary-entry { background: var(--surface2); border: 1px solid var(--border);
+                   border-radius: 8px; padding: 14px 16px; scroll-margin-top: 20px; }
+.glossary-entry h3 { color: var(--gold); font-size: 13px; margin: 0 0 8px 0;
+                      border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.glossary-entry p { font-size: 11.5px; line-height: 1.55; color: var(--text); margin: 6px 0; }
+.glossary-entry ul { font-size: 11.5px; line-height: 1.55; color: var(--text); margin: 6px 0; padding-left: 18px; }
+.glossary-entry code { background: #0d1117; color: var(--green); padding: 1px 5px;
+                         border-radius: 3px; font-size: 10.5px; }
+.glossary-entry em { color: var(--muted); font-style: italic; }
+.back-link { display: inline-block; color: var(--muted); font-size: 11px;
+              margin-right: 6px; text-decoration: none; }
+.back-link:hover { color: var(--gold); }
+.glossary-entry:target { border-color: var(--gold); background: rgba(212, 168, 67, 0.05); }
+</style>
+</head><body>
+<header>
+  <div class="header-left">
+    <h1>Market Dashboard — September 07, 2026 <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated 17:33 UTC-04:00</span></h1>
+    <div class="subtitle">Daily Market & Sector Research · September 07, 2026 · Universe: 3 benchmarks + 11 sector ETFs + 28 sector-leader candidates</div>
+  </div>
+  <div class="header-right">
+    <span class="header-badge live">RESEARCH</span>
+    <span class="last-updated">Updated Sep 07, 2026 · 17:33 UTC-04:00</span>
+  </div>
+</header>
+<div class="disclaimer">
+  <strong>Research output only — NOT a recommendation to buy, sell, or hold any security.</strong>
+  Sigma bands and 1w ranges are <strong>descriptive</strong> (spot ± N·σ·√(h/252)), not predictions or targets.
+  ClawRank is a transparent scoring layer — <strong>backtest shows no statistically significant 20D predictive edge in this universe &amp; window</strong> (see `2026-09-03-clawrank-backtest.md`).
+</div>
+<main>
+
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — 42 instruments (3 benchmarks + 11 sector ETFs + 28 sector leaders)</div>
+  <div class="kpi-row">
+    <div class="kpi gold">
+      <div class="kpi-label">SPY Spot</div>
+      <div class="kpi-value">$770.19</div>
+      <div class="kpi-sub">RS baseline</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Uptrend / Downtrend</div>
+      <div class="kpi-value">14 <span style="color:var(--muted);font-size:11px">/</span> 10</div>
+      <div class="kpi-sub">14 transitioning, 4 range</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">ClawRank Research</div>
+      <div class="kpi-value">13</div>
+      <div class="kpi-sub">composite ≥ 70</div>
+    </div>
+    <div class="kpi" style="--y:var(--yellow)">
+      <div class="kpi-label">Watchlist</div>
+      <div class="kpi-value" style="color:var(--yellow)">20</div>
+      <div class="kpi-sub">composite 30 – 70</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">ClawRank Avoid</div>
+      <div class="kpi-value">9</div>
+      <div class="kpi-sub">composite ≤ 30</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--blue)"></div> 1) Market & Sectors (3 benchmarks + 11 sector ETFs)</div>
+  <div class="controls chip-group" data-table="t1" data-col="4">
+    <span class="chip active" data-val="">All trends</span>
+    <span class="chip" data-val="uptrend">uptrend</span>
+    <span class="chip" data-val="downtrend">downtrend</span>
+    <span class="chip" data-val="range">range</span>
+    <span class="chip" data-val="transitioning">transitioning</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table id="t1">
+    <thead><tr>
+      <th class="sortable" onclick="sortTable('t1',0,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
+      <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+      <th><a href="#glossary-group-sector" class="header-glossary-link">Group / Sector</a></th>
+      <th class="sortable" onclick="sortTable('t1',3,'num')"><a href="#glossary-price" class="header-glossary-link">Price</a></th>
+      <th><a href="#glossary-trend" class="header-glossary-link">Trend</a></th>
+      <th class="sortable" onclick="sortTable('t1',5,'num')"><a href="#glossary-support" class="header-glossary-link">Support</a></th>
+      <th class="sortable" onclick="sortTable('t1',6,'num')"><a href="#glossary-resistance" class="header-glossary-link">Resistance</a></th>
+      <th><a href="#glossary-pct-to-support" class="header-glossary-link">%→S</a></th>
+      <th><a href="#glossary-pct-to-resistance" class="header-glossary-link">%→R</a></th>
+      <th class="sortable" onclick="sortTable('t1',9,'num')"><a href="#glossary-20d-sd" class="header-glossary-link">20D SD</a></th>
+      <th class="sortable" onclick="sortTable('t1',10,'num')"><a href="#glossary-ann-vol" class="header-glossary-link">Ann.Vol</a></th>
+      <th><a href="#glossary-atr" class="header-glossary-link">ATR$</a></th>
+      <th class="sortable" onclick="sortTable('t1',12,'num')"><a href="#glossary-rng-percentile" class="header-glossary-link">Rng%ile</a></th>
+      <th class="sortable" onclick="sortTable('t1',13,'num')"><a href="#glossary-rs-vs-spy" class="header-glossary-link">RS v SPY</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">60D + σ-bands</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">1σ 1d</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">1σ 1mo</a></th>
+      <th><a href="#glossary-outlook" class="header-glossary-link">Outlook</a></th>
+    </tr></thead>
+    <tbody>
+        <tr>
+          <td class="score-cell" data-val="97.60"><span class="score-big">98</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:63%;background:#58a6ff;"></span></span><span class="val">63</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:85%;background:#d4a843;"></span></span><span class="val">85</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:93%;background:#d4a843;"></span></span><span class="val">93</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:100%;background:#d4a843;"></span></span><span class="val">100</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 98</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = pullback retest &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">SPY</td>
+          <td>Broad Mkt</td>
+          <td data-val="770.19">$770.19</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="759.48">$759.48</td>
+          <td data-val="779.37">$779.37</td>
+          <td class="pos" data-val="0.0141">+1.41%</td>
+          <td class="pos" data-val="0.0119">+1.19%</td>
+          <td data-val="0.00511">0.511%</td>
+          <td data-val="0.08106">8.11%</td>
+          <td data-val="5.24">$5.24</td>
+          <td data-val="53.84622466076262">54</td>
+          <td class="" data-val="0.0000">+0.00%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="19.9" width="72.0" height="-14.9" fill="#f8514922"/><rect x="108.0" y="17.4" width="72.0" height="-9.9" fill="#d2992233"/><rect x="108.0" y="14.9" width="72.0" height="-5.0" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,32.9 3.1,30.4 6.1,22.1 9.2,25.0 12.2,30.9 15.3,27.2 18.3,28.7 21.4,35.5 24.4,35.8 27.5,35.1 30.5,38.4 33.6,30.9 36.6,27.2 39.7,27.8 42.7,28.5 45.8,24.4 48.8,26.6 51.9,28.1 54.9,24.1 58.0,22.0 61.0,25.7 64.1,24.0 67.1,22.1 70.2,24.7 73.2,29.4 76.3,30.2 79.3,26.3 82.4,26.8 85.4,32.6 88.5,32.2 91.5,32.1 94.6,30.9 97.6,38.1 100.7,30.4 103.7,27.0 106.8,20.3 109.8,11.7 112.9,12.7 115.9,13.4 119.0,10.5 122.0,10.6 125.1,12.2 128.1,11.0 131.2,7.6 134.2,8.5 137.3,10.8 140.3,14.1 143.4,13.1 146.4,17.2 149.5,15.2 152.5,16.7 155.6,15.1 158.6,15.0 161.7,11.8 164.7,12.9 167.8,14.4 170.8,17.7 173.9,15.6 176.9,10.5 180.0,12.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="12.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="769.94">769.94–770.44</td>
+          <td data-val="769.05">769.05–771.33</td>
+          <td>Uptrend w/ healthy pullback near 50D</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="100.00"><span class="score-big">100</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:58%;background:#58a6ff;"></span></span><span class="val">58</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:100%;background:#d4a843;"></span></span><span class="val">100</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:90%;background:#d4a843;"></span></span><span class="val">90</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:98%;background:#d4a843;"></span></span><span class="val">98</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 100</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = pullback retest &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">QQQ</td>
+          <td>Tech</td>
+          <td data-val="718.96">$718.96</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="702.70">$702.70</td>
+          <td data-val="734.58">$734.58</td>
+          <td class="pos" data-val="0.0231">+2.31%</td>
+          <td class="pos" data-val="0.0217">+2.17%</td>
+          <td data-val="0.00810">0.810%</td>
+          <td data-val="0.12856">12.86%</td>
+          <td data-val="7.91">$7.91</td>
+          <td data-val="51.00378693602797">51</td>
+          <td class="pos" data-val="0.0140">+1.40%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="23.5" width="72.0" height="-13.1" fill="#f8514922"/><rect x="108.0" y="21.3" width="72.0" height="-8.7" fill="#d2992233"/><rect x="108.0" y="19.1" width="72.0" height="-4.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,17.6 3.1,16.1 6.1,7.6 9.2,12.9 12.2,15.6 15.3,8.8 18.3,9.8 21.4,19.0 24.4,20.1 27.5,17.9 30.5,21.6 33.6,15.0 36.6,10.4 39.7,14.6 42.7,19.3 45.8,15.5 48.8,20.5 51.9,19.8 54.9,15.3 58.0,14.5 61.0,19.7 64.1,16.7 67.1,17.4 70.2,21.8 73.2,25.8 76.3,25.6 79.3,20.7 82.4,22.1 85.4,27.1 88.5,30.0 91.5,30.8 94.6,33.3 97.6,38.4 100.7,30.3 103.7,28.6 106.8,24.0 109.8,15.1 112.9,17.6 115.9,18.6 119.0,15.4 122.0,16.2 125.1,17.1 128.1,15.2 131.2,12.0 134.2,12.4 137.3,12.9 140.3,17.5 143.4,18.0 146.4,20.0 149.5,19.0 152.5,21.7 155.6,20.1 158.6,19.8 161.7,16.2 164.7,17.9 167.8,17.8 170.8,21.2 173.9,20.6 176.9,17.4 180.0,17.0"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.0" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="718.59">718.59–719.33</td>
+          <td data-val="717.28">717.28–720.64</td>
+          <td>Uptrend w/ healthy pullback near 50D</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="63.40"><span class="score-big">63</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:39%;background:#d29922;"></span></span><span class="val">39</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:71%;background:#d4a843;"></span></span><span class="val">71</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:39%;background:#d29922;"></span></span><span class="val">39</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:78%;background:#d4a843;"></span></span><span class="val">78</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 63</strong> &nbsp;+&nbsp; trend = range &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">IWM</td>
+          <td>Small Cap</td>
+          <td data-val="296.01">$296.01</td>
+          <td><span class="trend-pill" style="background:#d2992222;color:#d29922;border:1px solid #d2992255">range</span></td>
+          <td data-val="289.97">$289.97</td>
+          <td data-val="305.18">$305.18</td>
+          <td class="pos" data-val="0.0208">+2.08%</td>
+          <td class="pos" data-val="0.0310">+3.10%</td>
+          <td data-val="0.00765">0.765%</td>
+          <td data-val="0.12139">12.14%</td>
+          <td data-val="2.86">$2.86</td>
+          <td data-val="39.71079512280272">40</td>
+          <td class="neg" data-val="-0.0145">-1.45%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="37.2" width="72.0" height="-25.4" fill="#f8514922"/><rect x="108.0" y="33.0" width="72.0" height="-16.9" fill="#d2992233"/><rect x="108.0" y="28.8" width="72.0" height="-8.5" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,35.0 3.1,30.3 6.1,27.1 9.2,31.9 12.2,36.0 15.3,25.3 18.3,20.5 21.4,25.8 24.4,23.3 27.5,19.1 30.5,17.4 33.6,19.0 36.6,16.2 39.7,18.3 42.7,21.6 45.8,19.1 48.8,24.2 51.9,29.3 54.9,22.2 58.0,24.6 61.0,29.3 64.1,27.3 67.1,25.0 70.2,25.3 73.2,28.2 76.3,31.4 79.3,23.5 82.4,28.7 85.4,31.9 88.5,33.6 91.5,30.3 94.6,29.5 97.6,38.4 100.7,30.9 103.7,33.5 106.8,24.1 109.8,13.9 112.9,17.5 115.9,20.3 119.0,14.2 122.0,17.1 125.1,15.2 128.1,12.0 131.2,10.5 134.2,7.6 137.3,9.5 140.3,16.6 143.4,13.9 146.4,21.4 149.5,17.1 152.5,20.9 155.6,18.5 158.6,19.1 161.7,17.4 164.7,25.0 167.8,28.4 170.8,34.7 173.9,28.3 176.9,26.1 180.0,24.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="24.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="295.87">295.87–296.15</td>
+          <td data-val="295.36">295.36–296.66</td>
+          <td>Consolidation awaiting breakout</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="56.10"><span class="score-big">56</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:42%;background:#58a6ff;"></span></span><span class="val">42</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:44%;background:#58a6ff;"></span></span><span class="val">44</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:71%;background:#d4a843;"></span></span><span class="val">71</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:15%;background:#f85149;"></span></span><span class="val">15</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 56</strong> &nbsp;+&nbsp; trend = transitioning &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLB</td>
+          <td>Materials</td>
+          <td data-val="52.44">$52.44</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td data-val="51.75">$51.75</td>
+          <td data-val="54.19">$54.19</td>
+          <td class="pos" data-val="0.0133">+1.33%</td>
+          <td class="pos" data-val="0.0334">+3.34%</td>
+          <td data-val="0.00929">0.929%</td>
+          <td data-val="0.14750">14.75%</td>
+          <td data-val="0.79">$0.79</td>
+          <td data-val="28.27864815807864">28</td>
+          <td class="pos" data-val="0.0089">+0.89%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="30.4" width="72.0" height="-24.8" fill="#f8514922"/><rect x="108.0" y="26.3" width="72.0" height="-16.5" fill="#d2992233"/><rect x="108.0" y="22.1" width="72.0" height="-8.3" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,28.3 3.1,20.2 6.1,17.5 9.2,15.6 12.2,21.6 15.3,23.3 18.3,25.0 21.4,31.3 24.4,28.9 27.5,23.1 30.5,25.1 33.6,33.1 36.6,31.7 39.7,30.0 42.7,21.6 45.8,21.9 48.8,25.9 51.9,37.3 54.9,36.5 58.0,31.1 61.0,33.8 64.1,33.3 67.1,34.5 70.2,31.1 73.2,34.2 76.3,38.4 79.3,37.8 82.4,31.7 85.4,36.2 88.5,28.0 91.5,26.9 94.6,18.8 97.6,23.9 100.7,24.8 103.7,35.0 106.8,30.1 109.8,21.7 112.9,16.3 115.9,20.3 119.0,14.4 122.0,11.7 125.1,11.2 128.1,16.8 131.2,19.1 134.2,17.1 137.3,19.7 140.3,23.6 143.4,17.3 146.4,18.2 149.5,8.7 152.5,8.3 155.6,8.3 158.6,7.6 161.7,11.3 164.7,11.7 167.8,15.9 170.8,21.1 173.9,13.7 176.9,16.5 180.0,18.0"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="18.0" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="52.41">52.41–52.47</td>
+          <td data-val="52.30">52.30–52.58</td>
+          <td>Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="61.00"><span class="score-big">61</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:54%;background:#58a6ff;"></span></span><span class="val">54</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:12%;background:#f85149;"></span></span><span class="val">12</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:85%;background:#d4a843;"></span></span><span class="val">85</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:12%;background:#f85149;"></span></span><span class="val">12</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 61</strong> &nbsp;+&nbsp; trend = transitioning &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLC</td>
+          <td>Comm Services</td>
+          <td data-val="112.03">$112.03</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td data-val="109.89">$109.89</td>
+          <td data-val="114.29">$114.29</td>
+          <td class="pos" data-val="0.0194">+1.94%</td>
+          <td class="pos" data-val="0.0202">+2.02%</td>
+          <td data-val="0.01065">1.065%</td>
+          <td data-val="0.16899">16.90%</td>
+          <td data-val="1.54">$1.54</td>
+          <td data-val="48.57793084772125">49</td>
+          <td class="pos" data-val="0.0040">+0.40%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="26.6" width="72.0" height="-26.6" fill="#f8514922"/><rect x="108.0" y="22.0" width="72.0" height="-18.4" fill="#d2992233"/><rect x="108.0" y="17.4" width="72.0" height="-9.2" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,12.4 3.1,14.2 6.1,12.2 9.2,11.7 12.2,23.7 15.3,22.7 18.3,32.7 21.4,31.1 24.4,34.0 27.5,37.7 30.5,35.4 33.6,28.8 36.6,31.7 39.7,21.6 42.7,22.2 45.8,19.8 48.8,16.7 51.9,22.7 54.9,18.6 58.0,14.3 61.0,14.5 64.1,15.0 67.1,7.6 70.2,10.4 73.2,18.1 76.3,17.5 79.3,20.5 82.4,23.7 85.4,38.4 88.5,34.9 91.5,29.6 94.6,21.9 97.6,22.5 100.7,33.8 103.7,27.4 106.8,15.4 109.8,12.7 112.9,17.2 115.9,16.1 119.0,15.8 122.0,13.5 125.1,15.7 128.1,19.6 131.2,10.8 134.2,9.2 137.3,17.4 140.3,18.8 143.4,15.5 146.4,18.0 149.5,15.2 152.5,11.7 155.6,8.3 158.6,10.5 161.7,15.2 164.7,9.1 167.8,15.0 170.8,17.2 173.9,11.3 176.9,7.6 180.0,12.8"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="12.8" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="111.95">111.95–112.11</td>
+          <td data-val="111.69">111.69–112.37</td>
+          <td>Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="95.10"><span class="score-big">95</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:88%;background:#d4a843;"></span></span><span class="val">88</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:22%;background:#d29922;"></span></span><span class="val">22</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:71%;background:#d4a843;"></span></span><span class="val">71</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 95</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = continuation &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLE</td>
+          <td>Energy</td>
+          <td data-val="64.06">$64.06</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="58.10">$58.10</td>
+          <td data-val="65.52">$65.52</td>
+          <td class="pos" data-val="0.1026">+10.26%</td>
+          <td class="pos" data-val="0.0228">+2.28%</td>
+          <td data-val="0.01360">1.360%</td>
+          <td data-val="0.21595">21.60%</td>
+          <td data-val="1.16">$1.16</td>
+          <td data-val="80.32345761777752">80</td>
+          <td class="pos" data-val="0.0447">+4.47%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="16.7" width="72.0" height="-13.1" fill="#f8514922"/><rect x="108.0" y="14.6" width="72.0" height="-8.8" fill="#d2992233"/><rect x="108.0" y="12.4" width="72.0" height="-4.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,27.6 3.1,26.5 6.1,31.6 9.2,32.0 12.2,33.8 15.3,36.0 18.3,35.3 21.4,34.3 24.4,36.5 27.5,35.2 30.5,35.9 33.6,36.5 36.6,37.7 39.7,38.4 42.7,37.4 45.8,37.6 48.8,33.8 51.9,31.4 54.9,33.4 58.0,32.7 61.0,28.6 64.1,28.0 67.1,29.2 70.2,27.9 73.2,26.2 76.3,25.6 79.3,24.1 82.4,22.4 85.4,21.9 88.5,21.3 91.5,24.5 94.6,26.5 97.6,23.8 100.7,23.0 103.7,21.5 106.8,23.4 109.8,24.1 112.9,27.1 115.9,25.0 119.0,26.7 122.0,19.9 125.1,18.0 128.1,17.8 131.2,17.7 134.2,15.6 137.3,13.9 140.3,11.1 143.4,11.4 146.4,11.0 149.5,11.2 152.5,12.6 155.6,15.2 158.6,14.3 161.7,14.6 164.7,13.6 167.8,10.4 170.8,8.4 173.9,7.6 176.9,8.8 180.0,10.2"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="10.2" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="64.01">64.01–64.11</td>
+          <td data-val="63.81">63.81–64.31</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="82.90"><span class="score-big">83</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:71%;background:#d4a843;"></span></span><span class="val">71</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:24%;background:#d29922;"></span></span><span class="val">24</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:73%;background:#d4a843;"></span></span><span class="val">73</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:68%;background:#58a6ff;"></span></span><span class="val">68</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 83</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = continuation &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLF</td>
+          <td>Financials</td>
+          <td data-val="58.10">$58.10</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="56.91">$56.91</td>
+          <td data-val="58.60">$58.60</td>
+          <td class="pos" data-val="0.0209">+2.09%</td>
+          <td class="pos" data-val="0.0086">+0.86%</td>
+          <td data-val="0.00761">0.761%</td>
+          <td data-val="0.12079">12.08%</td>
+          <td data-val="0.61">$0.61</td>
+          <td data-val="70.41417714204454">70</td>
+          <td class="neg" data-val="-0.0106">-1.06%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="16.8" width="72.0" height="-13.8" fill="#f8514922"/><rect x="108.0" y="14.5" width="72.0" height="-9.2" fill="#d2992233"/><rect x="108.0" y="12.2" width="72.0" height="-4.6" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,34.7 6.1,33.6 9.2,29.4 12.2,31.0 15.3,33.5 18.3,32.8 21.4,31.9 24.4,32.7 27.5,34.1 30.5,33.5 33.6,32.7 36.6,33.3 39.7,27.2 42.7,22.8 45.8,20.1 48.8,20.6 51.9,26.2 54.9,23.3 58.0,22.4 61.0,20.5 64.1,19.9 67.1,18.0 70.2,17.0 73.2,19.5 76.3,20.7 79.3,20.3 82.4,20.6 85.4,21.8 88.5,19.3 91.5,16.3 94.6,12.5 97.6,17.3 100.7,15.7 103.7,16.0 106.8,13.7 109.8,11.1 112.9,10.5 115.9,11.5 119.0,12.5 122.0,11.5 125.1,11.5 128.1,10.9 131.2,9.1 134.2,9.6 137.3,12.7 140.3,11.3 143.4,13.2 146.4,15.9 149.5,13.2 152.5,9.3 155.6,8.9 158.6,9.1 161.7,11.1 164.7,10.0 167.8,12.0 170.8,14.6 173.9,12.2 176.9,7.6 180.0,10.0"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="10.0" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="58.07">58.07–58.13</td>
+          <td data-val="57.97">57.97–58.23</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="41.50"><span class="score-big">42</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:12%;background:#f85149;"></span></span><span class="val">12</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:78%;background:#d4a843;"></span></span><span class="val">78</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:27%;background:#d29922;"></span></span><span class="val">27</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:49%;background:#58a6ff;"></span></span><span class="val">49</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 42</strong> &nbsp;+&nbsp; trend = downtrend &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLI</td>
+          <td>Industrials</td>
+          <td data-val="175.27">$175.27</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="171.62">$171.62</td>
+          <td data-val="187.41">$187.41</td>
+          <td class="pos" data-val="0.0213">+2.13%</td>
+          <td class="pos" data-val="0.0693">+6.93%</td>
+          <td data-val="0.00774">0.774%</td>
+          <td data-val="0.12281">12.28%</td>
+          <td data-val="2.23">$2.23</td>
+          <td data-val="23.115941608830187">23</td>
+          <td class="neg" data-val="-0.0564">-5.64%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="41.9" width="72.0" height="-18.2" fill="#f8514922"/><rect x="108.0" y="38.8" width="72.0" height="-12.2" fill="#d2992233"/><rect x="108.0" y="35.8" width="72.0" height="-6.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,33.0 3.1,30.7 6.1,25.1 9.2,22.5 12.2,23.0 15.3,20.1 18.3,18.1 21.4,26.3 24.4,21.7 27.5,12.9 30.5,19.5 33.6,16.0 36.6,10.4 39.7,14.6 42.7,13.4 45.8,9.7 48.8,16.8 51.9,21.2 54.9,19.7 58.0,17.8 61.0,21.3 64.1,21.1 67.1,22.0 70.2,21.8 73.2,23.5 76.3,26.4 79.3,25.2 82.4,24.7 85.4,17.8 88.5,16.2 91.5,15.0 94.6,16.6 97.6,29.6 100.7,25.8 103.7,22.5 106.8,15.1 109.8,7.8 112.9,7.9 115.9,11.5 119.0,10.5 122.0,11.8 125.1,9.4 128.1,9.0 131.2,9.2 134.2,7.6 137.3,8.0 140.3,14.1 143.4,17.8 146.4,22.7 149.5,21.6 152.5,24.4 155.6,25.7 158.6,21.4 161.7,24.8 164.7,28.6 167.8,33.1 170.8,38.4 173.9,38.3 176.9,34.3 180.0,32.7"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="32.7" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="175.18">175.18–175.36</td>
+          <td data-val="174.88">174.88–175.66</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="92.70"><span class="score-big">93</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:73%;background:#d4a843;"></span></span><span class="val">73</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:76%;background:#d4a843;"></span></span><span class="val">76</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:68%;background:#58a6ff;"></span></span><span class="val">68</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:44%;background:#58a6ff;"></span></span><span class="val">44</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 93</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = continuation &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLK</td>
+          <td>Technology</td>
+          <td data-val="187.28">$187.28</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="178.82">$178.82</td>
+          <td data-val="191.75">$191.75</td>
+          <td class="pos" data-val="0.0473">+4.73%</td>
+          <td class="pos" data-val="0.0239">+2.39%</td>
+          <td data-val="0.01318">1.318%</td>
+          <td data-val="0.20925">20.93%</td>
+          <td data-val="3.13">$3.13</td>
+          <td data-val="65.42920531520687">65</td>
+          <td class="pos" data-val="0.0370">+3.70%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="22.4" width="72.0" height="-17.9" fill="#f8514922"/><rect x="108.0" y="19.4" width="72.0" height="-11.9" fill="#d2992233"/><rect x="108.0" y="16.4" width="72.0" height="-6.0" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,18.4 3.1,16.4 6.1,8.0 9.2,14.5 12.2,15.2 15.3,8.4 18.3,7.6 21.4,17.2 24.4,18.5 27.5,16.7 30.5,20.9 33.6,15.7 36.6,9.5 39.7,15.4 42.7,21.5 45.8,17.9 48.8,23.2 51.9,20.5 54.9,15.8 58.0,15.2 61.0,20.7 64.1,17.9 67.1,20.3 70.2,25.2 73.2,27.6 76.3,27.4 79.3,21.3 82.4,21.9 85.4,24.1 88.5,27.2 91.5,29.1 94.6,33.0 97.6,38.4 100.7,27.4 103.7,27.8 106.8,24.6 109.8,13.9 112.9,15.1 115.9,15.8 119.0,12.6 122.0,14.6 125.1,14.9 128.1,11.5 131.2,9.2 134.2,10.1 137.3,9.8 140.3,15.4 143.4,17.8 146.4,18.5 149.5,18.2 152.5,22.2 155.6,20.1 158.6,18.8 161.7,11.8 164.7,15.4 167.8,14.4 170.8,17.8 173.9,17.9 176.9,15.0 180.0,13.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="13.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="187.12">187.12–187.44</td>
+          <td data-val="186.57">186.57–187.99</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="22.00"><span class="score-big">22</span><span class="score-label-pill Av">Avoid</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:29%;background:#d29922;"></span></span><span class="val">29</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:15%;background:#f85149;"></span></span><span class="val">15</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:17%;background:#f85149;"></span></span><span class="val">17</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:29%;background:#d29922;"></span></span><span class="val">29</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 22</strong> ≤ 30 &nbsp;+&nbsp; trend = downtrend &nbsp;→&nbsp; Avoid</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLP</td>
+          <td>Consumer Staples</td>
+          <td data-val="84.58">$84.58</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="84.01">$84.01</td>
+          <td data-val="87.47">$87.47</td>
+          <td class="pos" data-val="0.0068">+0.68%</td>
+          <td class="pos" data-val="0.0342">+3.42%</td>
+          <td data-val="0.00935">0.935%</td>
+          <td data-val="0.14848">14.85%</td>
+          <td data-val="1.01">$1.01</td>
+          <td data-val="16.473983978267245">16</td>
+          <td class="neg" data-val="-0.0365">-3.65%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="38.3" width="72.0" height="-27.8" fill="#f8514922"/><rect x="108.0" y="33.6" width="72.0" height="-18.5" fill="#d2992233"/><rect x="108.0" y="29.0" width="72.0" height="-9.3" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,20.3 3.1,17.1 6.1,19.1 9.2,18.5 12.2,29.7 15.3,31.9 18.3,38.4 21.4,29.4 24.4,25.2 27.5,28.1 30.5,23.6 33.6,25.6 36.6,33.2 39.7,31.9 42.7,22.0 45.8,27.2 48.8,22.7 51.9,25.5 54.9,32.5 58.0,27.1 61.0,24.3 64.1,31.2 67.1,30.9 70.2,17.2 73.2,20.8 76.3,22.7 79.3,27.4 82.4,25.5 85.4,32.4 88.5,27.0 91.5,19.8 94.6,9.8 97.6,8.1 100.7,19.2 103.7,21.6 106.8,22.7 109.8,19.7 112.9,20.0 115.9,21.3 119.0,21.2 122.0,22.2 125.1,23.7 128.1,21.4 131.2,16.1 134.2,15.5 137.3,23.8 140.3,18.5 143.4,12.9 146.4,20.0 149.5,16.1 152.5,7.6 155.6,13.0 158.6,14.5 161.7,21.4 164.7,19.3 167.8,22.0 170.8,20.5 173.9,18.8 176.9,20.4 180.0,24.4"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="24.4" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="84.53">84.53–84.63</td>
+          <td data-val="84.35">84.35–84.81</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="19.50"><span class="score-big">20</span><span class="score-label-pill Av">Avoid</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:15%;background:#f85149;"></span></span><span class="val">15</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:34%;background:#d29922;"></span></span><span class="val">34</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:20%;background:#f85149;"></span></span><span class="val">20</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:2%;background:#f85149;"></span></span><span class="val">2</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 20</strong> ≤ 30 &nbsp;+&nbsp; trend = downtrend &nbsp;→&nbsp; Avoid</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLRE</td>
+          <td>Real Estate</td>
+          <td data-val="43.93">$43.93</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="43.56">$43.56</td>
+          <td data-val="45.47">$45.47</td>
+          <td class="pos" data-val="0.0084">+0.84%</td>
+          <td class="pos" data-val="0.0349">+3.49%</td>
+          <td data-val="0.00782">0.782%</td>
+          <td data-val="0.12414">12.41%</td>
+          <td data-val="0.48">$0.48</td>
+          <td data-val="19.21059922822713">19</td>
+          <td class="neg" data-val="-0.0563">-5.63%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="46.0" width="72.0" height="-24.2" fill="#f8514922"/><rect x="108.0" y="45.0" width="72.0" height="-18.6" fill="#d2992233"/><rect x="108.0" y="40.4" width="72.0" height="-9.3" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,22.3 3.1,16.4 6.1,21.4 9.2,19.9 12.2,35.2 15.3,36.7 18.3,34.5 21.4,26.1 24.4,27.9 27.5,26.8 30.5,18.0 33.6,22.3 36.6,34.4 39.7,32.3 42.7,25.6 45.8,30.9 48.8,22.7 51.9,32.8 54.9,31.7 58.0,28.7 61.0,25.3 64.1,28.3 67.1,27.2 70.2,15.0 73.2,15.6 76.3,18.1 79.3,18.5 82.4,21.1 85.4,21.9 88.5,8.4 91.5,10.9 94.6,7.6 97.6,8.2 100.7,17.2 103.7,20.3 106.8,18.8 109.8,18.9 112.9,18.5 115.9,23.8 119.0,21.5 122.0,29.4 125.1,33.7 128.1,28.1 131.2,19.6 134.2,17.6 137.3,23.5 140.3,26.3 143.4,21.4 146.4,20.2 149.5,20.2 152.5,16.8 155.6,16.4 158.6,20.0 161.7,25.8 164.7,28.3 167.8,33.3 170.8,34.2 173.9,38.4 176.9,31.4 180.0,35.7"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="35.7" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="43.91">43.91–43.95</td>
+          <td data-val="43.83">43.83–44.03</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="39.00"><span class="score-big">39</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:22%;background:#d29922;"></span></span><span class="val">22</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:29%;background:#d29922;"></span></span><span class="val">29</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:42%;background:#58a6ff;"></span></span><span class="val">42</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:37%;background:#d29922;"></span></span><span class="val">37</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 39</strong> &nbsp;+&nbsp; trend = range &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLU</td>
+          <td>Utilities</td>
+          <td data-val="43.08">$43.08</td>
+          <td><span class="trend-pill" style="background:#d2992222;color:#d29922;border:1px solid #d2992255">range</span></td>
+          <td data-val="41.86">$41.86</td>
+          <td data-val="44.65">$44.65</td>
+          <td class="pos" data-val="0.0291">+2.91%</td>
+          <td class="pos" data-val="0.0364">+3.64%</td>
+          <td data-val="0.00884">0.884%</td>
+          <td data-val="0.14040">14.04%</td>
+          <td data-val="0.58">$0.58</td>
+          <td data-val="43.72762797006216">44</td>
+          <td class="neg" data-val="-0.0596">-5.96%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="40.7" width="72.0" height="-17.4" fill="#f8514922"/><rect x="108.0" y="37.8" width="72.0" height="-11.6" fill="#d2992233"/><rect x="108.0" y="34.9" width="72.0" height="-5.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,24.6 3.1,20.9 6.1,19.3 9.2,16.9 12.2,21.5 15.3,19.2 18.3,19.5 21.4,16.8 24.4,13.3 27.5,10.9 30.5,8.2 33.6,9.6 36.6,14.8 39.7,19.1 42.7,11.6 45.8,15.1 48.8,12.0 51.9,14.6 54.9,16.4 58.0,14.3 61.0,11.9 64.1,12.1 67.1,15.7 70.2,13.8 73.2,16.1 76.3,17.8 79.3,18.0 82.4,10.3 85.4,8.3 88.5,7.6 91.5,12.2 94.6,13.4 97.6,18.1 100.7,20.0 103.7,22.3 106.8,22.2 109.8,24.1 112.9,27.6 115.9,29.7 119.0,27.9 122.0,31.6 125.1,27.8 128.1,26.2 131.2,24.7 134.2,22.6 137.3,23.6 140.3,24.8 143.4,24.8 146.4,26.7 149.5,34.3 152.5,30.9 155.6,30.2 158.6,28.7 161.7,31.2 164.7,34.6 167.8,38.4 170.8,35.9 173.9,35.1 176.9,32.4 180.0,32.0"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="32.0" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="43.06">43.06–43.10</td>
+          <td data-val="42.97">42.97–43.19</td>
+          <td>Consolidation awaiting breakout</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="73.20"><span class="score-big">73</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:83%;background:#d4a843;"></span></span><span class="val">83</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:7%;background:#f85149;"></span></span><span class="val">7</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:58%;background:#58a6ff;"></span></span><span class="val">58</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:56%;background:#58a6ff;"></span></span><span class="val">56</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 73</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = continuation &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLV</td>
+          <td>Health Care</td>
+          <td data-val="171.45">$171.45</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td data-val="165.55">$165.55</td>
+          <td data-val="176.60">$176.60</td>
+          <td class="pos" data-val="0.0356">+3.56%</td>
+          <td class="pos" data-val="0.0300">+3.00%</td>
+          <td data-val="0.01201">1.201%</td>
+          <td data-val="0.19067">19.07%</td>
+          <td data-val="2.61">$2.61</td>
+          <td data-val="53.3935951768431">53</td>
+          <td class="pos" data-val="0.0237">+2.37%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="19.8" width="72.0" height="-14.5" fill="#f8514922"/><rect x="108.0" y="17.4" width="72.0" height="-9.7" fill="#d2992233"/><rect x="108.0" y="14.9" width="72.0" height="-4.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,32.9 3.1,33.3 6.1,34.3 9.2,34.3 12.2,36.9 15.3,38.4 18.3,37.7 21.4,35.2 24.4,33.8 27.5,31.1 30.5,25.6 33.6,25.1 36.6,27.6 39.7,26.5 42.7,21.6 45.8,23.7 48.8,20.8 51.9,23.3 54.9,23.4 58.0,25.0 61.0,24.3 64.1,28.0 67.1,28.0 70.2,23.9 73.2,24.7 76.3,26.9 79.3,25.7 82.4,26.7 85.4,24.3 88.5,23.0 91.5,22.0 94.6,17.5 97.6,18.7 100.7,21.8 103.7,23.0 106.8,23.4 109.8,23.5 112.9,21.1 115.9,20.8 119.0,19.3 122.0,16.1 125.1,16.6 128.1,16.1 131.2,16.1 134.2,17.3 137.3,17.7 140.3,14.6 143.4,7.6 146.4,11.4 149.5,8.8 152.5,8.7 155.6,8.0 158.6,10.1 161.7,12.4 164.7,12.9 167.8,13.6 170.8,12.3 173.9,10.8 176.9,10.4 180.0,12.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="12.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="171.32">171.32–171.58</td>
+          <td data-val="170.86">170.86–172.04</td>
+          <td>Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="26.80"><span class="score-big">27</span><span class="score-label-pill Av">Avoid</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:24%;background:#d29922;"></span></span><span class="val">24</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:54%;background:#58a6ff;"></span></span><span class="val">54</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:12%;background:#f85149;"></span></span><span class="val">12</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:20%;background:#f85149;"></span></span><span class="val">20</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 27</strong> ≤ 30 &nbsp;+&nbsp; trend = downtrend &nbsp;→&nbsp; Avoid</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">XLY</td>
+          <td>Consumer Disc.</td>
+          <td data-val="114.91">$114.91</td>
+          <td><span class="trend-pill" style="background:#f8514922;color:#f85149;border:1px solid #f8514955">downtrend</span></td>
+          <td data-val="114.25">$114.25</td>
+          <td data-val="119.96">$119.96</td>
+          <td class="pos" data-val="0.0058">+0.58%</td>
+          <td class="pos" data-val="0.0439">+4.39%</td>
+          <td data-val="0.01030">1.030%</td>
+          <td data-val="0.16350">16.35%</td>
+          <td data-val="1.49">$1.49</td>
+          <td data-val="11.558734990065751">12</td>
+          <td class="neg" data-val="-0.0412">-4.12%</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="31.2" width="72.0" height="-19.8" fill="#f8514922"/><rect x="108.0" y="27.9" width="72.0" height="-13.2" fill="#d2992233"/><rect x="108.0" y="24.6" width="72.0" height="-6.6" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,17.5 3.1,16.6 6.1,11.1 9.2,11.5 12.2,19.7 15.3,15.1 18.3,21.2 21.4,24.5 24.4,20.9 27.5,25.7 30.5,22.8 33.6,15.2 36.6,14.7 39.7,12.5 42.7,15.2 45.8,12.7 48.8,14.4 51.9,20.2 54.9,15.9 58.0,14.8 61.0,18.2 64.1,18.6 67.1,15.5 70.2,14.6 73.2,19.9 76.3,22.2 79.3,21.4 82.4,23.8 85.4,38.4 88.5,36.6 91.5,32.7 94.6,28.1 97.6,30.5 100.7,28.3 103.7,18.0 106.8,12.1 109.8,11.9 112.9,11.0 115.9,12.5 119.0,7.6 122.0,8.1 125.1,9.3 128.1,13.0 131.2,11.5 134.2,12.2 137.3,16.2 140.3,17.3 143.4,11.1 146.4,16.4 149.5,12.7 152.5,11.9 155.6,12.9 158.6,15.1 161.7,18.6 164.7,14.9 167.8,16.7 170.8,22.2 173.9,21.5 176.9,17.0 180.0,21.3"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="21.3" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td data-val="114.84">114.84–114.98</td>
+          <td data-val="114.57">114.57–115.25</td>
+          <td>Downtrend — rallies face supply</td>
+        </tr></tbody>
+  </table>
+  </div>
+  <div class="legend-row"><span><span class="swatch" style="background:#f8514922;border:1px solid #f85149"></span>±3σ band</span><span><span class="swatch" style="background:#d2992233;border:1px solid #d29922"></span>±2σ band</span><span><span class="swatch" style="background:#58a6ff44;border:1px solid #58a6ff"></span>±1σ band</span><span><span class="swatch" style="background:#d4a843"></span>Price line</span><span style="margin-left:auto;color:var(--muted)"><strong>Hover any ClawRank score</strong> to see 5-factor breakdown + label rule · Sigma = spot ± N·σ·√(h/252) descriptive only</span></div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Sector Leaders (one highest-scoring stock per sector, sorted by ClawRank) — <span style="text-transform:none;font-weight:400;color:var(--gold)">hover any score for 5-factor breakdown</span></div>
+  <div class="controls chip-group" data-table="t2" data-col="4">
+    <span class="chip active" data-val="">All trends</span>
+    <span class="chip" data-val="uptrend">uptrend</span>
+    <span class="chip" data-val="downtrend">downtrend</span>
+    <span class="chip" data-val="range">range</span>
+    <span class="chip" data-val="transitioning">transitioning</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table id="t2">
+    <thead><tr>
+      <th class="sortable" onclick="sortTable('t2',0,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
+      <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+      <th><a href="#glossary-group-sector" class="header-glossary-link">Sector</a></th>
+      <th class="sortable" onclick="sortTable('t2',3,'num')"><a href="#glossary-price" class="header-glossary-link">Price</a></th>
+      <th><a href="#glossary-trend" class="header-glossary-link">Trend</a></th>
+      <th><a href="#glossary-setup-quality" class="header-glossary-link">Setup</a></th>
+      <th class="sortable" onclick="sortTable('t2',6,'num')"><a href="#glossary-rs-vs-spy" class="header-glossary-link">RS v SPY</a></th>
+      <th class="sortable" onclick="sortTable('t2',7,'num')"><a href="#glossary-20d-sd" class="header-glossary-link">20D SD</a></th>
+      <th class="sortable" onclick="sortTable('t2',8,'num')"><a href="#glossary-adv" class="header-glossary-link">ADV ($M)</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">60D + σ-bands</a></th>
+      <th><a href="#glossary-sigma-bands" class="header-glossary-link">1σ/2σ/3σ (1w)</a></th>
+      <th><a href="#glossary-outlook" class="header-glossary-link">Outlook</a></th>
+    </tr></thead>
+    <tbody>
+        <tr>
+          <td class="score-cell" data-val="89.00"><span class="score-big">89</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:61%;background:#58a6ff;"></span></span><span class="val">61</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:56%;background:#58a6ff;"></span></span><span class="val">56</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:61%;background:#58a6ff;"></span></span><span class="val">61</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 89</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = continuation &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">JPM</td>
+          <td>Financials <span style="color:var(--muted);font-size:10px">(XLF)</span></td>
+          <td data-val="358.64">$358.64</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td class="neg" data-val="-0.0115">-1.15%</td>
+          <td data-val="0.00889">0.889%</td>
+          <td data-val="1953">$1,953M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="17.2" width="72.0" height="-11.4" fill="#f8514922"/><rect x="108.0" y="15.3" width="72.0" height="-7.6" fill="#d2992233"/><rect x="108.0" y="13.4" width="72.0" height="-3.8" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,34.1 6.1,34.9 9.2,27.9 12.2,26.5 15.3,31.4 18.3,27.7 21.4,26.1 24.4,26.5 27.5,25.5 30.5,29.1 33.6,28.9 36.6,30.2 39.7,26.1 42.7,25.9 45.8,24.0 48.8,23.1 51.9,28.2 54.9,25.3 58.0,24.7 61.0,25.9 64.1,20.9 67.1,18.5 70.2,20.7 73.2,21.9 76.3,23.3 79.3,19.5 82.4,17.7 85.4,16.7 88.5,14.7 91.5,12.9 94.6,12.3 97.6,19.8 100.7,16.1 103.7,15.6 106.8,15.1 109.8,12.1 112.9,11.1 115.9,12.9 119.0,12.1 122.0,10.8 125.1,9.4 128.1,7.6 131.2,8.8 134.2,9.0 137.3,10.1 140.3,8.7 143.4,12.3 146.4,15.7 149.5,15.7 152.5,12.8 155.6,12.6 158.6,12.7 161.7,14.1 164.7,12.1 167.8,13.0 170.8,13.7 173.9,12.9 176.9,9.4 180.0,11.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="11.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:358.19–359.09  2σ:357.74–359.54  3σ:357.29–359.99</td>
+          <td title="Other sector candidates: BAC=85, GS=71">Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="89.00"><span class="score-big">89</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:24%;background:#d29922;"></span></span><span class="val">24</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:76%;background:#d4a843;"></span></span><span class="val">76</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:73%;background:#d4a843;"></span></span><span class="val">73</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:100%;background:#d4a843;"></span></span><span class="val">100</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:85%;background:#d4a843;"></span></span><span class="val">85</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 89</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = breakout &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">META</td>
+          <td>Comm Services <span style="color:var(--muted);font-size:10px">(XLC)</span></td>
+          <td data-val="616.77">$616.77</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>breakout</td>
+          <td class="pos" data-val="0.0769">+7.69%</td>
+          <td data-val="0.02065">2.065%</td>
+          <td data-val="9217">$9,217M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="29.9" width="72.0" height="-16.6" fill="#f8514922"/><rect x="108.0" y="27.1" width="72.0" height="-11.1" fill="#d2992233"/><rect x="108.0" y="24.3" width="72.0" height="-5.5" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,32.1 3.1,32.4 6.1,26.6 9.2,25.2 12.2,32.2 15.3,30.2 18.3,33.1 21.4,33.4 24.4,34.4 27.5,37.6 30.5,36.0 33.6,33.3 36.6,33.2 39.7,22.4 42.7,28.9 45.8,25.1 48.8,21.8 51.9,24.5 54.9,18.4 58.0,10.2 61.0,12.9 64.1,12.0 67.1,7.6 70.2,11.2 73.2,15.2 76.3,15.3 79.3,15.7 82.4,19.3 85.4,23.9 88.5,26.3 91.5,26.5 94.6,26.6 97.6,28.3 100.7,38.4 103.7,34.6 106.8,27.3 109.8,27.8 112.9,27.6 115.9,27.4 119.0,26.9 122.0,26.3 125.1,25.4 128.1,29.8 131.2,26.3 134.2,27.4 137.3,31.9 140.3,37.4 143.4,36.9 146.4,37.0 149.5,36.1 152.5,34.1 155.6,31.7 158.6,30.4 161.7,31.5 164.7,30.0 167.8,31.2 170.8,29.9 173.9,26.8 176.9,22.9 180.0,21.6"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="21.6" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:614.98–618.56  2σ:613.18–620.36  3σ:611.39–622.15</td>
+          <td title="Other sector candidates: GOOGL=24">Trend extension; new 20D high</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="80.50"><span class="score-big">80</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:34%;background:#d29922;"></span></span><span class="val">34</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:68%;background:#58a6ff;"></span></span><span class="val">68</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:51%;background:#58a6ff;"></span></span><span class="val">51</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:95%;background:#d4a843;"></span></span><span class="val">95</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:90%;background:#d4a843;"></span></span><span class="val">90</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 80</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = pullback retest &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">AAPL</td>
+          <td>Technology <span style="color:var(--muted);font-size:10px">(XLK)</span></td>
+          <td data-val="319.97">$319.97</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>pullback retest</td>
+          <td class="pos" data-val="0.0048">+0.48%</td>
+          <td data-val="0.01354">1.354%</td>
+          <td data-val="12423">$12,423M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="23.3" width="72.0" height="-12.4" fill="#f8514922"/><rect x="108.0" y="21.2" width="72.0" height="-8.2" fill="#d2992233"/><rect x="108.0" y="19.2" width="72.0" height="-4.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,28.7 3.1,30.8 6.1,28.3 9.2,27.0 12.2,28.5 15.3,27.6 18.3,28.0 21.4,29.3 24.4,29.9 27.5,38.4 30.5,34.3 33.6,35.3 36.6,31.7 39.7,29.3 42.7,22.5 45.8,20.6 48.8,21.6 51.9,20.3 54.9,18.9 58.0,19.3 61.0,18.4 64.1,19.6 67.1,13.5 70.2,10.8 73.2,10.6 76.3,14.0 79.3,13.4 82.4,14.3 85.4,16.3 88.5,10.9 91.5,9.1 94.6,7.6 97.6,8.5 100.7,10.7 103.7,22.4 106.8,25.0 109.8,22.2 112.9,21.4 115.9,20.7 119.0,20.3 122.0,22.7 125.1,24.3 128.1,25.6 131.2,24.1 134.2,23.8 137.3,24.0 140.3,21.9 143.4,18.6 146.4,21.2 149.5,22.2 152.5,21.7 155.6,21.9 158.6,20.2 161.7,19.7 164.7,17.3 167.8,18.6 170.8,14.7 173.9,14.8 176.9,13.2 180.0,17.1"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.1" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:319.36–320.58  2σ:318.75–321.19  3σ:318.14–321.80</td>
+          <td title="Other sector candidates: MSFT=76, NVDA=68">Uptrend w/ healthy pullback near 50D</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="78.00"><span class="score-big">78</span><span class="score-label-pill Rc">Research candidate</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:56%;background:#58a6ff;"></span></span><span class="val">56</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:85%;background:#d4a843;"></span></span><span class="val">85</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:37%;background:#d29922;"></span></span><span class="val">37</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:83%;background:#d4a843;"></span></span><span class="val">83</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:42%;background:#58a6ff;"></span></span><span class="val">42</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 78</strong> ≥ 70 &nbsp;+&nbsp; trend = uptrend &nbsp;+&nbsp; setup = continuation &nbsp;→&nbsp; Research candidate</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">CVX</td>
+          <td>Energy <span style="color:var(--muted);font-size:10px">(XLE)</span></td>
+          <td data-val="208.60">$208.60</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td class="pos" data-val="0.0288">+2.88%</td>
+          <td data-val="0.01394">1.394%</td>
+          <td data-val="1583">$1,583M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="15.5" width="72.0" height="-11.7" fill="#f8514922"/><rect x="108.0" y="13.6" width="72.0" height="-7.8" fill="#d2992233"/><rect x="108.0" y="11.6" width="72.0" height="-3.9" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,25.0 3.1,24.0 6.1,28.6 9.2,28.8 12.2,30.5 15.3,33.1 18.3,32.2 21.4,31.5 24.4,34.6 27.5,34.1 30.5,34.8 33.6,36.6 36.6,38.4 39.7,38.4 42.7,36.1 45.8,36.8 48.8,32.9 51.9,31.6 54.9,32.8 58.0,31.3 61.0,27.4 64.1,27.7 67.1,27.8 70.2,26.3 73.2,23.9 76.3,22.3 79.3,21.4 82.4,20.2 85.4,19.2 88.5,18.9 91.5,22.2 94.6,23.8 97.6,20.9 100.7,20.6 103.7,17.6 106.8,20.0 109.8,21.9 112.9,24.6 115.9,22.7 119.0,24.5 122.0,18.9 125.1,17.7 128.1,17.7 131.2,17.0 134.2,15.5 137.3,13.6 140.3,11.6 143.4,11.6 146.4,11.6 149.5,11.9 152.5,13.4 155.6,15.5 158.6,15.3 161.7,15.6 164.7,14.2 167.8,11.3 170.8,8.0 173.9,7.6 176.9,7.9 180.0,9.7"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="9.7" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:208.19–209.01  2σ:207.78–209.42  3σ:207.37–209.83</td>
+          <td title="Other sector candidates: XOM=34">Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="65.90"><span class="score-big">66</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:37%;background:#d29922;"></span></span><span class="val">37</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:100%;background:#d4a843;"></span></span><span class="val">100</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:2%;background:#f85149;"></span></span><span class="val">2</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:88%;background:#d4a843;"></span></span><span class="val">88</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:17%;background:#f85149;"></span></span><span class="val">17</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 66</strong> &nbsp;+&nbsp; trend = uptrend &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">DE</td>
+          <td>Industrials <span style="color:var(--muted);font-size:10px">(XLI)</span></td>
+          <td data-val="693.53">$693.53</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td class="pos" data-val="0.1392">+13.92%</td>
+          <td data-val="0.02559">2.559%</td>
+          <td data-val="867">$867M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="21.4" width="72.0" height="-21.4" fill="#f8514922"/><rect x="108.0" y="17.2" width="72.0" height="-16.9" fill="#d2992233"/><rect x="108.0" y="12.9" width="72.0" height="-8.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.4 3.1,36.3 6.1,36.8 9.2,34.5 12.2,33.7 15.3,33.5 18.3,31.3 21.4,32.9 24.4,30.8 27.5,23.7 30.5,27.8 33.6,24.6 36.6,22.8 39.7,24.4 42.7,25.9 45.8,22.6 48.8,30.1 51.9,31.8 54.9,32.7 58.0,34.1 61.0,34.4 64.1,34.7 67.1,33.5 70.2,31.2 73.2,31.6 76.3,34.3 79.3,34.1 82.4,29.2 85.4,28.6 88.5,24.3 91.5,25.0 94.6,21.5 97.6,28.4 100.7,31.1 103.7,32.7 106.8,29.8 109.8,26.8 112.9,28.1 115.9,27.4 119.0,26.0 122.0,28.8 125.1,26.7 128.1,26.3 131.2,28.0 134.2,28.9 137.3,31.0 140.3,33.7 143.4,35.6 146.4,26.0 149.5,19.7 152.5,19.4 155.6,23.7 158.6,22.8 161.7,25.6 164.7,23.8 167.8,17.9 170.8,12.9 173.9,7.6 176.9,8.5 180.0,8.7"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="8.7" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:691.03–696.03  2σ:688.53–698.53  3σ:686.03–701.03</td>
+          <td title="Other sector candidates: CAT=37, HON=2">Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="58.50"><span class="score-big">58</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:39%;background:#d29922;"></span></span><span class="val">39</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:90%;background:#d4a843;"></span></span><span class="val">90</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:10%;background:#f85149;"></span></span><span class="val">10</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:76%;background:#d4a843;"></span></span><span class="val">76</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:51%;background:#58a6ff;"></span></span><span class="val">51</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 58</strong> &nbsp;+&nbsp; trend = uptrend &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">JNJ</td>
+          <td>Health Care <span style="color:var(--muted);font-size:10px">(XLV)</span></td>
+          <td data-val="275.23">$275.23</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td class="pos" data-val="0.0426">+4.26%</td>
+          <td data-val="0.01340">1.340%</td>
+          <td data-val="1686">$1,686M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="16.4" width="72.0" height="-13.7" fill="#f8514922"/><rect x="108.0" y="14.1" width="72.0" height="-9.1" fill="#d2992233"/><rect x="108.0" y="11.8" width="72.0" height="-4.6" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,32.3 3.1,30.7 6.1,34.0 9.2,34.3 12.2,34.9 15.3,38.4 18.3,36.7 21.4,31.8 24.4,30.7 27.5,28.3 30.5,22.2 33.6,19.9 36.6,22.7 39.7,22.6 42.7,17.1 45.8,19.3 48.8,14.5 51.9,16.8 54.9,19.5 58.0,20.8 61.0,20.3 64.1,22.7 67.1,26.9 70.2,25.1 73.2,23.2 76.3,25.8 79.3,24.7 82.4,21.6 85.4,19.4 88.5,16.8 91.5,15.3 94.6,14.8 97.6,15.5 100.7,21.5 103.7,21.2 106.8,22.4 109.8,22.1 112.9,20.4 115.9,20.8 119.0,19.4 122.0,17.8 125.1,19.1 128.1,18.4 131.2,17.6 134.2,18.7 137.3,17.5 140.3,12.1 143.4,10.7 146.4,14.4 149.5,12.6 152.5,10.9 155.6,10.8 158.6,12.8 161.7,15.4 164.7,14.0 167.8,15.3 170.8,12.0 173.9,9.5 176.9,7.6 180.0,9.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="9.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:274.71–275.75  2σ:274.19–276.27  3σ:273.67–276.79</td>
+          <td title="Other sector candidates: LLY=7, UNH=49">Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="53.70"><span class="score-big">54</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:32%;background:#d29922;"></span></span><span class="val">32</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:95%;background:#d4a843;"></span></span><span class="val">95</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:42%;background:#58a6ff;"></span></span><span class="val">42</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:54%;background:#58a6ff;"></span></span><span class="val">54</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:27%;background:#d29922;"></span></span><span class="val">27</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 54</strong> &nbsp;+&nbsp; trend = transitioning &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">FCX</td>
+          <td>Materials <span style="color:var(--muted);font-size:10px">(XLB)</span></td>
+          <td data-val="72.73">$72.73</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td>continuation</td>
+          <td class="pos" data-val="0.1303">+13.03%</td>
+          <td data-val="0.02950">2.950%</td>
+          <td data-val="1026">$1,026M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="26.3" width="72.0" height="-17.7" fill="#f8514922"/><rect x="108.0" y="23.4" width="72.0" height="-11.8" fill="#d2992233"/><rect x="108.0" y="20.4" width="72.0" height="-5.9" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,26.3 3.1,23.4 6.1,21.0 9.2,21.0 12.2,22.5 15.3,23.0 18.3,22.3 21.4,28.9 24.4,32.5 27.5,31.1 30.5,31.6 33.6,32.8 36.6,31.0 39.7,34.3 42.7,33.7 45.8,33.6 48.8,35.9 51.9,38.4 54.9,34.3 58.0,32.9 61.0,35.0 64.1,32.3 67.1,33.7 70.2,37.0 73.2,37.2 76.3,36.7 79.3,31.5 82.4,28.1 85.4,30.2 88.5,31.4 91.5,31.2 94.6,32.7 97.6,35.0 100.7,30.3 103.7,31.4 106.8,30.0 109.8,24.9 112.9,22.1 115.9,23.7 119.0,21.7 122.0,20.5 125.1,22.8 128.1,22.3 131.2,25.6 134.2,26.1 137.3,23.4 140.3,26.3 143.4,22.5 146.4,19.5 149.5,12.0 152.5,10.5 155.6,7.6 158.6,8.8 161.7,9.6 164.7,12.3 167.8,13.3 170.8,17.8 173.9,15.8 176.9,17.7 180.0,17.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:72.43–73.03  2σ:72.13–73.33  3σ:71.82–73.64</td>
+          <td title="Other sector candidates: LIN=5">Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="51.20"><span class="score-big">51</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:49%;background:#58a6ff;"></span></span><span class="val">49</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:49%;background:#58a6ff;"></span></span><span class="val">49</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:80%;background:#d4a843;"></span></span><span class="val">80</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:51%;background:#58a6ff;"></span></span><span class="val">51</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:34%;background:#d29922;"></span></span><span class="val">34</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 51</strong> &nbsp;+&nbsp; trend = transitioning &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">PG</td>
+          <td>Consumer Staples <span style="color:var(--muted);font-size:10px">(XLP)</span></td>
+          <td data-val="146.44">$146.44</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td>range approach</td>
+          <td class="neg" data-val="-0.0175">-1.75%</td>
+          <td data-val="0.00810">0.810%</td>
+          <td data-val="1283">$1,283M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="38.7" width="72.0" height="-22.5" fill="#f8514922"/><rect x="108.0" y="35.0" width="72.0" height="-15.0" fill="#d2992233"/><rect x="108.0" y="31.2" width="72.0" height="-7.5" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,21.5 3.1,17.5 6.1,14.8 9.2,8.4 12.2,14.5 15.3,15.0 18.3,23.6 21.4,13.5 24.4,9.8 27.5,21.0 30.5,19.3 33.6,21.1 36.6,26.9 39.7,24.4 42.7,11.8 45.8,18.4 48.8,7.6 51.9,21.3 54.9,26.2 58.0,25.6 61.0,21.4 64.1,28.6 67.1,22.4 70.2,11.5 73.2,16.3 76.3,19.0 79.3,22.2 82.4,19.0 85.4,25.8 88.5,24.4 91.5,20.6 94.6,19.8 97.6,28.6 100.7,35.3 103.7,33.6 106.8,32.1 109.8,22.5 112.9,26.3 115.9,25.8 119.0,29.5 122.0,27.5 125.1,31.4 128.1,34.9 131.2,34.4 134.2,33.5 137.3,38.0 140.3,36.9 143.4,34.0 146.4,38.4 149.5,33.0 152.5,27.0 155.6,30.8 158.6,32.0 161.7,37.9 164.7,35.9 167.8,31.7 170.8,28.2 173.9,23.7 176.9,26.0 180.0,27.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="27.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:146.27–146.61  2σ:146.11–146.77  3σ:145.94–146.94</td>
+          <td title="Other sector candidates: KO=32, WMT=12">Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="46.30"><span class="score-big">46</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:46%;background:#58a6ff;"></span></span><span class="val">46</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:46%;background:#58a6ff;"></span></span><span class="val">46</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:63%;background:#58a6ff;"></span></span><span class="val">63</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:63%;background:#58a6ff;"></span></span><span class="val">63</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:0%;background:#f85149;"></span></span><span class="val">0</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 46</strong> &nbsp;+&nbsp; trend = uptrend &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">AMT</td>
+          <td>Real Estate <span style="color:var(--muted);font-size:10px">(XLRE)</span></td>
+          <td data-val="175.85">$175.85</td>
+          <td><span class="trend-pill" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95055">uptrend</span></td>
+          <td>continuation</td>
+          <td class="neg" data-val="-0.0166">-1.66%</td>
+          <td data-val="0.01345">1.345%</td>
+          <td data-val="336">$336M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="30.9" width="72.0" height="-16.1" fill="#f8514922"/><rect x="108.0" y="28.2" width="72.0" height="-10.7" fill="#d2992233"/><rect x="108.0" y="25.5" width="72.0" height="-5.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,7.6 3.1,10.0 6.1,11.6 9.2,13.1 12.2,16.9 15.3,22.6 18.3,22.2 21.4,18.8 24.4,24.4 27.5,30.9 30.5,23.1 33.6,31.0 36.6,36.8 39.7,33.9 42.7,34.0 45.8,38.4 48.8,34.9 51.9,35.1 54.9,35.2 58.0,31.1 61.0,30.1 64.1,30.8 67.1,31.0 70.2,30.7 73.2,29.4 76.3,32.8 79.3,37.0 82.4,34.0 85.4,35.6 88.5,33.3 91.5,33.2 94.6,27.8 97.6,19.0 100.7,24.4 103.7,25.7 106.8,26.1 109.8,23.5 112.9,31.7 115.9,28.1 119.0,26.6 122.0,30.5 125.1,30.0 128.1,29.0 131.2,24.7 134.2,23.1 137.3,27.0 140.3,26.8 143.4,24.4 146.4,23.0 149.5,22.9 152.5,20.0 155.6,19.8 158.6,23.0 161.7,24.8 164.7,22.4 167.8,23.0 170.8,22.6 173.9,26.2 176.9,20.7 180.0,22.8"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="22.8" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:175.52–176.18  2σ:175.18–176.52  3σ:174.85–176.85</td>
+          <td title="Other sector candidates: PLD=17">Above 20D & 50D MAs</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="43.90"><span class="score-big">44</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:5%;background:#f85149;"></span></span><span class="val">5</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:44%;background:#58a6ff;"></span></span><span class="val">44</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:68%;background:#58a6ff;"></span></span><span class="val">68</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:66%;background:#58a6ff;"></span></span><span class="val">66</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:83%;background:#d4a843;"></span></span><span class="val">83</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 44</strong> &nbsp;+&nbsp; trend = transitioning &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">AMZN</td>
+          <td>Consumer Disc. <span style="color:var(--muted);font-size:10px">(XLY)</span></td>
+          <td data-val="258.51">$258.51</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td>pullback retest</td>
+          <td class="neg" data-val="-0.0791">-7.91%</td>
+          <td data-val="0.01677">1.677%</td>
+          <td data-val="8581">$8,581M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="28.3" width="72.0" height="-14.0" fill="#f8514922"/><rect x="108.0" y="26.0" width="72.0" height="-9.3" fill="#d2992233"/><rect x="108.0" y="23.6" width="72.0" height="-4.7" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,30.4 3.1,32.0 6.1,28.0 9.2,28.0 12.2,32.6 15.3,28.9 18.3,35.1 21.4,34.4 24.4,34.3 27.5,38.2 30.5,35.2 33.6,31.2 36.6,32.1 39.7,30.3 42.7,29.8 45.8,29.0 48.8,28.0 51.9,29.3 54.9,27.5 58.0,28.4 61.0,27.3 64.1,27.2 67.1,23.2 70.2,25.9 73.2,27.4 76.3,25.9 79.3,27.2 82.4,28.6 85.4,34.7 88.5,35.5 91.5,35.9 94.6,36.2 97.6,38.4 100.7,33.7 103.7,14.3 106.8,7.6 109.8,11.1 112.9,13.7 115.9,13.9 119.0,12.7 122.0,10.8 125.1,13.9 128.1,16.6 131.2,17.7 134.2,19.1 137.3,19.8 140.3,20.8 143.4,17.3 146.4,20.4 149.5,21.2 152.5,19.4 155.6,19.9 158.6,20.3 161.7,22.5 164.7,17.0 167.8,20.6 170.8,23.2 173.9,23.2 176.9,21.1 180.0,21.3"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="21.3" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:257.90–259.12  2σ:257.29–259.73  3σ:256.68–260.34</td>
+          <td title="Other sector candidates: HD=10, TSLA=29">Transitioning regime</td>
+        </tr>
+        <tr>
+          <td class="score-cell" data-val="14.60"><span class="score-big">15</span><span class="score-label-pill Wa">Watchlist</span><div class="popover"><div class="popover-title">ClawRank Breakdown</div><div class="popover-row"><span class="name">Fundamental Health <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:0%;background:#f85149;"></span></span><span class="val">0</span></div><div class="popover-row"><span class="name">Technical Momentum <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:17%;background:#f85149;"></span></span><span class="val">17</span></div><div class="popover-row"><span class="name">Volatility Regime <span style="color:var(--muted);font-size:9px">(15%)</span></span><span class="bar"><span class="bar-fill" style="width:90%;background:#d4a843;"></span></span><span class="val">90</span></div><div class="popover-row"><span class="name">Setup Quality <span style="color:var(--muted);font-size:9px">(25%)</span></span><span class="bar"><span class="bar-fill" style="width:37%;background:#d29922;"></span></span><span class="val">37</span></div><div class="popover-row"><span class="name">Sentiment / Catalyst <span style="color:var(--muted);font-size:9px">(10%)</span></span><span class="bar"><span class="bar-fill" style="width:22%;background:#d29922;"></span></span><span class="val">22</span></div><div class="popover-divider"></div><div class="popover-rule"><strong>Score 15</strong> &nbsp;+&nbsp; trend = transitioning &nbsp;→&nbsp; Watchlist</div><span class="popover-trigger-hint">hover any score to inspect factors</span></div></td>
+          <td class="ticker-cell">NEE</td>
+          <td>Utilities <span style="color:var(--muted);font-size:10px">(XLU)</span></td>
+          <td data-val="83.43">$83.43</td>
+          <td><span class="trend-pill" style="background:#a371f722;color:#a371f7;border:1px solid #a371f755">transitioning</span></td>
+          <td>range approach</td>
+          <td class="neg" data-val="-0.0712">-7.12%</td>
+          <td data-val="0.00830">0.830%</td>
+          <td data-val="872">$872M</td>
+          <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="40.3" width="72.0" height="-16.1" fill="#f8514922"/><rect x="108.0" y="37.6" width="72.0" height="-10.8" fill="#d2992233"/><rect x="108.0" y="35.0" width="72.0" height="-5.4" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,26.8 3.1,22.3 6.1,21.8 9.2,21.4 12.2,23.3 15.3,19.4 18.3,22.0 21.4,20.6 24.4,16.0 27.5,15.7 30.5,12.3 33.6,11.9 36.6,15.4 39.7,20.8 42.7,13.2 45.8,16.7 48.8,12.7 51.9,16.7 54.9,18.0 58.0,14.7 61.0,13.0 64.1,8.5 67.1,10.2 70.2,9.3 73.2,11.4 76.3,14.5 79.3,14.8 82.4,9.0 85.4,7.6 88.5,7.6 91.5,11.3 94.6,9.5 97.6,12.7 100.7,14.8 103.7,18.7 106.8,20.1 109.8,17.6 112.9,22.6 115.9,27.7 119.0,27.5 122.0,27.3 125.1,23.3 128.1,23.1 131.2,22.2 134.2,21.5 137.3,21.4 140.3,21.4 143.4,22.6 146.4,26.0 149.5,31.4 152.5,29.7 155.6,29.2 158.6,29.2 161.7,32.1 164.7,38.4 167.8,36.5 170.8,34.2 173.9,33.5 176.9,29.8 180.0,32.3"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="32.3" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
+          <td>1σ:83.33–83.53  2σ:83.23–83.63  3σ:83.14–83.72</td>
+          <td title="Other sector candidates: SO=0">Transitioning regime</td>
+        </tr></tbody>
+  </table>
+  </div>
+  <div class="legend-row">
+    <span><span class="swatch" style="background:var(--blue);width:10px;height:10px;border-radius:50%"></span>Research candidate (composite ≥70)</span>
+    <span><span class="swatch" style="background:var(--yellow);width:10px;height:10px;border-radius:50%"></span>Watchlist (30–70)</span>
+    <span><span class="swatch" style="background:var(--red);width:10px;height:10px;border-radius:50%"></span>Avoid (composite ≤30)</span>
+    <span style="margin-left:auto;color:var(--muted)">Factor weights: Fund 25% / Tech 25% / Vol 15% / Setup 25% / Sent 10%</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="dot" style="background:var(--purple)"></div> 3) ClawRank Composite (transparent, editable in YAML)</div>
+  <div class="card-body" style="padding:0">
+  <table>
+    <thead><tr><th>Factor</th><th>Source</th><th style="text-align:right">Weight</th><th style="text-align:right">Cap</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#glossary-fundamental-health" class="glossary-link">Fundamental Health</a></td><td>yfinance .info — earnings yield, revenue growth, op margin, D/E, FCF yield (stocks only; ETFs skip)</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-technical-momentum" class="glossary-link">Technical Momentum</a></td><td>RS vs SPY (20D/60D), MA distances, RSI(14), trend slope</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-volatility-regime" class="glossary-link">Volatility Regime</a></td><td>20D/252D vol ratio, ATR% vs SPY, 60D max drawdown</td><td style="text-align:right"><span class="badge-gold">15%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a></td><td>Setup type (breakout / pullback / continuation / range / reversal) + range percentile + proximity to MA/resistance</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td><a href="#glossary-sentiment-catalyst" class="glossary-link">Sentiment / Catalyst</a></td><td>ADV, 5D/20D volume ratio, analyst-target upside (stocks only)</td><td style="text-align:right"><span class="badge-gold">10%</span></td><td style="text-align:right">—</td></tr>
+      <tr><td colspan="4" style="font-size:10.5px;color:var(--muted);padding-top:14px">
+        <strong>Label rules:</strong>
+        <span class="badge-gold">Research candidate</span> = composite ≥ 70
+        <span style="color:var(--yellow);font-weight:600">Watchlist</span> = 30 ≤ composite &lt; 70
+        <span style="color:var(--red);font-weight:600">Avoid</span> = composite &lt; 30
+        <span style="display:block;margin-top:6px;color:var(--muted);font-style:italic">Trend + setup factors are already baked into the composite (via Technical Momentum + Setup Quality) so the label rule is score-only. See <a href="#glossary-label-rule" class="glossary-link">label rule glossary</a>.</span>
+      </td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="composite">
+    <strong>Honest read on the backtest (2026-09-03):</strong>
+    IC = −0.011 (t-stat −0.31) over 85 rebalance periods × 22 tickers × 2y window. <strong>No statistically significant 20D forward-return edge.</strong>
+    ClawRank is shipped as a <strong>transparency / drill-down layer</strong>, not a trade signal. See <code>reports/2026-09-03-clawrank-backtest.md</code>.
+  </div>
+</div>
+
+<div class="dq">
+  <h3>Data-Quality Note</h3>
+  <p><strong>Danelfin (per your 2026-09-03 directive):</strong> Removed from the live dashboard. ClawRank replaces it.
+  Danelfin remains available as a side-by-side sanity check via the API at <code>apirest.danelfin.com</code>
+  (Free tier: 500 calls/month, 10/min — fix the secret's host allow-list to enable). Not pulled automatically today.</p>
+  <p><strong>Sigma bands:</strong> descriptive only (spot ± N·σ·√(h/252)); not predictions or targets.
+  <strong>Support / Resistance:</strong> 20D high/low. <strong>Fundamentals (Factor 1):</strong> yfinance .info, stocks only —
+  ETFs correctly skip this factor. <strong>Sample sizes:</strong> 20-session rolling windows on ~6mo yfinance daily bars.</p>
+  <p><strong>No trade placement</strong>, no broker access, no position sizing, no scheduling, no universe expansion.</p>
+</div>
+</main>
+<footer>
+  <div class="footer-text">Generated Sep 07, 2026 · 17:33 UTC-04:00 by <span>dependability-quant</span> · research only</div>
+  <div class="footer-text">yfinance · chart_structure (lib) · <span>ClawRank-v0</span></div>
+</footer>
+
+<aside class="glossary" id="glossary">
+  <h2>📖 Glossary &amp; Methodology</h2>
+  <p style="color:var(--muted);font-size:11px;margin-top:0">
+    Click any <a href="#" class="glossary-link">term</a> in the tables above to jump to its glossary entry.
+    Hover any score to see the 5-factor breakdown for that row.
+  </p>
+
+  <div class="glossary-grid">
+    <div class="glossary-entry" id="glossary-fundamental-health">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Fundamental Health (Factor 1, 25%)</h3>
+      <p><strong>What it measures:</strong> The financial health and valuation of the underlying company.</p>
+      <p><strong>Inputs:</strong> From <code>yfinance .info</code>: earnings yield (EPS/price), revenue growth
+      (year-over-year), operating margin, debt-to-equity ratio, free-cash-flow yield.</p>
+      <p><strong>Who gets scored:</strong> Individual stocks only. ETFs (sector, benchmark) correctly skip
+      this factor because they don't have company-level fundamentals — they get a neutral 50.</p>
+      <p><strong>What a high score means:</strong> Cheap (high earnings yield), growing, profitable, low debt,
+      strong FCF generation.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-technical-momentum">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Technical Momentum (Factor 2, 25%)</h3>
+      <p><strong>What it measures:</strong> How the price is moving relative to itself and the market.</p>
+      <p><strong>Inputs:</strong> Relative Strength vs SPY over 20D and 60D windows, distance from 50-day
+      moving average, RSI(14), 50-day trend slope.</p>
+      <p><strong>What a high score means:</strong> Outperforming the broad market, price above its 50-day
+      MA, RSI in a healthy range (not overbought), and the trend is rolling over to higher highs.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-volatility-regime">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Volatility Regime (Factor 3, 15%)</h3>
+      <p><strong>What it measures:</strong> The current volatility environment — whether it's elevated,
+      compressed, or normal.</p>
+      <p><strong>Inputs:</strong> Ratio of 20-day realized volatility to 1-year (252-day) realized volatility,
+      Average True Range as a percentage vs SPY's ATR%, and the 60-day maximum drawdown.</p>
+      <p><strong>What a high score means:</strong> Volatility is compressed (calm) vs its own history, the
+      instrument is less volatile than SPY in absolute terms, and it hasn't suffered a recent drawdown.
+      These conditions often precede directional breakouts.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-setup-quality">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Setup Quality (Factor 4, 25%)</h3>
+      <p><strong>What it measures:</strong> Whether the current price action matches a recognizable,
+      tradable chart pattern.</p>
+      <p><strong>Setup types:</strong></p>
+      <ul>
+        <li><strong>Breakout</strong> — price making a new 20-day high with positive 5-day momentum</li>
+        <li><strong>Pullback / Retest</strong> — uptrend with price pulling back to MA50 or MA20 (often
+        high-probability entry in an uptrend)</li>
+        <li><strong>Continuation</strong> — uptrend above both MAs with smaller retracements</li>
+        <li><strong>Range approach</strong> — trading sideways, no clear trend; setups still possible at
+        range extremes</li>
+        <li><strong>Reversal</strong> — downtrend showing first signs of base-building</li>
+        <li><strong>Mean reversion</strong> — extreme move likely to revert to the mean</li>
+      </ul>
+      <p><strong>What a high score means:</strong> Active setup in a direction with momentum alignment;
+      or a high range percentile (price near the top of its 20-day range, useful for breakout setups).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-sentiment-catalyst">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Sentiment / Catalyst (Factor 5, 10%)</h3>
+      <p><strong>What it measures:</strong> Trading activity and consensus expectations.</p>
+      <p><strong>Inputs:</strong> Average Daily Volume in dollars, ratio of 5-day average volume to
+      20-day average volume (rising volume = interest), and analyst price-target upside (stocks only).</p>
+      <p><strong>What a high score means:</strong> Heavy trading activity relative to peers, accelerating
+      volume (institutions piling in or distributing), and analyst targets implying upside from current
+      price.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-trend">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Trend (4-state classification)</h3>
+      <p><strong>Uptrend</strong> — price above both MA50 and MA20, 5-day and 20-day momentum positive.</p>
+      <p><strong>Downtrend</strong> — price below both MA50 and MA20, 5-day and 20-day momentum negative.</p>
+      <p><strong>Range</strong> — price hugging its MAs and 20-day return inside ±3%, 5-day inside ±1%.</p>
+      <p><strong>Transitioning</strong> — anything else (mixed signals: above one MA but below the other,
+      or recent momentum diverging from the slower trend).</p>
+      <p><strong>Examples today:</strong> SPY 765 above MA50 755 but below MA20 769 → <em>transitioning</em>
+      (rangebound near the highs, not a clean uptrend). QQQ 709 below both MAs but +7% over 20 days →
+      <em>transitioning</em> (bearish MA posture, bullish recent momentum).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-label-rule">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Label rule (Research / Watchlist / Avoid)</h3>
+      <p><strong>Score-only, not trend-gated.</strong> The ClawRank label is the composite score bucketed:</p>
+      <ul>
+        <li><span class="badge-gold">Research candidate</span> — composite ≥ 70</li>
+        <li><span style="color:var(--yellow);font-weight:600">Watchlist</span> — 30 ≤ composite &lt; 70</li>
+        <li><span style="color:var(--red);font-weight:600">Avoid</span> — composite &lt; 30</li>
+      </ul>
+      <p><strong>Why score-only?</strong> Trend and setup are already inside the composite via the
+      Technical Momentum and Setup Quality factors. Gating the label on trend/setup AGAIN would
+      double-count and demote fundamentally strong names that happen to be in a transition (e.g.,
+      JPM, XLE). The score already reflects the underlying signal.</p>
+      <p><strong>Backtest context:</strong> ClawRank's score-based label is a transparency layer — not a
+      trade signal. The 2-year backtest showed IC = −0.011 (t-stat −0.31), no significant 20-day
+      forward-return edge. See <code>reports/2026-09-03-clawrank-backtest.md</code>.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-sigma-bands">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Sigma bands (1σ 1d / 1σ 1mo)</h3>
+      <p><strong>What they are:</strong> Descriptive price ranges based on recent realized volatility,
+      not predictions or targets.</p>
+      <p><strong>Formula:</strong> <code>spot ± 1·σ·√(h/252)</code> where σ is the 20-day rolling daily
+      standard deviation (annualized) and h is the holding period in trading days (1 for 1-day, 21 for
+      1-month).</p>
+      <p><strong>How to read them:</strong> A name with σ = 1%/day has a 1-day 1σ band of roughly ±1%
+      around spot, and a 1-month 1σ band of roughly ±4.6%. About 68% of the time, the next-day close
+      should land inside that band (assuming returns are normal — they aren't, but it's a useful
+      rough guide).</p>
+      <p><strong>Not:</strong> Bollinger Bands, options-pricing implied moves, or trade signals.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-support-resistance">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Support / Resistance</h3>
+      <p>The 20-day low and 20-day high, used as crude short-term support and resistance levels. The
+      <strong>%→S</strong> and <strong>%→R</strong> columns show how far the current price is from each
+      level.</p>
+      <p><strong>Not:</strong> A magic number where price will bounce. These are descriptive, not
+      predictive. Use them as orientation, not as entry/exit triggers.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-rs-vs-spy">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> RS v SPY (Relative Strength)</h3>
+      <p>The ratio of the instrument's return to SPY's return over the same window. +5% means the
+      instrument outperformed SPY by 5 percentage points over the period. Used to find leadership
+      (sectors or stocks that are stronger than the broad market, often where the next big move
+      starts).</p>
+      <p><strong>Today:</strong> XLE +6.10% (energy leading), XLRE −9.75% (real estate lagging).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-adv">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> ADV ($M)</h3>
+      <p>Average Daily Volume in millions of dollars. Higher = more liquid = easier to enter/exit
+      without moving the price. Used as a sentiment/catalyst input (heavier volume = more institutional
+      interest).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-volatility-metrics">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Volatility metrics</h3>
+      <p><strong>20D SD:</strong> 20-day rolling standard deviation of daily returns (annualized).
+      Recent realized volatility.</p>
+      <p><strong>Ann.Vol:</strong> Annualized volatility computed from the full available history.
+      The "normal" volatility for this name.</p>
+      <p><strong>ATR$:</strong> Average True Range in dollars. The typical daily high-low range, in
+      cash terms. Useful for sizing stops.</p>
+      <p><strong>Rng%ile:</strong> Where today's price sits within the 20-day range, as a percentile
+      (0 = at the low, 100 = at the high). Values near 100 suggest breakouts; values near 0 suggest
+      breakdowns or mean-reversion setups.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-sector-leaders">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Sector Leaders (Table 2)</h3>
+      <p>For each of the 11 sector ETFs, the table shows the highest-ClawRank-scoring candidate from
+      a 2-3 name mega-cap shortlist. Sorted by score descending so the best sector-wide setup is at
+      the top.</p>
+      <p><strong>Candidate map:</strong> XLK→MSFT/NVDA/AAPL, XLF→JPM/BAC/GS, XLE→XOM/CVX,
+      XLV→LLY/UNH/JNJ, XLI→CAT/HON/DE, XLY→HD/AMZN/TSLA, XLP→PG/KO/WMT, XLC→META/GOOGL,
+      XLB→LIN/FCX, XLRE→AMT/PLD, XLU→NEE/SO.</p>
+      <p><strong>Hover the Outlook column</strong> to see the alternate candidates' scores
+      ("Other sector candidates: JPM=90, GS=42") — full transparency on what was considered.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-price">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Price</h3>
+      <p>The most recent closing price from the daily history. For intraday context this is the prior
+      session close (we only pull end-of-day data). Used as the anchor for all σ-band calculations
+      and percentage distances.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-ticker">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Ticker</h3>
+      <p>The exchange ticker symbol. For sector ETFs the underlying index is implied by the symbol
+      (XLK = Technology Select Sector SPDR, XLF = Financial Select Sector SPDR, etc.).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-group-sector">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Group / Sector</h3>
+      <p>Broad classification: "Broad Mkt", "Tech", "Small Cap" for benchmarks; the GICS sector
+      name ("Materials", "Financials", "Health Care", etc.) for sector ETFs and stocks. Helps
+      quickly identify where each name fits in the market structure.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-support">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Support</h3>
+      <p>The lowest low over the last 20 trading days. Used as a crude short-term support level. The
+      %→S column shows how far above support the current price is. See <a href="#glossary-support-resistance" class="glossary-link">Support / Resistance</a> for caveats.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-resistance">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Resistance</h3>
+      <p>The highest high over the last 20 trading days. Used as a crude short-term resistance level.
+      The %→R column shows how far below resistance the current price is. See <a href="#glossary-support-resistance" class="glossary-link">Support / Resistance</a> for caveats.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-pct-to-support">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> %→S (percent to support)</h3>
+      <p>Percentage distance from the current price to the 20-day low (support), expressed as a
+      positive number. A value of +1.86% means the price is 1.86% above the recent low. Higher
+      values mean the price has travelled further away from support (often stronger short-term
+      momentum); values near 0 mean the price is testing support.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-pct-to-resistance">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> %→R (percent to resistance)</h3>
+      <p>Percentage distance from the current price to the 20-day high (resistance), expressed as a
+      positive number. A value of +3.57% means the price would need to rally 3.57% to make a new
+      20-day high. Higher values = more upside room before hitting resistance.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-20d-sd">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> 20D SD (20-day standard deviation)</h3>
+      <p>The standard deviation of daily returns over the last 20 trading days, <em>annualized</em>
+      (multiplied by √252). This is the "recent realized volatility" — what the name has been
+      actually doing lately, not the long-term average. A ClawRank volatility factor (25%) uses
+      this directly.</p>
+      <p><strong>Today:</strong> SPY 0.46% (extremely calm — broad market compressed),
+      SO 1.5%+ (volatile utilities), NVDA 2.0%+ (tech mega-cap with elevated short-term vol).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-ann-vol">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Ann.Vol (annualized volatility)</h3>
+      <p>Standard deviation of daily returns over the full available history, annualized. This is the
+      "normal" volatility for the name — its long-term baseline. Pair this with 20D SD to see if
+      the name is currently <em>calmer or more volatile than usual</em>.</p>
+      <p><strong>Today:</strong> XLE 21.55% (highest — energy is volatile by nature),
+      SPY 7.37% (calmest — broad-market index).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-atr">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> ATR$ (Average True Range in dollars)</h3>
+      <p>14-day Average True Range expressed in dollars per share. The typical daily high-low range.
+      Useful for sizing stops: "I'll risk 1× ATR$ per share if I'm wrong". Also useful for options
+      premium sanity-checks.</p>
+      <p>Example: NVDA at $180 with ATR$ $5.18 means NVDA typically moves about $5 in either
+      direction each day.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-rng-percentile">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Rng%ile (range percentile)</h3>
+      <p>Where today's close sits within the 20-day high/low range, on a 0-100 scale. 100 = at the
+      20-day high (potential breakout), 0 = at the 20-day low (potential breakdown or reversal
+      setup). Values in the middle indicate choppy, directionless action.</p>
+      <p>This is one of the inputs to the <a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a> factor.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-outlook">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Outlook</h3>
+      <p>A one-line qualitative read combining trend + setup + ClawRank label:</p>
+      <ul>
+        <li><strong>Bullish continuation</strong> — uptrend + breakout/pullback setup + Research candidate</li>
+        <li><strong>Mean reversion candidate</strong> — uptrend that has pulled back to MA, RS still positive</li>
+        <li><strong>Range-bound</strong> — flat trend, watch for range extremes</li>
+        <li><strong>Caution</strong> — downtrend + low RS, even if score is high</li>
+        <li><strong>Avoid</strong> — low score and downtrend</li>
+      </ul>
+      <p>Not a recommendation — just a structured summary of what the dashboard's quantitative
+      factors are saying together.</p>
+    </div>
+
+  </div>
+</aside>
+
+<footer>
+<script>
+function sortTable(tableId, colIdx, type) {
+  const tbl = document.getElementById(tableId);
+  const tbody = tbl.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const ths = tbl.querySelectorAll('th');
+  const cur = ths[colIdx];
+  const asc = !cur.classList.contains('sorted-asc');
+  ths.forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+  cur.classList.add(asc ? 'sorted-asc' : 'sorted-desc');
+  rows.sort((a, b) => {
+    let av = a.children[colIdx].dataset.val;
+    let bv = b.children[colIdx].dataset.val;
+    if (av === undefined || av === '') av = a.children[colIdx].textContent.trim();
+    if (bv === undefined || bv === '') bv = b.children[colIdx].textContent.trim();
+    if (type === 'num') {
+      av = parseFloat(av); bv = parseFloat(bv);
+      if (isNaN(av)) av = asc ? 1e18 : -1e18;
+      if (isNaN(bv)) bv = asc ? 1e18 : -1e18;
+      return asc ? av - bv : bv - av;
+    }
+    return asc ? String(av).localeCompare(String(bv))
+               : String(bv).localeCompare(String(av));
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Chip filter groups (trend / label) ---
+  document.querySelectorAll('.chip-group').forEach(group => {
+    const tableId = group.dataset.table;
+    const col = parseInt(group.dataset.col);
+    let active = [];
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.dataset.val;
+        if (val === '') {
+          active = [];
+          group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+        } else {
+          group.querySelector('.chip[data-val=""]').classList.remove('active');
+          if (chip.classList.toggle('active')) active.push(val);
+          else active = active.filter(a => a !== val);
+        }
+        const tbl = document.getElementById(tableId);
+        tbl.querySelectorAll('tbody tr').forEach(r => {
+          const v = r.children[col].textContent.trim();
+          r.style.display = (!active.length || active.includes(v)) ? '' : 'none';
+        });
+      });
+    });
+  });
+
+  // --- Viewport-aware popover positioning ---
+  // .card has overflow:visible so popovers can escape; CSS anchors them
+  // by default to the LEFT. We add flip classes when the cell is near the
+  // right edge (anchor right) or bottom edge (anchor above).
+  function positionPopover(pop) {
+    const cell = pop.closest('.score-cell');
+    if (!cell) return;
+    const rect = cell.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    // First measure (popover must be visible for accurate size)
+    pop.style.left = '0px';
+    pop.style.top = '0px';
+    pop.style.visibility = 'hidden';
+    pop.style.display = 'block';
+    const pw = pop.offsetWidth, ph = pop.offsetHeight;
+    pop.style.visibility = '';
+    // Horizontal: prefer to anchor at cell.left; flip right if it would overflow
+    let left = rect.left;
+    if (left + pw > vw - 8) {
+      // Anchor right edge of popover to right edge of cell
+      left = rect.right - pw;
+      if (left < 8) left = 8;  // also clamp
+    }
+    // Vertical: prefer below; flip above if it would overflow bottom
+    let top = rect.bottom + 6;
+    if (top + ph > vh - 8) {
+      top = rect.top - ph - 6;
+      if (top < 8) top = 8;
+    }
+    pop.style.position = 'fixed';
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+  }
+  let activePop = null;
+  document.querySelectorAll('.score-cell').forEach(cell => {
+    const pop = cell.querySelector('.popover');
+    if (!pop) return;
+    let hideTimer = null;
+    cell.addEventListener('mouseenter', () => {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      if (activePop && activePop !== pop) activePop.style.display = 'none';
+      positionPopover(pop);
+      activePop = pop;
+    });
+    cell.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => {
+        pop.style.display = 'none';
+        if (activePop === pop) activePop = null;
+      }, 120);
+    });
+    pop.addEventListener('mouseenter', () => {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    });
+    pop.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => {
+        pop.style.display = 'none';
+        if (activePop === pop) activePop = null;
+      }, 120);
+    });
+  });
+  // Reposition on scroll/resize
+  window.addEventListener('scroll', () => { if (activePop) positionPopover(activePop); }, true);
+  window.addEventListener('resize', () => { if (activePop) positionPopover(activePop); });
+});
+</script>
+</body></html>
