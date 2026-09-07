@@ -209,6 +209,14 @@ header {{ background: linear-gradient(135deg, #1a1510 0%, #161b22 100%);
                  letter-spacing: 0.5px; font-weight: 600; }}
 .header-badge.live {{ background: rgba(63,185,80,0.12); border-color: rgba(63,185,80,0.4); color: var(--green); }}
 .last-updated {{ font-size: 10px; color: var(--muted); }}
+.regime-banner {{ background: rgba(88,166,255,0.10); color: var(--blue); padding: 10px 24px;
+                  font-size: 11.5px; border-bottom: 1px solid rgba(88,166,255,0.25);
+                  font-family: var(--mono); }}
+.regime-banner strong {{ color: var(--text); margin-right: 4px; }}
+.popover-subhead {{ font-size: 10px; color: var(--gold); margin-top: 6px;
+                    margin-bottom: 2px; letter-spacing: 0.05em; text-transform: uppercase; }}
+.popover-row.sub {{ font-size: 10px; color: var(--muted); }}
+.popover-row.sub .name {{ font-weight: 400; }}
 .disclaimer {{ background: rgba(210,153,34,0.10); color: var(--yellow); padding: 10px 24px;
               font-size: 11.5px; border-bottom: 1px solid rgba(210,153,34,0.25); }}
 .disclaimer strong {{ color: var(--text); }}
@@ -500,7 +508,7 @@ import urllib.parse as _up
 FAVICON_HREF = "data:image/svg+xml;utf8," + _up.quote(FAVICON_SVG)
 
 
-def score_cell_with_popover(score, label, factors, trend, setup):
+def score_cell_with_popover(score, label, factors, trend, setup, kr=None):
     """First-column cell: score + hover-popover with 5 factor bars + label rule."""
     if score is None:
         return '<td class="score-cell" data-val="-1"><span class="unav">—</span></td>'
@@ -516,8 +524,34 @@ def score_cell_with_popover(score, label, factors, trend, setup):
         ("Technical Momentum", factors.get("technical_momentum"), 25),
         ("Volatility Regime",   factors.get("volatility_regime"), 15),
         ("Setup Quality",        factors.get("setup_quality"), 25),
-        ("Sentiment / Catalyst", factors.get("sentiment_catalyst"), 10),
+        ("Sentiment / Catalyst", factors.get("sentiment_catalyst"), 25),
     ]
+    # Event/positioning/social sub-factors (Mike 2026-09-07 directive)
+    sub_event_rows = []
+    if kr:
+        nc = kr.get("news_count_7d")
+        ns = kr.get("news_sentiment_avg")
+        si = kr.get("short_interest_change_pct")
+        ip = kr.get("institutional_pct")
+        st_b = kr.get("stocktwits_bullish_pct")
+        if nc is not None or ns is not None or si is not None or ip is not None or st_b is not None:
+            sub_event_rows.append('<div class="popover-subhead">Event signals</div>')
+        def ev(name, val, fmt="{:.2f}"):
+            if val is None:
+                txt = "—"
+            else:
+                txt = fmt.format(val)
+            return f'<div class="popover-row sub"><span class="name">{name}</span><span class="val">{txt}</span></div>'
+        if nc is not None:
+            sub_event_rows.append(ev("News (7d count)", nc, "{:d}"))
+        if ns is not None:
+            sub_event_rows.append(ev("News sentiment", ns, "{:+.2f}"))
+        if si is not None:
+            sub_event_rows.append(ev("Short interest ΔMoM", si, "{:+.1%}"))
+        if ip is not None:
+            sub_event_rows.append(ev("Institutional %", ip, "{:.1%}"))
+        if st_b is not None:
+            sub_event_rows.append(ev("Stocktwits bullish %", st_b, "{:.1%}"))
     for name, val, weight in factor_defs:
         if val is None:
             f_rows.append(
@@ -544,6 +578,7 @@ def score_cell_with_popover(score, label, factors, trend, setup):
         '<div class="popover-title">ClawRank Breakdown</div>'
         + "".join(f_rows) +
         '<div class="popover-divider"></div>'
+        + "".join(sub_event_rows) +
         f'<div class="popover-rule">{rule}</div>'
         '<span class="popover-trigger-hint">hover any score to inspect factors</span>'
         '</div>'
@@ -613,7 +648,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
                    ("clawrank_fundamental_health", "clawrank_technical_momentum",
                     "clawrank_volatility_regime", "clawrank_setup_quality",
                     "clawrank_sentiment_catalyst")} if kr else {}
-        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"])
+        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=kr)
         t1.append(f"""
         <tr>
           {score_td}
@@ -661,7 +696,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
                    ("clawrank_fundamental_health", "clawrank_technical_momentum",
                     "clawrank_volatility_regime", "clawrank_setup_quality",
                     "clawrank_sentiment_catalyst")}
-        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"])
+        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=pick)
         # Show alternate candidates in the score-cell title attribute
         alts = ", ".join(f"{t}={s:.0f}" if s is not None else f"{t}=—"
                          for t, s in pick.get("all_candidates", []) if t != sym)
@@ -694,6 +729,31 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     last_updated = as_of.strftime("%b %d, %Y · %H:%M %Z")
     subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} sector-leader candidates"
 
+    # ----- Market regime note (Mike 2026-09-07 directive: real-time event awareness) -----
+    # Detect US market holidays + cash market open/closed status. Display a banner
+    # so the dashboard reflects "what's happening now," not just price action.
+    US_FED_HOLIDAYS_2026 = {
+        "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
+        "2026-06-19", "2026-07-03", "2026-09-07", "2026-11-26", "2026-12-25",
+    }
+    as_of_date_str = as_of.strftime("%Y-%m-%d")
+    wd = as_of.weekday()
+    if wd >= 5:
+        cash_status = "CLOSED (weekend)"
+    elif as_of_date_str in US_FED_HOLIDAYS_2026:
+        cash_status = "CLOSED (US holiday)"
+    elif 9 * 60 + 30 <= as_of.hour * 60 + as_of.minute <= 16 * 60:
+        cash_status = "OPEN"
+    else:
+        cash_status = "CLOSED (after hours)"
+    regime_html = (
+        '<div class="regime-banner">'
+        f'<strong>Cash market:</strong> {cash_status} · '
+        f'<strong>Event-aware:</strong> news + institutional positioning + social sentiment active · '
+        f'<strong>Last build:</strong> {as_of_date_str} {as_of.strftime("%H:%M %Z").strip()}'
+        '</div>'
+    )
+
     # ClawRank factor table
     factor_table_rows = []
     factor_names = ["fundamental_health", "technical_momentum", "volatility_regime", "setup_quality", "sentiment_catalyst"]
@@ -703,7 +763,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
                      "setup_quality": "Setup Quality",
                      "sentiment_catalyst": "Sentiment / Catalyst"}
     factor_weights = {"fundamental_health": "25%", "technical_momentum": "25%",
-                      "volatility_regime": "15%", "setup_quality": "25%", "sentiment_catalyst": "10%"}
+                      "volatility_regime": "15%", "setup_quality": "25%", "sentiment_catalyst": "25%"}
     for fn in factor_names:
         factor_table_rows.append(f"""
         <tr>
@@ -731,6 +791,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     <span class="last-updated">Updated {last_updated}</span>
   </div>
 </header>
+{regime_html}
 <div class="disclaimer">
   <strong>Research output only — NOT a recommendation to buy, sell, or hold any security.</strong>
   Sigma bands and 1w ranges are <strong>descriptive</strong> (spot ± N·σ·√(h/252)), not predictions or targets.

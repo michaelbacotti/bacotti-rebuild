@@ -1,6 +1,6 @@
 # ClawRank-v0 — editable weights + sub-metric list
 # Edit this file to fine-tune; rebuild dashboard to see effect.
-# Last updated: 2026-09-03
+# Last updated: 2026-09-07 (v8 — event-aware Sentiment/Catalyst: news + 8-K + institutional + social)
 
 # Cross-sectional normalization
 normalization:
@@ -65,9 +65,19 @@ factors:
       room_to_resist:    { source: "computed",      field: "room_to_resist_atr", weight: 0.20, optimal_low: 1, optimal_high: 5 }
 
   sentiment_catalyst:
-    weight: 0.10
-    description: "Proxy signals only (no news feed yet). Liquidity, volume health, analyst-target upside."
+    weight: 0.25
+    description: "Real-time event awareness (Mike 2026-09-07 directive): news + institutional positioning + social sentiment + price/volume liquidity. Captures 'what's happening now,' not just price action."
     sub_metrics:
-      adv_usd_m:         { source: "computed",      field: "adv_usd_m",       direction: "higher", weight: 0.40, floor: 50 }
-      volume_ratio:      { source: "computed",      field: "vol_5d_over_20d", direction: "sweet", weight: 0.30, sweet_low: 0.9, sweet_high: 1.5 }
-      analyst_upside:    { source: "yfinance_info", field: "target_upside_pct",direction: "higher", weight: 0.30, fallback: "skip" }
+      # --- Price/volume liquidity (kept from previous stub) ---
+      adv_usd_m:         { source: "computed",      field: "adv_usd_m",       direction: "higher", weight: 0.15, floor: 50 }
+      volume_ratio:      { source: "computed",      field: "vol_5d_over_20d", direction: "sweet", weight: 0.10, sweet_low: 0.9, sweet_high: 1.5 }
+      # --- News (real-time event awareness) ---
+      news_count_7d:     { source: "computed",      field: "news_count_7d",   direction: "higher", weight: 0.10, fallback: "skip" }
+      news_sentiment:    { source: "computed",      field: "news_sentiment_avg", direction: "higher", weight: 0.20, fallback: "skip" }
+      # --- Institutional positioning (13F + ETF flows + short interest) ---
+      short_interest_chg: { source: "computed",     field: "short_interest_change_pct", direction: "lower", weight: 0.15, fallback: "skip" }
+      institutional_pct: { source: "computed",      field: "institutional_pct",direction: "sweet", weight: 0.10, sweet_low: 0.30, sweet_high: 0.85, fallback: "skip" }
+      # --- Social sentiment ---
+      stocktwits_bullish: { source: "computed",     field: "stocktwits_bullish_pct", direction: "sweet", weight: 0.10, sweet_low: 0.20, sweet_high: 0.50, fallback: "skip" }
+      # --- Analyst target (legacy, kept) ---
+      analyst_upside:    { source: "yfinance_info", field: "target_upside_pct",direction: "higher", weight: 0.10, fallback: "skip" }

@@ -294,9 +294,19 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
         "range_pctile": rng_pctile,
         "dist_to_50d_atr": dist_to_50d_atr,
         "room_to_resist_atr": room_to_resist_atr,
-        # Sentiment
+        # Sentiment (price/volume-based)
         "adv_usd_m": adv_usd_m,
         "vol_5d_over_20d": vol_ratio_5d_20d,
+        # Event/positioning/social signals — populated later in main() via event_signals_for()
+        "news_count_7d": None,
+        "news_sentiment_avg": None,
+        "short_interest_change_pct": None,
+        "short_interest_pct_float": None,
+        "institutional_pct": None,
+        "insider_pct": None,
+        "stocktwits_bullish_pct": None,
+        "stocktwits_bearish_pct": None,
+        "stocktwits_n": None,
         # Fundamentals (None for ETFs)
         **fund_metrics,
     }
@@ -320,6 +330,26 @@ def main():
         feats = compute_features_for(t, hist, spy_close, info_cache)
         if feats is not None:
             rows.append(feats)
+
+    # ----- Event / positioning / social signals -----
+    # Per Mike 2026-09-07 17:40 ET: real-time event awareness (news, institutional
+    # positioning, social sentiment) is required input, not a stub. Pulled here
+    # so the dashboard reflects "what's happening" — not just price data.
+    print(f"Fetching event signals for {len(rows)} tickers ...", file=sys.stderr)
+    from event_signals import event_signals_for
+    by_ticker = {r["ticker"]: r for r in rows}
+    for t in list(by_ticker.keys()):
+        try:
+            sig = event_signals_for(t, quiet=True)
+            for k, v in sig.items():
+                if k == "ticker":
+                    continue
+                if k == "as_of":
+                    continue  # tracked globally
+                if k in by_ticker[t]:
+                    by_ticker[t][k] = v
+        except Exception as e:
+            print(f"  event_signals failed for {t}: {e}", file=sys.stderr)
 
     # Run ClawRank
     ranked = rank(rows, cfg)
