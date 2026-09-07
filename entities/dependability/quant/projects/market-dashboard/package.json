@@ -1,0 +1,15 @@
+{
+  "name": "dependability-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Market Dashboard project — CF Pages deploy + PIN gate. See README.md.",
+  "scripts": {
+    "deploy": "bash scripts/update-content.sh",
+    "deploy:full": "bash scripts/build-and-deploy.sh",
+    "deploy:dev": "wrangler pages dev public"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20"
+  }
+}

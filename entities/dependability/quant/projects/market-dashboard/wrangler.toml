@@ -1,0 +1,23 @@
+name = "dependability-dashboard"
+compatibility_date = "2026-09-07"
+pages_build_output_dir = "./public"
+
+# Production secrets (set via `wrangler pages secret put`, never commit):
+#   ACCESS_CODE_HASH  — SHA-256 of access code with fixed salt
+#   SESSION_SECRET    — 32-byte hex, signs session cookies
+#
+# To set these locally for `wrangler pages dev`:
+#   Add a .dev.vars file (gitignored) with:
+#     ACCESS_CODE_HASH = "..."
+#     SESSION_SECRET   = "..."
+#
+# To set on the production Pages project:
+#   wrangler pages secret put ACCESS_CODE_HASH --project-name=dependability-dashboard
+#   wrangler pages secret put SESSION_SECRET   --project-name=dependability-dashboard
+
+# Functions auto-detected from functions/ directory.
+# No KV namespace binding currently — rate limiting uses in-memory state.
+# To upgrade to KV (multi-user / public exposure), add:
+#   [[kv_namespaces]]
+#   binding = "RATE_LIMIT"
+#   id = "<your-namespace-id>"

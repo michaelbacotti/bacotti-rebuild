@@ -1,0 +1,27 @@
+# Deploy artifacts (regenerated on every deploy)
+public/index.html
+
+# Local secrets — NEVER commit
+.dev.vars
+.dev.vars.*
+*.local
+PIN.txt
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Wrangler
+.wrangler/
+.mf/
+
+# Node
+node_modules/
+package-lock.json
