@@ -95,8 +95,14 @@ python3 scripts/build_market_dashboard_html.py # Step 2: render HTML
 - Writes `reports/YYYY-MM-DD-clawrank.json`
 
 **Step 2 (`build_market_dashboard_html.py`)** reads the JSON + raw price data, renders HTML.
+Writes TWO files:
+- `reports/YYYY-MM-DD-market-dashboard.html` — dated archive (Mike's archive convention)
+- `reports/market-dashboard.html` — canonical "latest" (always the freshest build)
 
-Expected output ends with `OK html=... rows=42 duration=~1s` on success.
+Both contain identical content; the canonical path is what `dashboard.dependability.us`
+serves after deploy.
+
+Expected output ends with `OK html=... canonical=... rows=42 duration=~1s` on success.
 
 **Failure modes to watch for:**
 - yfinance rate-limit / network error → retry once after 30 seconds
@@ -124,15 +130,43 @@ After the build, confirm the HTML file was produced and is well-formed:
 
 ```bash
 ls -la entities/dependability/quant/reports/YYYY-MM-DD-market-dashboard.html
+ls -la entities/dependability/quant/reports/market-dashboard.html
 # File size typically 130-150 KB. If much smaller, investigate.
 ```
 
-If a portal is running, curl it to confirm HTTP 200:
+**Verify the live URL** (CF Pages + PIN gate, since 2026-09-07 19:40 ET):
 
 ```bash
+# Custom domain (after Mike has added the CNAME — see project DEPLOY.md)
 curl -sS -o /dev/null -w "HTTP %{http_code}  size=%{size_download}\n" \
-  "http://127.0.0.1:<PORT>/YYYY-MM-DD-market-dashboard.html?openclaw_portal=<TOKEN>"
+  "https://dashboard.dependability.us/"
+
+# Backup URL (always works without DNS setup)
+curl -sS -o /dev/null -w "HTTP %{http_code}  size=%{size_download}\n" \
+  "https://dependability-dashboard.pages.dev/"
 ```
+
+**Important:** GET requests return the PIN page (HTTP 200, no auth challenge). To verify
+the dashboard actually serves, you need a valid session cookie:
+
+```bash
+# 1. Get a session cookie via the PIN submission
+COOKIE_JAR=$(mktemp)
+PIN="<the PIN from $PROJ/PIN.txt or Mike's password manager>"
+ENCODED_PIN=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$PIN")
+curl -s -X POST "https://dependability-dashboard.pages.dev/" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -c "$COOKIE_JAR" \
+  -d "pin=$ENCODED_PIN" > /dev/null
+
+# 2. Use the cookie to verify dashboard serves
+curl -sS -i "https://dependability-dashboard.pages.dev/" \
+  -H "Cookie: dash_auth=$(grep dash_auth "$COOKIE_JAR" | awk '{print $NF}')" | head -25
+# Expect HTTP 200 + title "Market Dashboard — <today> (v9)"
+```
+
+If the dashboard is on CF Pages (since 2026-09-07), the local portal is no longer used.
+The python http.server workflow is deprecated.
 
 ### Step 5 — Spot-check content
 
@@ -194,3 +228,12 @@ Report back to Mike with:
   sub-rows. Regime banner at top shows cash market status. Bug fix: sector
   leaders loop had `kr=kr` typo leaking last ETF's row into every popover;
   fixed to `kr=pick`.
+- 2026-09-07 v3 — CF Pages + PIN-gate deploy (Mike directive).
+  Dashboard now lives at `dashboard.dependability.us`. Local python http.server
+  workflow deprecated. Refresh procedure now: `cd projects/market-dashboard &&
+  bash scripts/update-content.sh`. Live verification uses CF Pages URL, not
+  portal. See project folder README/DEPLOY.md for full procedure.
+- 2026-09-07 v3.1 — canonical URL convention (Mike directive).
+  `build_market_dashboard_html.py` now writes both `reports/YYYY-MM-DD-market-dashboard.html`
+  (archive) and `reports/market-dashboard.html` (always-latest canonical). Title
+  includes `(vN)` version badge; `BUILD_VERSION` constant in build script.
