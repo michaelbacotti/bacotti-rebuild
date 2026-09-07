@@ -75,13 +75,28 @@ recorded 2026-09-03).
 
 ### Step 2 — Run the build
 
+Two-step process (as of v8, Mike 2026-09-07 directive):
+
 ```bash
 cd /Users/mike/.openclaw/workspace-bacottibot/entities/dependability/quant
-python3 scripts/build_market_dashboard_html.py
+python3 scripts/build_clawrank_features.py   # Step 1: features + event signals
+python3 scripts/build_market_dashboard_html.py # Step 2: render HTML
 ```
 
+**Step 1 (`build_clawrank_features.py`)** pulls:
+- 6mo daily bars from yfinance for all 42 tickers
+- yfinance `.info` for fundamentals (stocks only; ETFs skip)
+- Event signals via `lib/event_signals.py`:
+  - News (yfinance news feed, last 30 headlines per ticker)
+  - Short interest MoM change (FINRA via yfinance)
+  - Institutional ownership % (yfinance)
+  - Stocktwits bullish/bearish % (last 30 messages per ticker)
+- Computes ClawRank-v0 composite (5 factors × weighted z-score)
+- Writes `reports/YYYY-MM-DD-clawrank.json`
+
+**Step 2 (`build_market_dashboard_html.py`)** reads the JSON + raw price data, renders HTML.
+
 Expected output ends with `OK html=... rows=42 duration=~1s` on success.
-yfinance is called for all 42 tickers (~6 months of daily bars).
 
 **Failure modes to watch for:**
 - yfinance rate-limit / network error → retry once after 30 seconds
@@ -90,6 +105,10 @@ yfinance is called for all 42 tickers (~6 months of daily bars).
   for syntax errors
 - Empty data for one ticker → check that ticker still trades; report and pause
   if more than 5 tickers fail
+- **Event signals slow**: each ticker now makes 3-4 external calls (yfinance news,
+  institutional_flow, social_sentiment). Build takes 60-120s (was 7-10s).
+  If a source returns 429 or times out, `event_signals_for` quietly returns
+  None for those fields; check the build output for warnings.
 
 ### Step 3 — Re-select sector leaders (automatic)
 
@@ -168,3 +187,10 @@ Report back to Mike with:
 - 2026-09-03 v1.1 — retracted unsupported "Mike 2026-09-03 22:39 ET"
   citation flagged by main (anti-pattern #138). Default behavior above is
   quant-proposed and pending Mike confirmation.
+- 2026-09-07 v2 — event-aware Sentiment/Catalyst (Mike directive).
+  Two-step build now: `build_clawrank_features.py` first (pulls news + institutional
+  + social via `lib/event_signals.py`), then `build_market_dashboard_html.py`.
+  Sentiment/Catalyst weight 10% → 25%. Dashboard popover shows event signals
+  sub-rows. Regime banner at top shows cash market status. Bug fix: sector
+  leaders loop had `kr=kr` typo leaking last ETF's row into every popover;
+  fixed to `kr=pick`.
