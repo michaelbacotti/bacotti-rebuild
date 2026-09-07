@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """build_market_dashboard_html.py — Interactive single-file HTML market dashboard.
 
+v9 (2026-09-07): Benchmark decoupling (SPY/QQQ/IWM get regime, not ClawRank).
+Event-aware Sentiment/Catalyst (news + institutional + social). Single canonical
+URL (`market-dashboard.html`) plus dated archive (`YYYY-MM-DD-market-dashboard.html`).
 v3 (2026-09-03): ClawRank score moved to first column. Hover the score to see
 the 5-factor breakdown (Fund / Tech / Vol / Setup / Sent) + label rule that
 fired. Eliminates 5 redundant factor columns from the Stock Shortlist.
@@ -32,6 +35,9 @@ from clawrank import rank, load_config  # noqa: E402
 
 WINDOW = 20
 TRADING_DAYS = 252
+# Bump on every shipped dashboard methodology change.
+# Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
+BUILD_VERSION = "v9"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -861,13 +867,14 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Market Dashboard — {as_of.strftime('%Y-%m-%d')}</title>
+<title>Market Dashboard — {as_of.strftime('%Y-%m-%d')} ({BUILD_VERSION})</title>
+<meta name="dashboard-version" content="{BUILD_VERSION}">
 <link rel="icon" type="image/svg+xml" href="{FAVICON_HREF}">
 <style>{CSS}</style>
 </head><body>
 <header>
   <div class="header-left">
-    <h1>Market Dashboard — {as_of.strftime('%B %d, %Y')} <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated {as_of.strftime('%H:%M %Z').strip()}</span></h1>
+    <h1>Market Dashboard — {as_of.strftime('%B %d, %Y')} <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated {as_of.strftime('%H:%M %Z').strip()} · {BUILD_VERSION}</span></h1>
     <div class="subtitle">{subtitle}</div>
   </div>
   <div class="header-right">
@@ -1354,9 +1361,14 @@ def main():
         print(f"ClawRank computed: {len(clawrank_data)} rows", file=sys.stderr)
 
     doc = render_html(rows, as_of_et, sparkline_data, clawrank_data)
-    out_path = Path(__file__).resolve().parent.parent / "reports" / f"{as_of_et.strftime('%Y-%m-%d')}-market-dashboard.html"
-    out_path.write_text(doc)
-    print(f"OK  html={out_path}  rows={len(rows)}  duration={time.time()-t0:.1f}s", file=sys.stderr)
+    reports_dir = Path(__file__).resolve().parent.parent / "reports"
+    dated_path = reports_dir / f"{as_of_et.strftime('%Y-%m-%d')}-market-dashboard.html"
+    canonical_path = reports_dir / "market-dashboard.html"
+    dated_path.write_text(doc)
+    # Canonical "latest" path — always points at the freshest build.
+    # Mike's stable URL: /market-dashboard.html. Dated copy stays for archive.
+    canonical_path.write_text(doc)
+    print(f"OK  html={dated_path}  canonical={canonical_path}  rows={len(rows)}  duration={time.time()-t0:.1f}s", file=sys.stderr)
 
 
 if __name__ == "__main__":
