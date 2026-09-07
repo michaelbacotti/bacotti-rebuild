@@ -405,21 +405,19 @@ export async function onRequest(context) {
     }
 
     if (matchedUser) {
-      // PIN accepted — issue session cookie, clear lockout, serve dashboard
+      // PIN accepted — issue session cookie, clear lockout, redirect to dashboard
+      // We do NOT call next() here because next() would proxy the POST to the
+      // static-file handler, which rejects POST with 405. Instead, return a 303
+      // redirect so the browser re-fetches / as GET with the new cookie set.
       clearLockout(ip);
       const token = await issueSessionToken(env);
-      const dashboardResponse = await next();
-      // Clone response so we can attach Set-Cookie header
-      const newHeaders = new Headers(dashboardResponse.headers);
-      newHeaders.set(
-        'Set-Cookie',
-        `${COOKIE_NAME}=${token}; Path=${COOKIE_PATH}; HttpOnly; Secure; SameSite=Strict; Max-Age=${COOKIE_MAX_AGE}`
-      );
-      newHeaders.set('Cache-Control', 'no-store');
-      return new Response(dashboardResponse.body, {
-        status: dashboardResponse.status,
-        statusText: dashboardResponse.statusText,
-        headers: newHeaders,
+      return new Response(null, {
+        status: 303,
+        headers: {
+          'Location': '/',
+          'Set-Cookie': `${COOKIE_NAME}=${token}; Path=${COOKIE_PATH}; HttpOnly; Secure; SameSite=Strict; Max-Age=${COOKIE_MAX_AGE}`,
+          'Cache-Control': 'no-store',
+        },
       });
     }
 
