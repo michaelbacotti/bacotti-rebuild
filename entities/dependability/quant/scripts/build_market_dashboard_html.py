@@ -125,6 +125,73 @@ def compute_metrics(closes, highs, lows, vols, spy_close, ticker):
     }
 
 
+def regime_for(m):
+    """Compute market regime label for benchmarks (SPY/QQQ/IWM).
+
+    Mike 2026-09-07 17:42 ET: decouple benchmark scoring — benchmarks get a
+    regime label, not a percentile score.
+
+    Logic (transparent, debuggable):
+      - risk-on:    uptrend AND above 50D MA AND 20D return > 0
+      - risk-off:   downtrend AND below 50D MA AND 20D return < 0
+      - neutral:    everything else (transitioning, mixed signals)
+
+    Inputs are the same fields the trend classifier uses, so the regime
+    label is consistent with the trend pill in the dashboard.
+    """
+    trend = m.get("trend", "n/a")
+    spot = m.get("spot")
+    ma50 = m.get("ma50")
+    ret_20d = m.get("ret_20d")
+    if trend == "n/a" or spot is None or ma50 is None or ret_20d is None:
+        return "neutral"
+    above_ma = spot > ma50
+    if trend == "uptrend" and above_ma and ret_20d > 0:
+        return "risk-on"
+    if trend == "downtrend" and not above_ma and ret_20d < 0:
+        return "risk-off"
+    return "neutral"
+
+
+REGIME_STYLE = {
+    "risk-on":  ("Rc", "#3fb950", "Trending up; above 50D MA; positive 20D return"),
+    "neutral":  ("Wa", "#d29922", "Mixed signals — between risk-on and risk-off"),
+    "risk-off": ("Av", "#f85149", "Trending down; below 50D MA; negative 20D return"),
+}
+
+
+def regime_cell_with_popover(regime, m):
+    """Render a regime cell for a benchmark (replaces score cell).
+
+    No ClawRank score; just a regime label with the underlying metrics as
+    a hover popover so the determination is transparent.
+    """
+    short_class, color, desc = REGIME_STYLE.get(regime, REGIME_STYLE["neutral"])
+    spot = m.get("spot")
+    ma50 = m.get("ma50")
+    ret_5d = m.get("ret_5d")
+    ret_20d = m.get("ret_20d")
+    above_ma = (spot > ma50) if (spot is not None and ma50 is not None) else None
+    popover = (
+        '<div class="popover">'
+        '<div class="popover-title">Benchmark Regime</div>'
+        f'<div class="popover-row sub"><span class="name">Trend</span><span class="val">{m.get("trend", "—")}</span></div>'
+        f'<div class="popover-row sub"><span class="name">Above 50D MA</span><span class="val">{"yes" if above_ma else "no" if above_ma is not None else "—"}</span></div>'
+        f'<div class="popover-row sub"><span class="name">20D return</span><span class="val">{(f"{ret_20d:+.2%}") if ret_20d is not None else "—"}</span></div>'
+        f'<div class="popover-row sub"><span class="name">5D return</span><span class="val">{(f"{ret_5d:+.2%}") if ret_5d is not None else "—"}</span></div>'
+        '<div class="popover-divider"></div>'
+        f'<div class="popover-rule">{desc} → <strong>{regime}</strong></div>'
+        '<span class="popover-trigger-hint">benchmarks are not scored</span>'
+        '</div>'
+    )
+    return (
+        f'<td class="score-cell" data-val="0">'
+        f'<span class="score-big" style="color:{color};font-size:14px">{regime}</span>'
+        f'{popover}'
+        f'</td>'
+    )
+
+
 def outlook_for(m):
     t, s = m["trend"], m["setup"]
     if t == "n/a": return "Data insufficient."
@@ -599,9 +666,22 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     uptrend = sum(1 for r in rows if r["trend"] == "uptrend")
     downtrend = sum(1 for r in rows if r["trend"] == "downtrend")
     transitions = sum(1 for r in rows if r["trend"] == "transitioning")
-    research = sum(1 for kr in clawrank_by_ticker.values() if kr.get("clawrank_label") == "Research candidate")
-    watchlist = sum(1 for kr in clawrank_by_ticker.values() if kr.get("clawrank_label") == "Watchlist")
-    avoid = sum(1 for kr in clawrank_by_ticker.values() if kr.get("clawrank_label") == "Avoid")
+    # ClawRank label counts EXCLUDE benchmarks (Mike 2026-09-07 — benchmarks get
+    # regime labels, not ClawRank labels, so they shouldn't pollute the
+    # "scored universe" KPIs).
+    research = sum(1 for kr in clawrank_by_ticker.values()
+                   if kr.get("ticker") not in BENCH_GROUP and kr.get("clawrank_label") == "Research candidate")
+    watchlist = sum(1 for kr in clawrank_by_ticker.values()
+                    if kr.get("ticker") not in BENCH_GROUP and kr.get("clawrank_label") == "Watchlist")
+    avoid = sum(1 for kr in clawrank_by_ticker.values()
+                if kr.get("ticker") not in BENCH_GROUP and kr.get("clawrank_label") == "Avoid")
+    # Benchmark regime counts
+    regime_count = {"risk-on": 0, "neutral": 0, "risk-off": 0}
+    for t in BENCHMARKS:
+        m = by_ticker.get(t)
+        if m:
+            r = regime_for(m)
+            regime_count[r] = regime_count.get(r, 0) + 1
     spy = by_ticker.get("SPY", {})
 
     # Column index legend (kept consistent for chip filter + sort handlers):
@@ -640,15 +720,19 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
         pct_r = m["resistance"] / m["spot"] - 1
         rng = m["range_pctile"] if m["range_pctile"] is not None else -1
         rs = m["rs_vs_spy"] if m["rs_vs_spy"] is not None else -999
-        # ClawRank data
-        kr = clawrank_by_ticker.get(t)
-        cr_score = kr.get("clawrank_score") if kr else None
-        cr_label = kr.get("clawrank_label", "—") if kr else "—"
-        factors = {k.replace("clawrank_", ""): kr.get(k) for k in
-                   ("clawrank_fundamental_health", "clawrank_technical_momentum",
-                    "clawrank_volatility_regime", "clawrank_setup_quality",
-                    "clawrank_sentiment_catalyst")} if kr else {}
-        score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=kr)
+        # Benchmarks (SPY/QQQ/IWM) get regime labels, not ClawRank scores (Mike 2026-09-07).
+        if t in BENCH_GROUP:
+            score_td = regime_cell_with_popover(regime_for(m), m)
+        else:
+            # ClawRank data (sector ETFs only)
+            kr = clawrank_by_ticker.get(t)
+            cr_score = kr.get("clawrank_score") if kr else None
+            cr_label = kr.get("clawrank_label", "—") if kr else "—"
+            factors = {k.replace("clawrank_", ""): kr.get(k) for k in
+                       ("clawrank_fundamental_health", "clawrank_technical_momentum",
+                        "clawrank_volatility_regime", "clawrank_setup_quality",
+                        "clawrank_sentiment_catalyst")} if kr else {}
+            score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=kr)
         t1.append(f"""
         <tr>
           {score_td}
@@ -826,6 +910,11 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
       <div class="kpi-label">ClawRank Avoid</div>
       <div class="kpi-value">{avoid}</div>
       <div class="kpi-sub">composite ≤ 30</div>
+    </div>
+    <div class="kpi" style="--y:var(--green)">
+      <div class="kpi-label">Benchmark Regime</div>
+      <div class="kpi-value" style="color:var(--green)">{regime_count["risk-on"]} on <span style="color:var(--muted);font-size:11px">/</span> {regime_count["neutral"]} n <span style="color:var(--muted);font-size:11px">/</span> {regime_count["risk-off"]} off</div>
+      <div class="kpi-sub">SPY / QQQ / IWM</div>
     </div>
   </div>
 </div>
