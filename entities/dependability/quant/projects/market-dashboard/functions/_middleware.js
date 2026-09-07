@@ -405,18 +405,46 @@ export async function onRequest(context) {
     }
 
     if (matchedUser) {
-      // PIN accepted — issue session cookie, clear lockout, redirect to dashboard
+      // PIN accepted — issue session cookie, clear lockout, redirect to dashboard.
+      //
       // We do NOT call next() here because next() would proxy the POST to the
-      // static-file handler, which rejects POST with 405. Instead, return a 303
-      // redirect so the browser re-fetches / as GET with the new cookie set.
+      // static-file handler, which rejects POST with 405. Instead, return a
+      // small HTML page that sets the cookie + auto-redirects via:
+      //   1. window.location.replace (JS, fires immediately)
+      //   2. <meta http-equiv="refresh"> (HTML fallback if JS disabled)
+      //   3. Clickable link (last-resort fallback)
+      // This 3-layer approach works in every browser/proxy/edge case.
       clearLockout(ip);
       const token = await issueSessionToken(env);
-      return new Response(null, {
-        status: 303,
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=/">
+<title>Unlocking…</title>
+<script>window.location.replace('/');</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0d1117; color: #e6edf3;
+         display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 32px; text-align: center; max-width: 400px; }
+  h1 { color: #d4a843; font-size: 18px; margin: 0 0 8px; }
+  p { color: #7d8590; font-size: 13px; margin: 8px 0 0; }
+  a { color: #d4a843; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Unlocking dashboard…</h1>
+    <p>Not redirecting? <a href="/">Click here</a>.</p>
+  </div>
+</body>
+</html>`;
+      return new Response(html, {
+        status: 200,
         headers: {
-          'Location': '/',
+          'Content-Type': 'text/html; charset=utf-8',
           'Set-Cookie': `${COOKIE_NAME}=${token}; Path=${COOKIE_PATH}; HttpOnly; Secure; SameSite=Strict; Max-Age=${COOKIE_MAX_AGE}`,
-          'Cache-Control': 'no-store',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
         },
       });
     }
