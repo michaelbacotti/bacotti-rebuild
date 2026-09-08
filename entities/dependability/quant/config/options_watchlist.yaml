@@ -109,3 +109,17 @@ tickers:
     rank_reason: "Attractive potential reward because $175 remains far below consensus targets, but it carries higher sector and sentiment volatility."
     risk_line: 140.50
     risk_meaning: "This is near cited short-term support; a break makes $175 a later, lower-probability outcome."
+
+  - ticker: INSM
+    ref_price: 145.00
+    target: 175.00
+    move_pct: 20.7
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Insulet's Omnipod 5 install base is still expanding into U.S. and international markets; consensus near $195 implies $175 is a reasonable intermediate target as adoption milestones print through 2026."
+    rank: 7
+    rank_reason: "Healthcare name with durable device-revenue thesis; $175 sits below consensus and gives a defined intermediate objective without requiring a full re-rating."
+    risk_line: 132.00
+    risk_meaning: "Breaks the recent basing structure; new-product/regulatory concerns would be a read-through to back off the position."

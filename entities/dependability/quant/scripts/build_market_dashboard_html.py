@@ -39,7 +39,35 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v15"
+BUILD_VERSION = "v17"
+
+# Sector color scheme (Mike 2026-09-08 08:52 ET directive):
+#   Each sector + benchmark gets a unique color so the user can identify a
+#   sector by hue. Used for ticker-cell border + sector-name text in sections
+#   1 (Market & Sectors) and 2 (Sector Leaders). Benchmarks get muted tones
+#   since they are aggregates, not sectors.
+SECTOR_COLORS = {
+    "SPY":  "#94a3b8",  # slate gray (broad mkt)
+    "QQQ":  "#60a5fa",  # sky blue (tech-heavy)
+    "IWM":  "#fbbf24",  # amber (small cap)
+    "XLB":  "#d97706",  # dark amber (materials)
+    "XLC":  "#ec4899",  # pink (comm services)
+    "XLE":  "#ef4444",  # red (energy)
+    "XLF":  "#22c55e",  # green (financials)
+    "XLI":  "#06b6d4",  # cyan (industrials)
+    "XLK":  "#3b82f6",  # bright blue (tech)
+    "XLP":  "#a78bfa",  # purple (consumer staples)
+    "XLRE": "#f97316",  # orange (real estate)
+    "XLU":  "#14b8a6",  # teal (utilities)
+    "XLV":  "#84cc16",  # lime (healthcare)
+    "XLY":  "#eab308",  # yellow (consumer disc)
+}
+
+
+def sector_color(key):
+    """Look up the unique color for a sector ETF key (XLK, XLU, etc.) or
+    benchmark (SPY, QQQ, IWM). Returns the muted gray for unknown keys."""
+    return SECTOR_COLORS.get(key, "#7d8590")
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -323,6 +351,41 @@ th.sorted-asc::after {{ content: ' ▲'; color: var(--gold); }}
 th.sorted-desc::after {{ content: ' ▼'; color: var(--gold); }}
 tr:hover {{ background: rgba(212,168,67,0.04); }}
 .ticker-cell {{ font-weight: 700; color: var(--gold); letter-spacing: 0.3px; }}
+/* Sector color coding (Mike 2026-09-08 08:52 ET directive):
+   Each sector has a unique color used for a 3px left border on the ticker
+   cell and a colored text on the sector-name cell. Same scheme in section 1
+   (Market & Sectors) and section 2 (Sector Leaders) so the user can
+   match a stock to its sector at a glance. */
+.ticker-cell {{ border-left: 3px solid var(--gold); padding-left: 6px; }}
+.ticker-cell.sector-SPY  {{ border-left-color: #94a3b8; }}
+.ticker-cell.sector-QQQ  {{ border-left-color: #60a5fa; }}
+.ticker-cell.sector-IWM  {{ border-left-color: #fbbf24; }}
+.ticker-cell.sector-XLB  {{ border-left-color: #d97706; }}
+.ticker-cell.sector-XLC  {{ border-left-color: #ec4899; }}
+.ticker-cell.sector-XLE  {{ border-left-color: #ef4444; }}
+.ticker-cell.sector-XLF  {{ border-left-color: #22c55e; }}
+.ticker-cell.sector-XLI  {{ border-left-color: #06b6d4; }}
+.ticker-cell.sector-XLK  {{ border-left-color: #3b82f6; }}
+.ticker-cell.sector-XLP  {{ border-left-color: #a78bfa; }}
+.ticker-cell.sector-XLRE {{ border-left-color: #f97316; }}
+.ticker-cell.sector-XLU  {{ border-left-color: #14b8a6; }}
+.ticker-cell.sector-XLV  {{ border-left-color: #84cc16; }}
+.ticker-cell.sector-XLY  {{ border-left-color: #eab308; }}
+.sector-name {{ font-weight: 600; }}
+.sector-name.sector-SPY  {{ color: #94a3b8; }}
+.sector-name.sector-QQQ  {{ color: #60a5fa; }}
+.sector-name.sector-IWM  {{ color: #fbbf24; }}
+.sector-name.sector-XLB  {{ color: #d97706; }}
+.sector-name.sector-XLC  {{ color: #ec4899; }}
+.sector-name.sector-XLE  {{ color: #ef4444; }}
+.sector-name.sector-XLF  {{ color: #22c55e; }}
+.sector-name.sector-XLI  {{ color: #06b6d4; }}
+.sector-name.sector-XLK  {{ color: #3b82f6; }}
+.sector-name.sector-XLP  {{ color: #a78bfa; }}
+.sector-name.sector-XLRE {{ color: #f97316; }}
+.sector-name.sector-XLU  {{ color: #14b8a6; }}
+.sector-name.sector-XLV  {{ color: #84cc16; }}
+.sector-name.sector-XLY  {{ color: #eab308; }}
 .trend-pill {{ display: inline-block; padding: 2px 8px; border-radius: 10px;
                font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }}
 .label-Rc {{ color: var(--blue); font-weight: 700; }}
@@ -970,9 +1033,9 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
             score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=kr)
         t1.append(f"""
         <tr>
-          <td class="ticker-cell">{m['ticker']}</td>
+          <td class="ticker-cell sector-{t}">{m['ticker']}</td>
           {score_td}
-          <td>{BENCH_GROUP.get(t, SECTOR_GROUP.get(t, ''))}</td>
+          <td class="sector-name sector-{t}">{BENCH_GROUP.get(t, SECTOR_GROUP.get(t, ''))}</td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
           <td>{trend_badge(m['trend'])}</td>
           <td data-val="{m['support']:.2f}">{fmt_money(m['support'])}</td>
@@ -1024,9 +1087,9 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
                          for t, s in pick.get("all_candidates", []) if t != sym)
         t2.append(f"""
         <tr>
-          <td class="ticker-cell">{m['ticker']}</td>
+          <td class="ticker-cell sector-{pick['sector_etf']}">{m['ticker']}</td>
           {score_td}
-          <td>{pick['sector_name']} <span style="color:var(--muted);font-size:10px">({pick['sector_etf']})</span></td>
+          <td class="sector-name sector-{pick['sector_etf']}">{pick['sector_name']} <span style="color:var(--muted);font-size:10px">({pick['sector_etf']})</span></td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
           <td>{trend_badge(m['trend'])}</td>
           <td>{m['setup'].replace('_', ' ')}</td>
