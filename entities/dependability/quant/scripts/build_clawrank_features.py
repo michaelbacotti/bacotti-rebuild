@@ -413,7 +413,11 @@ def compute_features_for(ticker, hist, spy_close, info_cache, macro_state):
     highs = get_series(hist, ticker, "High")
     lows = get_series(hist, ticker, "Low")
     vols = get_series(hist, ticker, "Volume")
-    if len(closes) < 50:
+    # Minimum 25 days (~5 trading weeks). Features that need longer lookbacks
+    # (RS_12m, MA50, MA200, max_dd_60d, vol_252d) return None when the underlying
+    # history is short — they degrade gracefully rather than crash. 25 lets newer
+    # IPOs (SKHY=42d, etc.) still produce a partial score instead of being skipped.
+    if len(closes) < 25:
         return None
 
     spot = float(closes.iloc[-1])

@@ -228,12 +228,12 @@ tickers:
     timing: "8-16 weeks; October through January"
     timing_min_weeks: 8
     timing_max_weeks: 16
-    trigger: "Tracking candidate (ETF — Software - Application). Mike to detail the read-through."
+    trigger: "Tracking candidate (XLK — Software - Application). Mike to detail the read-through."
     rank: 14
     rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
     risk_line: 8.83
     risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
-    sector_etf: "ETF"  # used for color coding in dashboard
+    sector_etf: "XLK"  # used for color coding in dashboard — BULL is Webull Corp (equity), not an ETF
 
   - ticker: CAT
     ref_price: 827.445
@@ -834,3 +834,18 @@ tickers:
     risk_line: 68.53
     risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
     sector_etf: "XLV"  # used for color coding in dashboard
+
+  - ticker: LITE
+    ref_price: 989.05
+    target: 1087.95
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Communication Equipment). Mike to detail the read-through."
+    rank: 55
+    rank_reason: "Added to watchlist on 2026-09-08 11:46 ET (Mike directive)."
+    risk_line: 910.33
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard

@@ -325,3 +325,16 @@ grep -c '<td><td class="score-cell"' reports/market-dashboard.html
   3px left border, sector name cell gets colored text. Section 1 uses the
   ETF's own key, Section 2 uses the stock's parent sector ETF. INSM
   added to watchlist (rank 7).
+
+- 2026-09-08 v7 (v19 build) — LITE added + 6-bug sweep (Mike 2026-09-08 11:46 ET
+  directive). (1) BRK/B was unscoreable — added `YF_ALIASES` map that translates
+  `BRK/B` → `BRK-B` for yfinance, restoring score 49.1. (2) SKHY short-history
+  bug — lowered `compute_features_for` minimum closes from 50 to 25 (features
+  that need longer history return None gracefully). SKHY now scores 67.1.
+  (3) BULL misclassified as ETF — it's Webull Corp, moved to XLK. (4) SKHY
+  missing `sector_etf` field — added XLK. (5) Subtitle showed "0 scored stocks"
+  — module-level `STOCKS` was stale at render time; re-resolved inside
+  `render_html`. (6) Risk line proximity logic was checking `< 3` before `< 0`,
+  so below-risk tickers showed "above risk" with negative number — reordered
+  to check `< 0` first (broken), then `< 3` (near), else safe. New ticker:
+  LITE (Lumentum Holdings, XLK). All 55 watchlist tickers now have scores.

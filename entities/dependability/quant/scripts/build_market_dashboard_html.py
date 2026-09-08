@@ -843,20 +843,25 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
         else:
             prob_class, prob_badge = "prob-low", f"{prob}%"
 
-        # Risk line proximity
+        # Risk line proximity — measured as percent above (or below) the risk line.
+        #   risk_dist > 0   → spot above risk (good; more is safer)
+        #   risk_dist < 0   → spot below risk (thesis broken)
+        #   abs(risk_dist) <= 3 → within danger zone either side
         risk_proximity_class = ""
         risk_proximity_text = ""
         risk_proximity_label_class = ""
         if spot is not None and risk_line is not None:
             risk_dist = ((spot / risk_line) - 1.0) * 100
-            if risk_dist < 3:
-                risk_proximity_class = "risk-near"
-                risk_proximity_label_class = "risk-near"
-                risk_proximity_text = f"⚠ +{risk_dist:.1f}% above risk"
-            elif risk_dist < 0:
+            if risk_dist < 0:
+                # Spot is BELOW the risk line — thesis broken.
                 risk_proximity_class = "risk-broken"
                 risk_proximity_label_class = "risk-broken"
                 risk_proximity_text = f"❌ BROKEN {risk_dist:+.1f}%"
+            elif risk_dist < 3:
+                # Spot is above risk line but within the 3% danger zone.
+                risk_proximity_class = "risk-near"
+                risk_proximity_label_class = "risk-near"
+                risk_proximity_text = f"⚠ +{risk_dist:.1f}% above risk"
             else:
                 risk_proximity_label_class = "risk-safe"
                 risk_proximity_text = f"✓ +{risk_dist:.1f}% above risk"
@@ -1121,7 +1126,11 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
     )
 
     last_updated = as_of.strftime("%b %d, %Y · %H:%M %Z")
-    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} scored stocks (S&P 500 + NASDAQ-100 + VTWO proxy)"
+    # Re-resolve STOCKS at render time — the imported reference is stale until init_universe()
+    # rebinds the module-level name. Without this, the subtitle shows "0 scored stocks".
+    import build_clawrank_features as _bcf_render
+    _render_stocks = _bcf_render.STOCKS
+    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(_render_stocks)} scored stocks (S&P 500 + NASDAQ-100 + VTWO proxy)"
 
     # ----- Market regime note (Mike 2026-09-07 directive: real-time event awareness) -----
     # Detect US market holidays + cash market open/closed status. Display a banner
@@ -1195,7 +1204,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
 <main>
 
 <div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — {len(rows)} instruments ({len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} scored stocks)</div>
+  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — {len(rows)} instruments ({len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(_render_stocks)} scored stocks)</div>
   <div class="kpi-row">
     <div class="kpi gold">
       <div class="kpi-label">SPY Spot</div>
@@ -1716,15 +1725,21 @@ def main():
     # (Mike 21:03 ET: "each stock needs a clawscore!") — merged into clawrank_data.
     watchlist_path = Path(__file__).resolve().parent.parent / "config" / "options_watchlist.yaml"
     watchlist_data = {"tickers": [], "live_prices": {}, "sparklines": {}}
+    # Yahoo Finance ticker aliases for symbols that have invalid URL chars.
+    # Map display symbol -> yfinance-fetchable symbol. Applied at fetch time;
+    # original symbols are kept for display/ranking so the UI never changes.
+    YF_ALIASES = {"BRK/B": "BRK-B"}  # Berkshire Hathaway: slash invalid in Yahoo URL
     if watchlist_path.exists():
         wl_cfg = yaml.safe_load(open(watchlist_path))
         watchlist_data["tickers"] = sorted(wl_cfg.get("tickers", []), key=lambda t: t.get("rank", 99))
         wl_syms = [t["ticker"] for t in watchlist_data["tickers"]]
         if wl_syms:
-            wl_hist = fetch_history(wl_syms, period="3mo")
+            # Fetch history using yfinance-friendly symbols; map result back to display symbol.
+            yf_syms = [YF_ALIASES.get(t, t) for t in wl_syms]
+            wl_hist = fetch_history(yf_syms, period="3mo")
             if wl_hist is not None and len(wl_hist) > 0:
-                for t in wl_syms:
-                    closes = get_series(wl_hist, t, "Close")
+                for t, yt in zip(wl_syms, yf_syms):
+                    closes = get_series(wl_hist, yt, "Close")
                     if closes is not None and len(closes) > 0:
                         watchlist_data["live_prices"][t] = float(closes.iloc[-1])
                         watchlist_data["sparklines"][t] = closes
@@ -1743,8 +1758,10 @@ def main():
                     wl_macro_state = {"regime": "n/a", "composite_score": 0.0,
                                       "bear_risk_score": 0.0, "confidence": 0.5, "pillars": {}}
                     wl_hist_2y = None
+                    # Translate display symbols to yfinance-friendly symbols for fetch
+                    missing_yf = [YF_ALIASES.get(t, t) for t in missing]
                     try:
-                        wl_hist_2y = fetch_history(missing, period="2y")
+                        wl_hist_2y = fetch_history(missing_yf, period="2y")
                     except Exception as e:
                         print(f"WARN: watchlist 2y fetch failed: {e}", file=sys.stderr)
                     if wl_hist_2y is not None and len(wl_hist_2y) > 0:
@@ -1759,9 +1776,15 @@ def main():
                             wl_spy = spy_close  # fallback to main history's SPY
                         info_cache_wl: dict = {}
                         wl_feat_rows = []
-                        for t in missing:
-                            feats = compute_features_for(t, wl_hist_2y, wl_spy, info_cache_wl, wl_macro_state)
+                        # Pair display ticker with yf-symbol; score using yf data but
+                        # emit the display symbol in the row so rendering matches the YAML.
+                        for t, yt in zip(missing, missing_yf):
+                            feats = compute_features_for(yt, wl_hist_2y, wl_spy, info_cache_wl, wl_macro_state)
                             if feats is not None:
+                                # Rewrite ticker in the feature dict to display form so
+                                # downstream rendering shows BRK/B (the user's symbol).
+                                if t != yt:
+                                    feats["ticker"] = t
                                 wl_feat_rows.append(feats)
                         if wl_feat_rows:
                             cfg = load_config(str(Path(__file__).resolve().parent.parent / "config" / "clawrank.yaml"))
