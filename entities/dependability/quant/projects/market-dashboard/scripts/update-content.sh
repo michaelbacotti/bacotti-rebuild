@@ -11,7 +11,9 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 QUANT_DIR="$(dirname "$PROJECT_DIR")"
 
 : "${CLOUDFLARE_ACCOUNT_ID:?CLOUDFLARE_ACCOUNT_ID env var required}"
-: "${CLOUDFLARE_API_TOKEN:?CLOUDFLARE_API_TOKEN env var required}"
+# NOTE: wrangler uses CF_API_TOKEN, not CLOUDFLARE_API_TOKEN. We accept both for ergonomics.
+: "${CF_API_TOKEN:=${CLOUDFLARE_API_TOKEN:?CF_API_TOKEN or CLOUDFLARE_API_TOKEN env var required}}"
+export CF_API_TOKEN
 
 PROJECT_NAME="dependability-dashboard"
 SOURCE_HTML="$QUANT_DIR/reports/market-dashboard.html"
