@@ -37,48 +37,67 @@ import pandas as pd
 import yfinance as yf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # for universe_loader
 
 # Local imports
 from clawrank import rank, load_config  # noqa: E402
+from universe_loader import load_universe, get_cached_info, SECTOR_GROUP  # noqa: E402
+from pathlib import Path as _Path
+CACHE_DIR = _Path(__file__).resolve().parent.parent / "data" / "cache"
 
 TRADING_DAYS = 252
 WINDOW = 20
 
-# Same universe as dashboard
+# Universe: S&P 500 + NASDAQ-100 + VTWO proxy for IWM (loaded dynamically)
 BENCHMARKS = ["SPY", "QQQ", "IWM"]
 SECTOR_ETFS = ["XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLRE", "XLU", "XLV", "XLY"]
-
-SECTOR_LEADERS = {
-    "XLK":  ["MSFT", "NVDA", "AAPL"],
-    "XLF":  ["JPM", "BAC", "GS"],
-    "XLE":  ["XOM", "CVX"],
-    "XLV":  ["LLY", "UNH", "JNJ"],
-    "XLI":  ["CAT", "HON", "DE"],
-    "XLY":  ["HD", "AMZN", "TSLA"],
-    "XLP":  ["PG", "KO", "WMT"],
-    "XLC":  ["META", "GOOGL"],
-    "XLB":  ["LIN", "FCX"],
-    "XLRE": ["AMT", "PLD"],
-    "XLU":  ["NEE", "SO"],
-}
-
-STOCKS = []
-SECTOR_GROUP = {
-    "XLB": "Materials", "XLC": "Comm Services", "XLE": "Energy", "XLF": "Financials",
-    "XLI": "Industrials", "XLK": "Technology", "XLP": "Consumer Staples",
-    "XLRE": "Real Estate", "XLU": "Utilities", "XLV": "Health Care", "XLY": "Consumer Disc.",
-}
-SECTOR_ETF_OF = {t: etf for etf, candidates in SECTOR_LEADERS.items() for t in candidates}
-for etf, candidates in SECTOR_LEADERS.items():
-    sector_name = SECTOR_GROUP[etf]
-    for ticker in candidates:
-        STOCKS.append((ticker, etf, sector_name))
-
-STOCKS_BY_SECTOR = [(t, sec) for (t, _etf, sec) in STOCKS]
-
 BENCH_GROUP = {"SPY": "Broad Mkt", "QQQ": "Tech", "IWM": "Small Cap"}
 ETF_SET = set(BENCHMARKS + SECTOR_ETFS)
-ALL_TICKERS = BENCHMARKS + SECTOR_ETFS + [t for t, _, _ in STOCKS]
+
+
+def build_stock_universe():
+    """Build STOCKS list dynamically from config/universe.json + VTWO holdings.
+
+    Returns: list of (ticker, sector_etf, sector_name)
+    """
+    universe_list, sector_map, sector_groups = load_universe(verbose=True)
+    # Add VTWO proxy tickers for IWM small-cap exposure
+    try:
+        import yfinance as yf
+        vtwo = yf.Ticker('VTWO').funds_data
+        if vtwo is not None:
+            top = vtwo.top_holdings
+            if top is not None and not top.empty:
+                vtwo_tickers = [t for t in top.index.tolist() if t not in sector_map]
+                for t in vtwo_tickers:
+                    meta_path = CACHE_DIR / "sectors" / f"{t}.json"
+                    if meta_path.exists():
+                        data = json.loads(meta_path.read_text())
+                        sector_map[t] = (data["sector_etf"], data["sector_name"])
+                        sector_groups.setdefault(data["sector_name"], []).append(t)
+                print(f"  VTWO proxy: added {len(vtwo_tickers)} small-caps", flush=True)
+    except Exception as e:
+        print(f"  VTWO proxy failed (non-fatal): {e}", flush=True)
+    # Rebuild universe_list from final sector_map
+    final = [(t, sector_map[t][0], sector_map[t][1]) for t in sorted(sector_map.keys())]
+    print(f"  Total universe: {len(final)} tickers across {len(sector_groups)} sectors", flush=True)
+    return final, sector_groups
+
+
+# Populated at module load
+STOCKS = []
+SECTOR_GROUPS_DYNAMIC = {}
+SECTOR_ETF_OF = {}
+
+
+def init_universe():
+    global STOCKS, SECTOR_GROUPS_DYNAMIC, SECTOR_ETF_OF
+    STOCKS, SECTOR_GROUPS_DYNAMIC = build_stock_universe()
+    SECTOR_ETF_OF = {t: etf for (t, etf, _sec) in STOCKS}
+
+
+STOCKS_BY_SECTOR = []  # populated after init_universe()
+ALL_TICKERS = []  # populated after init_universe()
 
 # Sector beta classification — used for macro_sector_fit
 # Defensive: rewarded in risk-off / bear-risk-elevated regimes
@@ -98,36 +117,128 @@ SECTOR_BETA_CLASS = {
     "XLC":  "neutral",
 }
 # Map stock ticker to its sector ETF for sector_fit (when beta not in info)
-STOCK_BETA_CLASS = {t: SECTOR_BETA_CLASS.get(etf, "neutral") for etf, candidates in SECTOR_LEADERS.items() for t in candidates}
+# Populated by init_universe() based on dynamic universe.
+STOCK_BETA_CLASS = {}
 BENCH_BETA_CLASS = {"SPY": "neutral", "QQQ": "neutral", "IWM": "cyclical"}
 
 
-def pick_top_by_sector(clawrank_data):
+def pick_top_by_sector(clawrank_data, top_n=3):
+    """Return top N tickers per sector (default 3), sorted by ClawRank descending.
+
+    Uses the dynamic STOCKS universe (S&P 500 + NASDAQ-100 + VTWO proxy).
+    Falls back to ALL ranked tickers if STOCKS is empty.
+    """
     if not clawrank_data:
         return []
     by_ticker = {r["ticker"]: r for r in clawrank_data}
+
+    # Group tickers by sector
+    sector_tickers = {}
+    if STOCKS:
+        for t, etf, sec_name in STOCKS:
+            sector_tickers.setdefault((etf, sec_name), []).append(t)
+    else:
+        # Fallback: infer sector from sector_name field on each row
+        for r in clawrank_data:
+            sec_name = r.get("sector_name") or "Other"
+            etf = r.get("sector_etf") or ""
+            sector_tickers.setdefault((etf, sec_name), []).append(r["ticker"])
+
     picks = []
-    for etf, candidates in SECTOR_LEADERS.items():
+    for (etf, sec_name), candidates in sector_tickers.items():
         ranked = [by_ticker[t] for t in candidates if t in by_ticker
                   and by_ticker[t].get("clawrank_score") is not None]
         if not ranked:
             continue
-        best = max(ranked, key=lambda r: r.get("clawrank_score") or -1)
-        picks.append({
-            "sector_etf": etf,
-            "sector_name": SECTOR_GROUP[etf],
-            "ticker": best["ticker"],
-            "all_candidates": [(t, by_ticker.get(t, {}).get("clawrank_score"))
-                                for t in candidates if t in by_ticker],
-            **best,
-        })
-    picks.sort(key=lambda r: -(r.get("clawrank_score") or -1))
+        ranked.sort(key=lambda r: -(r.get("clawrank_score") or -1))
+        top = ranked[:top_n]
+        for rank_idx, row in enumerate(top):
+            picks.append({
+                "sector_etf": etf,
+                "sector_name": sec_name,
+                "ticker": row["ticker"],
+                "rank_in_sector": rank_idx + 1,
+                "sector_candidate_count": len(ranked),
+                **row,
+            })
+    picks.sort(key=lambda r: (-(r.get("clawrank_score") or -1), r.get("sector_name", "")))
     return picks
 
 
 def fetch_history(tickers, period="2y"):
     return yf.download(tickers=tickers, period=period, interval="1d",
                        group_by="ticker", auto_adjust=False, progress=False, threads=True)
+
+
+PRICE_CACHE_DIR = CACHE_DIR / "prices"
+PRICE_CACHE_TTL_DAYS = 1
+
+
+def fetch_history_cached(tickers, period="2y"):
+    """Fetch 2y price history with per-ticker parquet cache (1-day TTL).
+
+    On rebuilds, only tickers without a fresh cache file trigger network calls.
+    Returns a multi-ticker DataFrame (concat of cached + fresh).
+    """
+    PRICE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    now_ts = time.time()
+    ttl_secs = PRICE_CACHE_TTL_DAYS * 86400
+
+    needed = []
+    cached_frames = {}
+    for t in tickers:
+        cache_file = PRICE_CACHE_DIR / f"{t.upper()}_2y.parquet"
+        if cache_file.exists() and (now_ts - cache_file.stat().st_mtime) < ttl_secs:
+            try:
+                df = pd.read_parquet(cache_file)
+                if not df.empty:
+                    cached_frames[t] = df
+                    continue
+            except Exception:
+                pass
+        needed.append(t)
+
+    print(f"  price cache: {len(cached_frames)}/{len(tickers)} fresh, fetching {len(needed)}", file=sys.stderr)
+
+    if needed:
+        fresh = yf.download(tickers=needed, period=period, interval="1d",
+                            group_by="ticker", auto_adjust=False, progress=False, threads=True)
+        if fresh is None or len(fresh) == 0:
+            fresh = pd.DataFrame()
+        # Write each ticker to its own parquet
+        for t in needed:
+            try:
+                if isinstance(fresh.columns, pd.MultiIndex):
+                    if (t, "Close") in fresh.columns:
+                        df = fresh[t].dropna(how="all")
+                    else:
+                        continue
+                else:
+                    df = fresh.dropna(how="all")
+                if not df.empty:
+                    cache_file = PRICE_CACHE_DIR / f"{t.upper()}_2y.parquet"
+                    df.to_parquet(cache_file)
+                    cached_frames[t] = df
+            except Exception as e:
+                print(f"  cache write failed for {t}: {e}", file=sys.stderr)
+
+    if not cached_frames:
+        return pd.DataFrame()
+
+    # Concat all per-ticker frames into a multi-ticker DataFrame matching yf.download output
+    cols = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
+    pieces = []
+    for t, df in cached_frames.items():
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+        df = df[[c for c in cols if c in df.columns]].copy()
+        df.columns = pd.MultiIndex.from_product([[t], df.columns])
+        pieces.append(df)
+    if not pieces:
+        return pd.DataFrame()
+    # Align by date index
+    result = pd.concat(pieces, axis=1).sort_index()
+    return result
 
 
 def get_series(hist, ticker, field):
@@ -418,14 +529,17 @@ def compute_features_for(ticker, hist, spy_close, info_cache, macro_state):
     fund_metrics = {}
     estimate_metrics = {}
     if ticker not in ETF_SET:
-        info = info_cache.get(ticker, {})
+        # Use cached .info() (7-day TTL) — avoids 1-3s yfinance call per ticker on rebuilds
+        info = info_cache.get(ticker) if isinstance(info_cache, dict) and info_cache.get(ticker) else None
         if not info:
             try:
-                info = yf.Ticker(ticker).info or {}
-                info_cache[ticker] = info
+                info = get_cached_info(ticker, ttl_days=7)
+                if isinstance(info_cache, dict):
+                    info_cache[ticker] = info
             except Exception:
                 info = {}
-                info_cache[ticker] = info
+                if isinstance(info_cache, dict):
+                    info_cache[ticker] = info
         # Valuation
         pe = info.get("trailingPE")
         fund_metrics["trailing_pe"] = float(pe) if pe is not None and pe > 0 else None
@@ -638,19 +752,40 @@ def main():
     # Apply macro modifiers to config weights
     cfg = apply_macro_modifiers(cfg, macro_state)
 
-    # ----- Fetch price history (2y for 12M returns + 200D MA) -----
+    # ----- Initialize universe (S&P 500 + NASDAQ-100 + VTWO proxy) -----
+    init_universe()
+    global STOCKS_BY_SECTOR, ALL_TICKERS
+    STOCKS_BY_SECTOR = [(t, sec) for (t, _etf, sec) in STOCKS]
+    ALL_TICKERS = BENCHMARKS + SECTOR_ETFS + [t for t, _, _ in STOCKS]
+    print(f"Universe ready: {len(STOCKS)} stocks + {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs = {len(ALL_TICKERS)} total", file=sys.stderr)
+
+    # Populate STOCK_BETA_CLASS from dynamic universe
+    global STOCK_BETA_CLASS
+    STOCK_BETA_CLASS = {t: SECTOR_BETA_CLASS.get(etf, "neutral") for (t, etf, _sec) in STOCKS}
+
+    # ----- Fetch price history (2y for 12M returns + 200D MA) — cached -----
     print(f"Fetching {len(ALL_TICKERS)} tickers (~2y daily) ...", file=sys.stderr)
-    hist = fetch_history(ALL_TICKERS, period="2y")
+    hist = fetch_history_cached(ALL_TICKERS, period="2y")
     if hist is None or len(hist) == 0:
         print("FATAL: yfinance returned no data", file=sys.stderr); sys.exit(2)
 
     spy_close = get_series(hist, "SPY", "Close")
 
-    info_cache: dict = {}
     rows = []
+    # Build ticker -> (sector_etf, sector_name) lookup from STOCKS
+    ticker_sector = {t: (etf, sec_name) for (t, etf, sec_name) in STOCKS}
+    # ETFs map themselves
+    for etf in SECTOR_ETFS:
+        ticker_sector[etf] = (etf, SECTOR_GROUP.get(etf, ""))
+    for b in BENCHMARKS:
+        ticker_sector[b] = (b, BENCH_GROUP.get(b, ""))
+
     for t in ALL_TICKERS:
-        feats = compute_features_for(t, hist, spy_close, info_cache, macro_state)
+        feats = compute_features_for(t, hist, spy_close, {}, macro_state)
         if feats is not None:
+            etf, sec_name = ticker_sector.get(t, ("", "Other"))
+            feats["sector_etf"] = etf
+            feats["sector_name"] = sec_name
             rows.append(feats)
 
     # ----- Event / positioning / social signals -----

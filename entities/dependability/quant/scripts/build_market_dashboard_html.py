@@ -27,10 +27,11 @@ import yaml
 import yfinance as yf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_clawrank_features import (  # noqa: E402
     fetch_history, get_series, compute_features_for, ALL_TICKERS, ETF_SET,
     BENCHMARKS, SECTOR_ETFS, STOCKS, SECTOR_GROUP, BENCH_GROUP,
-    SECTOR_LEADERS, pick_top_by_sector,
+    pick_top_by_sector,
 )
 from clawrank import rank, load_config  # noqa: E402
 
@@ -38,7 +39,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v14"
+BUILD_VERSION = "v15"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -1052,7 +1053,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
     )
 
     last_updated = as_of.strftime("%b %d, %Y · %H:%M %Z")
-    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} sector-leader candidates"
+    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} scored stocks (S&P 500 + NASDAQ-100 + VTWO proxy)"
 
     # ----- Market regime note (Mike 2026-09-07 directive: real-time event awareness) -----
     # Detect US market holidays + cash market open/closed status. Display a banner
@@ -1126,7 +1127,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
 <main>
 
 <div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — {len(rows)} instruments ({len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} sector leaders)</div>
+  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — {len(rows)} instruments ({len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(STOCKS)} scored stocks)</div>
   <div class="kpi-row">
     <div class="kpi gold">
       <div class="kpi-label">SPY Spot</div>
@@ -1199,7 +1200,7 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
 </div>
 
 <div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Sector Leaders (one highest-scoring stock per sector, sorted by ClawRank) — <span style="text-transform:none;font-weight:400;color:var(--gold)">hover any score for 5-factor breakdown</span></div>
+  <div class="card-header"><div class="dot" style="background:var(--green)"></div> 2) Sector Leaders (top 3 highest-scoring stocks per sector, sorted by ClawRank) — <span style="text-transform:none;font-weight:400;color:var(--gold)">hover any score for 10-factor breakdown</span></div>
   <div class="controls chip-group" data-table="t2" data-col="4">
     <span class="chip active" data-val="">All trends</span>
     <span class="chip" data-val="uptrend">uptrend</span>
@@ -1555,8 +1556,48 @@ def factor_table_rows_count(fn):
 def main():
     t0 = time.time()
     as_of_et = dt.datetime.now(dt.timezone(dt.timedelta(hours=-4)))
+    # Initialize universe (populates STOCKS, ALL_TICKERS) — needed when running standalone
+    from build_clawrank_features import init_universe, STOCKS as _STOCKS, SECTOR_GROUP as _SG
+    if not _STOCKS:
+        init_universe()
+    # Re-read STOCKS from the module — init_universe() rebinds the module-level name
+    import build_clawrank_features as _bcf_mod
+    _STOCKS = _bcf_mod.STOCKS
+    global ALL_TICKERS
+    ALL_TICKERS = BENCHMARKS + SECTOR_ETFS + [t for t, _, _ in _STOCKS]
+    print(f"Universe: {len(_STOCKS)} stocks + {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} ETFs = {len(ALL_TICKERS)} total", file=sys.stderr)
     print(f"Fetching {len(ALL_TICKERS)} tickers (~6mo daily) ...", file=sys.stderr)
-    hist = fetch_history(ALL_TICKERS, period="6mo")
+    # Try parquet cache first (populated by clawrank build, has 2y data for all 528 tickers)
+    from pathlib import Path as _P
+    cache_dir = _P(__file__).resolve().parent.parent / "data" / "cache" / "prices"
+    hist = pd.DataFrame()
+    if cache_dir.exists():
+        cached_frames = {}
+        for t in ALL_TICKERS:
+            cf = cache_dir / f"{t.upper()}_2y.parquet"
+            if cf.exists():
+                try:
+                    df = pd.read_parquet(cf)
+                    if not df.empty:
+                        cached_frames[t] = df.tail(126)  # ~6mo of trading days
+                except Exception:
+                    pass
+        if cached_frames:
+            cols = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
+            pieces = []
+            for t, df in cached_frames.items():
+                if isinstance(df.columns, pd.MultiIndex):
+                    df.columns = df.columns.get_level_values(0)
+                df = df[[c for c in cols if c in df.columns]].copy()
+                df.columns = pd.MultiIndex.from_product([[t], df.columns])
+                pieces.append(df)
+            if pieces:
+                hist = pd.concat(pieces, axis=1).sort_index()
+                print(f"  loaded {len(cached_frames)}/{len(ALL_TICKERS)} from parquet cache (last 6mo)", file=sys.stderr)
+    if hist is None or len(hist) == 0:
+        # Fallback: fresh yfinance fetch
+        print("  parquet cache empty, fetching from yfinance ...", file=sys.stderr)
+        hist = fetch_history(ALL_TICKERS, period="6mo")
     if hist is None or len(hist) == 0:
         print("FATAL: yfinance returned no data", file=sys.stderr); sys.exit(2)
 
@@ -1633,7 +1674,11 @@ def main():
                     # Build a minimal macro_state — same defaults as the inline-fallback path
                     wl_macro_state = {"regime": "n/a", "composite_score": 0.0,
                                       "bear_risk_score": 0.0, "confidence": 0.5, "pillars": {}}
-                    wl_hist_2y = fetch_history(missing, period="2y")
+                    wl_hist_2y = None
+                    try:
+                        wl_hist_2y = fetch_history(missing, period="2y")
+                    except Exception as e:
+                        print(f"WARN: watchlist 2y fetch failed: {e}", file=sys.stderr)
                     if wl_hist_2y is not None and len(wl_hist_2y) > 0:
                         # Need a spy_close series for relative-strength features
                         wl_spy = None
