@@ -23,6 +23,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 import yfinance as yf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "lib"))
@@ -37,7 +38,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v10"
+BUILD_VERSION = "v11"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -367,6 +368,15 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .unav {{ color: var(--muted); font-style: italic; }}
 .pos {{ color: var(--green); }}
 .neg {{ color: var(--red); }}
+
+/* Options Watchlist (Section 2.5) */
+.rank-cell {{ font-weight: 700; color: var(--muted); text-align: center; width: 30px; }}
+.trigger-cell {{ font-size: 11px; color: var(--text); max-width: 280px; line-height: 1.3; }}
+.prob-good {{ color: var(--green); font-weight: 700; }}
+.prob-mid  {{ color: var(--yellow); font-weight: 700; }}
+.prob-low  {{ color: var(--red); font-weight: 700; }}
+.risk-near {{ color: var(--yellow); font-weight: 600; }}
+.risk-broken {{ color: var(--red); font-weight: 700; background: rgba(248,81,73,0.08); }}
 .dq {{ background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.25);
       border-radius: 8px; padding: 12px 16px; font-size: 11.5px; color: var(--text); margin-top: 14px; }}
 .dq h3 {{ margin: 0 0 8px 0; font-size: 11px; font-weight: 700; color: var(--red);
@@ -671,7 +681,159 @@ def score_cell_with_popover(score, label, factors, trend, setup, kr=None):
     )
 
 
-def render_html(rows, as_of, sparkline_data, clawrank_data=None):
+def render_options_watchlist(watchlist_data, clawrank_by_ticker):
+    """Render Section 2.5 — Options Watchlist (long-call butterfly candidates).
+
+    Mike 2026-09-07 20:43 ET: a curated set of bullish option-trade picks with
+    target price, probability, timing window, and risk line. Shows live spot
+    price (yfinance) so Mike can see how far current price is from ref/target.
+
+    Columns:
+        # | Ticker | Spot | Ref | Target | Move% | Prob | Timing | Trigger | Risk line | Failure | ClawRank
+
+    Color coding:
+        - Move% target: green if spot <= ref (room to run), red if spot > ref (chasing)
+        - Prob: green >=50%, yellow 35-50%, red <35%
+        - Risk line proximity: red if spot within 3% of risk_line (in danger)
+    """
+    if not watchlist_data or not watchlist_data.get("tickers"):
+        return ""
+
+    live_prices = watchlist_data.get("live_prices", {})
+    sparklines = watchlist_data.get("sparklines", {})
+    tickers = watchlist_data["tickers"]
+
+    rows_html = []
+    for t in tickers:
+        sym = t["ticker"]
+        spot = live_prices.get(sym)
+        ref = t["ref_price"]
+        target = t["target"]
+        prob = t["probability"]
+        move_pct = t["move_pct"]
+        timing = t["timing"]
+        trigger = t["trigger"]
+        risk_line = t["risk_line"]
+        risk_meaning = t["risk_meaning"]
+        rank = t.get("rank", 99)
+        rank_reason = t.get("rank_reason", "")
+
+        # Spot vs ref delta (where current price sits relative to the analysis reference)
+        if spot is not None and ref is not None:
+            spot_vs_ref = ((spot / ref) - 1.0) * 100
+            spot_vs_ref_class = "pos" if spot_vs_ref <= 0 else "neg"
+            spot_text = f"${spot:,.2f}"
+            spot_vs_ref_text = f"{spot_vs_ref:+.1f}% vs ref"
+        else:
+            spot_text = "—"
+            spot_vs_ref_text = "no live data"
+            spot_vs_ref_class = ""
+
+        # Distance from spot to target (% upside remaining)
+        if spot is not None and target is not None:
+            upside = ((target / spot) - 1.0) * 100
+            upside_text = f"+{upside:.1f}%"
+            upside_class = "pos" if upside > 0 else "neg"
+        else:
+            upside_text = f"+{move_pct:.1f}%"  # fall back to ref-based move_pct
+            upside_class = ""
+
+        # Probability color coding
+        if prob >= 50:
+            prob_class, prob_badge = "prob-good", f"{prob}%"
+        elif prob >= 35:
+            prob_class, prob_badge = "prob-mid", f"{prob}%"
+        else:
+            prob_class, prob_badge = "prob-low", f"{prob}%"
+
+        # Risk line proximity
+        risk_proximity_class = ""
+        risk_proximity_text = ""
+        if spot is not None and risk_line is not None:
+            risk_dist = ((spot / risk_line) - 1.0) * 100
+            if risk_dist < 3:
+                risk_proximity_class = "risk-near"
+                risk_proximity_text = f"⚠️ +{risk_dist:.1f}% above risk"
+            elif risk_dist < 0:
+                risk_proximity_class = "risk-broken"
+                risk_proximity_text = f"❌ BROKEN {risk_dist:+.1f}%"
+            else:
+                risk_proximity_text = f"+{risk_dist:.1f}% above risk"
+
+        # Sparkline (3mo)
+        spark = ""
+        if sym in sparklines:
+            closes = sparklines[sym]
+            if closes is not None and len(closes) >= 5:
+                spark = sparkline_svg(closes, closes.std() / closes.mean() if closes.mean() else 0.02, spot or ref)
+
+        # ClawRank score (if in universe)
+        cr_score = clawrank_by_ticker.get(sym, {}).get("clawrank_score")
+        cr_label = clawrank_by_ticker.get(sym, {}).get("clawrank_label", "")
+        if cr_score is not None:
+            cr_text = f"{cr_score:.0f} · {cr_label}"
+        else:
+            cr_text = "— <span style='color:var(--muted);font-size:10px'>(not in universe)</span>"
+
+        rows_html.append(f"""
+        <tr>
+          <td class="rank-cell">{rank}</td>
+          <td class="ticker-cell">{sym}</td>
+          <td data-val="{spot or 0:.2f}" class="{spot_vs_ref_class}">{spot_text}<br><span style="font-size:10px;color:var(--muted)">{spot_vs_ref_text}</span></td>
+          <td data-val="{ref:.2f}">${ref:,.2f}</td>
+          <td data-val="{target:.2f}">${target:,.2f}<br><span class="{upside_class}" style="font-size:10px">{upside_text}</span></td>
+          <td class="{prob_class}">{prob_badge}</td>
+          <td>{timing}</td>
+          <td class="trigger-cell" title="{trigger}">{trigger[:80]}{'…' if len(trigger) > 80 else ''}</td>
+          <td data-val="{risk_line:.2f}" class="{risk_proximity_class}">${risk_line:,.2f}<br><span style="font-size:10px;color:var(--muted)">{risk_proximity_text}</span></td>
+          <td class="trigger-cell" title="{risk_meaning}">{risk_meaning[:60]}{'…' if len(risk_meaning) > 60 else ''}</td>
+          <td>{cr_text}</td>
+          <td class="spark-cell">{spark}</td>
+        </tr>""")
+
+    rows_joined = "".join(rows_html)
+    count = len(tickers)
+    return f"""
+  <div class="card">
+    <div class="card-header">
+      <div class="dot" style="background:var(--purple)"></div>
+      2.5) Options Watchlist — long-call butterfly candidates ({count} tickers, sorted by rank) &mdash;
+      <span style="text-transform:none;font-weight:400;color:var(--gold)">curated set; live spot prices; intended for long-call butterfly entries at target within timing window</span>
+    </div>
+    <div style="padding:0 16px 12px; color:var(--muted); font-size:11px;">
+      Mike 2026-09-07 20:43 ET directive: "ultimately I may want to open a long call butterfly (when bullish) at a price target in a time period (1 month or 3 month, or others) so this section will help with that." Source: <code>config/options_watchlist.yaml</code>.
+    </div>
+    <table class="dash">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Ticker</th>
+          <th>Spot (live)</th>
+          <th>Ref</th>
+          <th>Target</th>
+          <th>Prob</th>
+          <th>Timing</th>
+          <th>Trigger / read-through</th>
+          <th>Risk line</th>
+          <th>If risk breaks</th>
+          <th>ClawRank</th>
+          <th>3mo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows_joined}
+      </tbody>
+    </table>
+    <div style="padding:8px 16px; color:var(--muted); font-size:11px;">
+      <strong>Prob colors:</strong> <span class="prob-good">≥50%</span> · <span class="prob-mid">35-50%</span> · <span class="prob-low">&lt;35%</span>.
+      <strong>Risk line:</strong> <span class="risk-broken">below = thesis broken</span>, <span class="risk-near">within 3% = danger zone</span>.
+      <strong>Long-call butterfly plan:</strong> at spot, buy call at target (long wing) + sell 2 calls at midpoint + buy call at risk_line (short wing). Max loss = net debit. Max profit = midpoint − long − short. Best when spot is between short strikes at expiry.
+    </div>
+  </div>
+  """
+
+
+def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=None):
     by_ticker = {r["ticker"]: r for r in rows}
     clawrank_by_ticker = {r["ticker"]: r for r in (clawrank_data or [])}
 
@@ -741,9 +903,12 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
             cr_score = kr.get("clawrank_score") if kr else None
             cr_label = kr.get("clawrank_label", "—") if kr else "—"
             factors = {k.replace("clawrank_", ""): kr.get(k) for k in
-                       ("clawrank_fundamental_health", "clawrank_technical_momentum",
-                        "clawrank_volatility_regime", "clawrank_setup_quality",
-                        "clawrank_sentiment_catalyst")} if kr else {}
+                       ("clawrank_valuation", "clawrank_quality_growth",
+                        "clawrank_technical_momentum", "clawrank_earnings_catalyst",
+                        "clawrank_analyst_estimates", "clawrank_volatility_regime",
+                        "clawrank_setup_quality", "clawrank_positioning",
+                        "clawrank_sentiment_catalyst", "clawrank_macro_regime",
+                        "clawrank_seasonality")} if kr else {}
             score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=kr)
         t1.append(f"""
         <tr>
@@ -789,9 +954,12 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
         cr_score = pick.get("clawrank_score")
         cr_label = pick.get("clawrank_label", "—")
         factors = {k.replace("clawrank_", ""): pick.get(k) for k in
-                   ("clawrank_fundamental_health", "clawrank_technical_momentum",
-                    "clawrank_volatility_regime", "clawrank_setup_quality",
-                    "clawrank_sentiment_catalyst")}
+                   ("clawrank_valuation", "clawrank_quality_growth",
+                    "clawrank_technical_momentum", "clawrank_earnings_catalyst",
+                    "clawrank_analyst_estimates", "clawrank_volatility_regime",
+                    "clawrank_setup_quality", "clawrank_positioning",
+                    "clawrank_sentiment_catalyst", "clawrank_macro_regime",
+                    "clawrank_seasonality")}
         score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=pick)
         # Show alternate candidates in the score-cell title attribute
         alts = ", ".join(f"{t}={s:.0f}" if s is not None else f"{t}=—"
@@ -811,6 +979,10 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
           <td>{sig_text}</td>
           <td title="Other sector candidates: {alts}">{outlook_for(m)}</td>
         </tr>""")
+
+    # Section 2.5 — Options Watchlist (Mike 2026-09-07 20:43 ET directive).
+    # Curated long-call butterfly candidates with target, probability, timing, risk line.
+    options_watchlist_html = render_options_watchlist(watchlist_data, clawrank_by_ticker)
 
     band_legend = (
         '<div class="legend-row">'
@@ -1004,6 +1176,8 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None):
     <span style="margin-left:auto;color:var(--muted)">Factor weights: Fund 25% / Tech 25% / Vol 15% / Setup 25% / Sent 10%</span>
   </div>
 </div>
+
+{options_watchlist_html}
 
 <div class="card">
   <div class="card-header"><div class="dot" style="background:var(--purple)"></div> 3) ClawRank Composite (transparent, editable in YAML)</div>
@@ -1366,13 +1540,33 @@ def main():
         clawrank_data = rank(feat_rows, cfg)
         print(f"ClawRank computed: {len(clawrank_data)} rows", file=sys.stderr)
 
-    doc = render_html(rows, as_of_et, sparkline_data, clawrank_data)
+    # === Options Watchlist (Mike 2026-09-07 20:43 ET) ===
+    # Curated long-call butterfly candidates. Lives in config/options_watchlist.yaml.
+    # Pulls live spot prices via yfinance so the "ref vs spot" delta is visible.
+    watchlist_path = Path(__file__).resolve().parent.parent / "config" / "options_watchlist.yaml"
+    watchlist_data = {"tickers": [], "live_prices": {}, "sparklines": {}}
+    if watchlist_path.exists():
+        wl_cfg = yaml.safe_load(open(watchlist_path))
+        watchlist_data["tickers"] = sorted(wl_cfg.get("tickers", []), key=lambda t: t.get("rank", 99))
+        wl_syms = [t["ticker"] for t in watchlist_data["tickers"]]
+        if wl_syms:
+            wl_hist = fetch_history(wl_syms, period="3mo")
+            if wl_hist is not None and len(wl_hist) > 0:
+                for t in wl_syms:
+                    closes = get_series(wl_hist, t, "Close")
+                    if closes is not None and len(closes) > 0:
+                        watchlist_data["live_prices"][t] = float(closes.iloc[-1])
+                        watchlist_data["sparklines"][t] = closes
+                print(f"Options watchlist: {len(watchlist_data['live_prices'])}/{len(wl_syms)} live prices fetched", file=sys.stderr)
+    else:
+        print(f"WARN: {watchlist_path} not found, skipping options watchlist section", file=sys.stderr)
+
+    doc = render_html(rows, as_of_et, sparkline_data, clawrank_data, watchlist_data)
     reports_dir = Path(__file__).resolve().parent.parent / "reports"
     dated_path = reports_dir / f"{as_of_et.strftime('%Y-%m-%d')}-market-dashboard.html"
     canonical_path = reports_dir / "market-dashboard.html"
+    # Write both paths: dated archive (audit) + canonical /market-dashboard.html (Mike's stable URL).
     dated_path.write_text(doc)
-    # Canonical "latest" path — always points at the freshest build.
-    # Mike's stable URL: /market-dashboard.html. Dated copy stays for archive.
     canonical_path.write_text(doc)
     print(f"OK  html={dated_path}  canonical={canonical_path}  rows={len(rows)}  duration={time.time()-t0:.1f}s", file=sys.stderr)
 

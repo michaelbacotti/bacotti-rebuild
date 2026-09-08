@@ -1,0 +1,111 @@
+# options_watchlist.yaml — Long-call butterfly candidate universe
+#
+# Mike 2026-09-07 20:43 ET directive:
+#   "Under the 2) Sector Leaders I want a watchlist section. Add these stocks and
+#    similar details/columns ... ultimately I may want to open a long call butterfly
+#    (when bullish) at a price target in a time period (1 month or 3 month, or others)
+#    so this section will help with that."
+#
+# Schema v1 — locked 2026-09-07
+# Edit authority: Mike (this is a curated tactical list, not auto-derived)
+# Re-render:   cd projects/market-dashboard && bash scripts/update-content.sh
+#
+# Columns captured per pick:
+#   ticker            — symbol
+#   ref_price         — recent reference price at the time of the call (kept for audit)
+#   target            — upside objective for the long-call structure
+#   move_pct          — % move required from ref_price to target
+#   probability       — % chance of touching target within the timing window (Mike's estimate)
+#   timing            — human-readable time window (e.g., "4-10 weeks; Oct-mid Nov")
+#   timing_min_weeks  — lower bound of timing window (for sorting/filtering)
+#   timing_max_weeks  — upper bound of timing window
+#   trigger           — read-through / catalyst (what needs to happen for the move)
+#   rank              — preference order (1 = top pick)
+#   rank_reason       — why this rank
+#   risk_line         — price below which the bullish thesis fails
+#   risk_meaning      — what a break of risk_line means for the trade
+
+tickers:
+  - ticker: FCX
+    ref_price: 72.74
+    target: 80.00
+    move_pct: 10.0
+    probability: 55
+    timing: "4-10 weeks; October to mid-November"
+    timing_min_weeks: 4
+    timing_max_weeks: 10
+    trigger: "Copper remains firm and FCX continues to hold its uptrend; $80 is near the upper end of the published analyst range, so expect supply/profit-taking into that zone."
+    rank: 2
+    rank_reason: "Strongest underlying macro trend, though the recent 44% year-to-date run means $80 is more suitable as a take-profit/decision zone than a fresh chase level."
+    risk_line: 70.00
+    risk_meaning: "Copper/momentum thesis is losing its near-term structure; $80 odds fall materially."
+
+  - ticker: AB
+    ref_price: 37.20
+    target: 40.00
+    move_pct: 7.5
+    probability: 60
+    timing: "3-8 weeks; late September to October"
+    timing_min_weeks: 3
+    timing_max_weeks: 8
+    trigger: "Most attainable target on the list: $40 is close to the $39.17-$39.50 consensus area."
+    rank: 1
+    rank_reason: "Your $40 objective is closest to prevailing analyst expectations, with the smallest required move among the upside targets."
+    risk_line: 35.50
+    risk_meaning: "This is beneath the lower area of published price-target ranges and turns the trade from a $40 push into a range-repair setup."
+
+  - ticker: LII
+    ref_price: 390.53
+    target: 460.00
+    move_pct: 17.8
+    probability: 35
+    timing: "2-5 months; November through February"
+    timing_min_weeks: 8
+    timing_max_weeks: 22
+    trigger: "A legitimate rebound objective, but it needs a trend reversal and likely a strong earnings/guidance or rate-sensitive industrial/HVAC tailwind; consensus near $511 makes $460 feasible, not imminent."
+    rank: 6
+    rank_reason: "Potentially the largest quality rebound, but $460 requires time and confirmation; it is better suited to a longer-dated, defined-risk position than a short-dated Tuesday trade."
+    risk_line: 377.50
+    risk_meaning: "The rebound thesis weakens; wait for a base rather than financing a long recovery with short-dated premium."
+
+  - ticker: MTN
+    ref_price: 134.91
+    target: 150.00
+    move_pct: 11.2
+    probability: 50
+    timing: "4-10 weeks; October to mid-November"
+    timing_min_weeks: 4
+    timing_max_weeks: 10
+    trigger: "$150 aligns closely with roughly $149.83 consensus; the key is recapturing and holding the mid-$140s before treating $150 as likely."
+    rank: 3
+    rank_reason: "A clean mean-reversion objective: $150 essentially matches current consensus, making it a practical swing target."
+    risk_line: 130.00
+    risk_meaning: "Indicates the market is not accepting the recovery toward the $150 consensus zone."
+
+  - ticker: TTWO
+    ref_price: 216.14
+    target: 240.00
+    move_pct: 11.0
+    probability: 50
+    timing: "4-12 weeks; October to late November"
+    timing_min_weeks: 4
+    timing_max_weeks: 12
+    trigger: "Catalyst-led name: it has traded near $242 this year, so the level is proven, but release-calendar/news risk can create sharp reversals."
+    rank: 4
+    rank_reason: "$240 is technically plausible and previously tested, but path dependency around company catalysts reduces reliability."
+    risk_line: 212.00
+    risk_meaning: "Losing the recent early-September area weakens the case for a near-term return to $240."
+
+  - ticker: VST
+    ref_price: 149.30
+    target: 175.00
+    move_pct: 17.2
+    probability: 45
+    timing: "6-14 weeks; late October to December"
+    timing_min_weeks: 6
+    timing_max_weeks: 14
+    trigger: "$175 is well below the roughly $221-$231 median analyst-target area, but the stock needs to reclaim nearby short-term resistance before the recovery thesis is confirmed."
+    rank: 5
+    rank_reason: "Attractive potential reward because $175 remains far below consensus targets, but it carries higher sector and sentiment volatility."
+    risk_line: 140.50
+    risk_meaning: "This is near cited short-term support; a break makes $175 a later, lower-probability outcome."
