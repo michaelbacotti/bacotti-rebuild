@@ -21,8 +21,15 @@ DEST_HTML="$PROJECT_DIR/public/index.html"
 
 echo "=== Build dashboard ==="
 cd "$QUANT_DIR"
-source "$QUANT_DIR/.venv/bin/activate"
-python3 "$QUANT_DIR/scripts/build_market_dashboard_html.py"
+# NOTE: Mike 2026-09-07 21:25 ET — no .venv exists at $QUANT_DIR/.venv. Use system python3 directly
+# (homebrew /opt/homebrew/bin/python3 has yfinance/pandas/numpy/yaml installed). The original venv
+# path was from a previous setup that no longer exists.
+if [ -f "$QUANT_DIR/.venv/bin/activate" ]; then
+  source "$QUANT_DIR/.venv/bin/activate"
+  python3 "$QUANT_DIR/scripts/build_market_dashboard_html.py"
+else
+  python3 "$QUANT_DIR/scripts/build_market_dashboard_html.py"
+fi
 
 echo ""
 echo "=== Stage HTML ==="

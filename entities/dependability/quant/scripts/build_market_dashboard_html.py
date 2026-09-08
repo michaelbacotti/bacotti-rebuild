@@ -38,7 +38,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v11"
+BUILD_VERSION = "v12"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -369,9 +369,35 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .pos {{ color: var(--green); }}
 .neg {{ color: var(--red); }}
 
-/* Options Watchlist (Section 2.5) */
+/* Watchlist (Section 2.5) — Mike 2026-09-07 21:03 ET: renamed from "Options Watchlist" */
+.watchlist-table th, .watchlist-table td {{ font-variant-numeric: tabular-nums; }}
 .rank-cell {{ font-weight: 700; color: var(--muted); text-align: center; width: 30px; }}
-.trigger-cell {{ font-size: 11px; color: var(--text); max-width: 280px; line-height: 1.3; }}
+.trigger-cell {{ font-size: 11px; color: var(--text); line-height: 1.4;
+                 white-space: normal; word-wrap: break-word; }}
+/* Watchlist column alignment: numeric right, badge center, text left */
+.watchlist-table th:nth-child(1), .watchlist-table td:nth-child(1) {{ text-align: center; width: 30px; }}
+.watchlist-table th:nth-child(2), .watchlist-table td:nth-child(2) {{ text-align: left; width: 50px; }}
+.watchlist-table th:nth-child(3), .watchlist-table td:nth-child(3) {{ text-align: right; width: 100px; }}
+.watchlist-table th:nth-child(4), .watchlist-table td:nth-child(4) {{ text-align: right; width: 70px; }}
+.watchlist-table th:nth-child(5), .watchlist-table td:nth-child(5) {{ text-align: right; width: 95px; }}
+.watchlist-table th:nth-child(6), .watchlist-table td:nth-child(6) {{ text-align: center; width: 60px; }}
+.watchlist-table th:nth-child(7), .watchlist-table td:nth-child(7) {{ text-align: left; width: 130px; font-size: 10.5px; white-space: normal; }}
+.watchlist-table th:nth-child(8), .watchlist-table td:nth-child(8) {{ text-align: left; max-width: 280px; }}
+.watchlist-table th:nth-child(9), .watchlist-table td:nth-child(9) {{ text-align: right; width: 100px; }}
+.watchlist-table th:nth-child(10), .watchlist-table td:nth-child(10) {{ text-align: left; max-width: 220px; }}
+.watchlist-table th:nth-child(11), .watchlist-table td:nth-child(11) {{ text-align: center; width: 70px; }}
+.watchlist-table th:nth-child(12), .watchlist-table td:nth-child(12) {{ text-align: right; width: 110px; padding: 4px 8px; }}
+/* Probability badge — proper pill */
+.prob-badge {{ display: inline-block; min-width: 36px; padding: 2px 8px;
+               border-radius: 10px; font-size: 11px; font-weight: 700;
+               text-align: center; }}
+.prob-badge.prob-good {{ background: rgba(63,185,80,0.15); color: var(--green); }}
+.prob-badge.prob-mid  {{ background: rgba(210,153,34,0.15); color: var(--yellow); }}
+.prob-badge.prob-low  {{ background: rgba(248,81,73,0.15); color: var(--red); }}
+/* ClawRank label inside badge cell — small text under the pill */
+.cr-label {{ display: block; font-size: 9px; color: var(--muted); margin-top: 2px; line-height: 1.2; }}
+/* Risk line sub-text color when safe (>3% above) */
+.risk-safe {{ color: var(--green); font-size: 10px; font-weight: 600; }}
 .prob-good {{ color: var(--green); font-weight: 700; }}
 .prob-mid  {{ color: var(--yellow); font-weight: 700; }}
 .prob-low  {{ color: var(--red); font-weight: 700; }}
@@ -682,17 +708,18 @@ def score_cell_with_popover(score, label, factors, trend, setup, kr=None):
 
 
 def render_options_watchlist(watchlist_data, clawrank_by_ticker):
-    """Render Section 2.5 — Options Watchlist (long-call butterfly candidates).
+    """Render Section 2.5 — Watchlist (tactical trade candidates).
 
-    Mike 2026-09-07 20:43 ET: a curated set of bullish option-trade picks with
-    target price, probability, timing window, and risk line. Shows live spot
-    price (yfinance) so Mike can see how far current price is from ref/target.
+    Mike 2026-09-07 20:43 ET: a curated set of tactical trade picks with
+    target price, probability, timing window, and risk line. Originally
+    scoped to long-call butterflies; renamed "Watchlist" on 21:03 ET per Mike
+    since the same list can carry cash-secured puts, verticals, etc.
 
     Columns:
-        # | Ticker | Spot | Ref | Target | Move% | Prob | Timing | Trigger | Risk line | Failure | ClawRank
+        # | Ticker | Spot | Ref | Target | Prob | Timing | Trigger | Risk line | Failure | ClawRank | 3mo
 
     Color coding:
-        - Move% target: green if spot <= ref (room to run), red if spot > ref (chasing)
+        - Spot vs ref: green if spot <= ref (room to run), red if spot > ref (chasing)
         - Prob: green >=50%, yellow 35-50%, red <35%
         - Risk line proximity: red if spot within 3% of risk_line (in danger)
     """
@@ -723,7 +750,9 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
             spot_vs_ref = ((spot / ref) - 1.0) * 100
             spot_vs_ref_class = "pos" if spot_vs_ref <= 0 else "neg"
             spot_text = f"${spot:,.2f}"
-            spot_vs_ref_text = f"{spot_vs_ref:+.1f}% vs ref"
+            # Suppress noisy "0.0%" rounding artifacts
+            spot_vs_ref_disp = 0.0 if abs(spot_vs_ref) < 0.05 else spot_vs_ref
+            spot_vs_ref_text = f"{spot_vs_ref_disp:+.1f}% vs ref"
         else:
             spot_text = "—"
             spot_vs_ref_text = "no live data"
@@ -738,7 +767,7 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
             upside_text = f"+{move_pct:.1f}%"  # fall back to ref-based move_pct
             upside_class = ""
 
-        # Probability color coding
+        # Probability color coding (badge variant — v12)
         if prob >= 50:
             prob_class, prob_badge = "prob-good", f"{prob}%"
         elif prob >= 35:
@@ -749,16 +778,20 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
         # Risk line proximity
         risk_proximity_class = ""
         risk_proximity_text = ""
+        risk_proximity_label_class = ""
         if spot is not None and risk_line is not None:
             risk_dist = ((spot / risk_line) - 1.0) * 100
             if risk_dist < 3:
                 risk_proximity_class = "risk-near"
-                risk_proximity_text = f"⚠️ +{risk_dist:.1f}% above risk"
+                risk_proximity_label_class = "risk-near"
+                risk_proximity_text = f"⚠ +{risk_dist:.1f}% above risk"
             elif risk_dist < 0:
                 risk_proximity_class = "risk-broken"
+                risk_proximity_label_class = "risk-broken"
                 risk_proximity_text = f"❌ BROKEN {risk_dist:+.1f}%"
             else:
-                risk_proximity_text = f"+{risk_dist:.1f}% above risk"
+                risk_proximity_label_class = "risk-safe"
+                risk_proximity_text = f"✓ +{risk_dist:.1f}% above risk"
 
         # Sparkline (3mo)
         spark = ""
@@ -767,13 +800,20 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
             if closes is not None and len(closes) >= 5:
                 spark = sparkline_svg(closes, closes.std() / closes.mean() if closes.mean() else 0.02, spot or ref)
 
-        # ClawRank score (if in universe)
+        # ClawRank score (always available now — v12 scores watchlist tickers too)
         cr_score = clawrank_by_ticker.get(sym, {}).get("clawrank_score")
         cr_label = clawrank_by_ticker.get(sym, {}).get("clawrank_label", "")
         if cr_score is not None:
-            cr_text = f"{cr_score:.0f} · {cr_label}"
+            # Label color by tier
+            if cr_label == "Research candidate":
+                cr_pill_class = "prob-good"
+            elif cr_label == "Watchlist":
+                cr_pill_class = "prob-mid"
+            else:  # "Avoid"
+                cr_pill_class = "prob-low"
+            cr_text = f"<span class='prob-badge {cr_pill_class}'>{cr_score:.0f}</span><span class='cr-label'>{cr_label}</span>"
         else:
-            cr_text = "— <span style='color:var(--muted);font-size:10px'>(not in universe)</span>"
+            cr_text = "<span style='color:var(--muted)'>—</span>"
 
         rows_html.append(f"""
         <tr>
@@ -782,11 +822,11 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
           <td data-val="{spot or 0:.2f}" class="{spot_vs_ref_class}">{spot_text}<br><span style="font-size:10px;color:var(--muted)">{spot_vs_ref_text}</span></td>
           <td data-val="{ref:.2f}">${ref:,.2f}</td>
           <td data-val="{target:.2f}">${target:,.2f}<br><span class="{upside_class}" style="font-size:10px">{upside_text}</span></td>
-          <td class="{prob_class}">{prob_badge}</td>
+          <td><span class="prob-badge {prob_class}">{prob_badge}</span></td>
           <td>{timing}</td>
-          <td class="trigger-cell" title="{trigger}">{trigger[:80]}{'…' if len(trigger) > 80 else ''}</td>
-          <td data-val="{risk_line:.2f}" class="{risk_proximity_class}">${risk_line:,.2f}<br><span style="font-size:10px;color:var(--muted)">{risk_proximity_text}</span></td>
-          <td class="trigger-cell" title="{risk_meaning}">{risk_meaning[:60]}{'…' if len(risk_meaning) > 60 else ''}</td>
+          <td class="trigger-cell" title="{trigger}">{trigger}</td>
+          <td data-val="{risk_line:.2f}" class="{risk_proximity_class}">${risk_line:,.2f}<br><span class="{risk_proximity_label_class}" style="font-size:10px">{risk_proximity_text}</span></td>
+          <td class="trigger-cell" title="{risk_meaning}">{risk_meaning}</td>
           <td>{cr_text}</td>
           <td class="spark-cell">{spark}</td>
         </tr>""")
@@ -797,13 +837,13 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
   <div class="card">
     <div class="card-header">
       <div class="dot" style="background:var(--purple)"></div>
-      2.5) Options Watchlist — long-call butterfly candidates ({count} tickers, sorted by rank) &mdash;
-      <span style="text-transform:none;font-weight:400;color:var(--gold)">curated set; live spot prices; intended for long-call butterfly entries at target within timing window</span>
+      2.5) Watchlist — tactical trade candidates ({count} tickers, sorted by rank) &mdash;
+      <span style="text-transform:none;font-weight:400;color:var(--gold)">curated set with live spot prices, target window, and risk line. Default structure is a long-call butterfly at target; cash-secured puts / verticals use the same scoring framework.</span>
     </div>
     <div style="padding:0 16px 12px; color:var(--muted); font-size:11px;">
       Mike 2026-09-07 20:43 ET directive: "ultimately I may want to open a long call butterfly (when bullish) at a price target in a time period (1 month or 3 month, or others) so this section will help with that." Source: <code>config/options_watchlist.yaml</code>.
     </div>
-    <table class="dash">
+    <table class="dash watchlist-table">
       <thead>
         <tr>
           <th>#</th>
@@ -1530,19 +1570,24 @@ def main():
     else:
         # Compute inline
         print("Computing ClawRank inline ...", file=sys.stderr)
+        # Minimal macro_state (matches watchlist fallback below)
+        _macro = {"regime": "n/a", "composite_score": 0.0,
+                  "bear_risk_score": 0.0, "confidence": 0.5, "pillars": {}}
         info_cache: dict = {}
         feat_rows = []
         for t in ALL_TICKERS:
-            feats = compute_features_for(t, hist, spy_close, info_cache)
+            feats = compute_features_for(t, hist, spy_close, info_cache, _macro)
             if feats is not None:
                 feat_rows.append(feats)
         cfg = load_config(str(Path(__file__).resolve().parent.parent / "config" / "clawrank.yaml"))
         clawrank_data = rank(feat_rows, cfg)
         print(f"ClawRank computed: {len(clawrank_data)} rows", file=sys.stderr)
 
-    # === Options Watchlist (Mike 2026-09-07 20:43 ET) ===
-    # Curated long-call butterfly candidates. Lives in config/options_watchlist.yaml.
+    # === Options Watchlist (Mike 2026-09-07 20:43 ET, renamed "Watchlist" 21:03 ET) ===
+    # Curated tactical trade candidates. Lives in config/options_watchlist.yaml.
     # Pulls live spot prices via yfinance so the "ref vs spot" delta is visible.
+    # Also computes ClawRank for any watchlist tickers not in the regular universe
+    # (Mike 21:03 ET: "each stock needs a clawscore!") — merged into clawrank_data.
     watchlist_path = Path(__file__).resolve().parent.parent / "config" / "options_watchlist.yaml"
     watchlist_data = {"tickers": [], "live_prices": {}, "sparklines": {}}
     if watchlist_path.exists():
@@ -1557,9 +1602,51 @@ def main():
                     if closes is not None and len(closes) > 0:
                         watchlist_data["live_prices"][t] = float(closes.iloc[-1])
                         watchlist_data["sparklines"][t] = closes
-                print(f"Options watchlist: {len(watchlist_data['live_prices'])}/{len(wl_syms)} live prices fetched", file=sys.stderr)
+                print(f"Watchlist: {len(watchlist_data['live_prices'])}/{len(wl_syms)} live prices fetched", file=sys.stderr)
+
+            # --- Score watchlist tickers with ClawRank (Mike 21:03 ET directive) ---
+            # Tickers already in the regular universe keep their existing score.
+            # Tickers missing from the universe (AB, LII, MTN, TTWO, VST) get a fresh
+            # 2y history pull + feature compute + rank pass.
+            scored_tickers = {r["ticker"] for r in (clawrank_data or [])}
+            missing = [t for t in wl_syms if t not in scored_tickers]
+            if missing:
+                print(f"Scoring {len(missing)} watchlist tickers not in regular universe: {missing}", file=sys.stderr)
+                try:
+                    # Build a minimal macro_state — same defaults as the inline-fallback path
+                    wl_macro_state = {"regime": "n/a", "composite_score": 0.0,
+                                      "bear_risk_score": 0.0, "confidence": 0.5, "pillars": {}}
+                    wl_hist_2y = fetch_history(missing, period="2y")
+                    if wl_hist_2y is not None and len(wl_hist_2y) > 0:
+                        # Need a spy_close series for relative-strength features
+                        wl_spy = None
+                        try:
+                            if "SPY" in wl_hist_2y.columns.get_level_values(0):
+                                wl_spy = wl_hist_2y["SPY"]["Close"].dropna()
+                        except Exception:
+                            pass
+                        if wl_spy is None or len(wl_spy) < 50:
+                            wl_spy = spy_close  # fallback to main history's SPY
+                        info_cache_wl: dict = {}
+                        wl_feat_rows = []
+                        for t in missing:
+                            feats = compute_features_for(t, wl_hist_2y, wl_spy, info_cache_wl, wl_macro_state)
+                            if feats is not None:
+                                wl_feat_rows.append(feats)
+                        if wl_feat_rows:
+                            cfg = load_config(str(Path(__file__).resolve().parent.parent / "config" / "clawrank.yaml"))
+                            wl_ranked = rank(wl_feat_rows, cfg)
+                            # Merge into clawrank_data so render_options_watchlist picks them up
+                            if clawrank_data is None:
+                                clawrank_data = wl_ranked
+                            else:
+                                clawrank_data = list(clawrank_data) + wl_ranked
+                            print(f"Watchlist ClawRank scored: {len(wl_ranked)} tickers", file=sys.stderr)
+                except Exception as e:
+                    print(f"WARN: watchlist ClawRank scoring failed: {e}", file=sys.stderr)
+                    import traceback; traceback.print_exc()
     else:
-        print(f"WARN: {watchlist_path} not found, skipping options watchlist section", file=sys.stderr)
+        print(f"WARN: {watchlist_path} not found, skipping watchlist section", file=sys.stderr)
 
     doc = render_html(rows, as_of_et, sparkline_data, clawrank_data, watchlist_data)
     reports_dir = Path(__file__).resolve().parent.parent / "reports"

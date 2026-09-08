@@ -2,8 +2,8 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Market Dashboard — 2026-09-07 (v11)</title>
-<meta name="dashboard-version" content="v11">
+<title>Market Dashboard — 2026-09-07 (v12)</title>
+<meta name="dashboard-version" content="v12">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27bg%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23161b22%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230d1117%27/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%27cg%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23e6c25a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23b88f33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2712%27%20fill%3D%27url%28%23bg%29%27%20stroke%3D%27%23d4a843%27%20stroke-width%3D%271.5%27/%3E%3Cpath%20d%3D%27M%2050%2022%20Q%2038%2010%2024%2016%20Q%208%2022%208%2034%20Q%208%2046%2022%2050%20Q%2038%2054%2050%2042%27%20stroke%3D%27url%28%23cg%29%27%20stroke-width%3D%277%27%20fill%3D%27none%27%20stroke-linecap%3D%27round%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2722%27%20r%3D%273.5%27%20fill%3D%27%233fb950%27/%3E%3C/svg%3E">
 <style>
 :root {
@@ -113,9 +113,35 @@ tr:hover { background: rgba(212,168,67,0.04); }
 .pos { color: var(--green); }
 .neg { color: var(--red); }
 
-/* Options Watchlist (Section 2.5) */
+/* Watchlist (Section 2.5) — Mike 2026-09-07 21:03 ET: renamed from "Options Watchlist" */
+.watchlist-table th, .watchlist-table td { font-variant-numeric: tabular-nums; }
 .rank-cell { font-weight: 700; color: var(--muted); text-align: center; width: 30px; }
-.trigger-cell { font-size: 11px; color: var(--text); max-width: 280px; line-height: 1.3; }
+.trigger-cell { font-size: 11px; color: var(--text); line-height: 1.4;
+                 white-space: normal; word-wrap: break-word; }
+/* Watchlist column alignment: numeric right, badge center, text left */
+.watchlist-table th:nth-child(1), .watchlist-table td:nth-child(1) { text-align: center; width: 30px; }
+.watchlist-table th:nth-child(2), .watchlist-table td:nth-child(2) { text-align: left; width: 50px; }
+.watchlist-table th:nth-child(3), .watchlist-table td:nth-child(3) { text-align: right; width: 100px; }
+.watchlist-table th:nth-child(4), .watchlist-table td:nth-child(4) { text-align: right; width: 70px; }
+.watchlist-table th:nth-child(5), .watchlist-table td:nth-child(5) { text-align: right; width: 95px; }
+.watchlist-table th:nth-child(6), .watchlist-table td:nth-child(6) { text-align: center; width: 60px; }
+.watchlist-table th:nth-child(7), .watchlist-table td:nth-child(7) { text-align: left; width: 130px; font-size: 10.5px; white-space: normal; }
+.watchlist-table th:nth-child(8), .watchlist-table td:nth-child(8) { text-align: left; max-width: 280px; }
+.watchlist-table th:nth-child(9), .watchlist-table td:nth-child(9) { text-align: right; width: 100px; }
+.watchlist-table th:nth-child(10), .watchlist-table td:nth-child(10) { text-align: left; max-width: 220px; }
+.watchlist-table th:nth-child(11), .watchlist-table td:nth-child(11) { text-align: center; width: 70px; }
+.watchlist-table th:nth-child(12), .watchlist-table td:nth-child(12) { text-align: right; width: 110px; padding: 4px 8px; }
+/* Probability badge — proper pill */
+.prob-badge { display: inline-block; min-width: 36px; padding: 2px 8px;
+               border-radius: 10px; font-size: 11px; font-weight: 700;
+               text-align: center; }
+.prob-badge.prob-good { background: rgba(63,185,80,0.15); color: var(--green); }
+.prob-badge.prob-mid  { background: rgba(210,153,34,0.15); color: var(--yellow); }
+.prob-badge.prob-low  { background: rgba(248,81,73,0.15); color: var(--red); }
+/* ClawRank label inside badge cell — small text under the pill */
+.cr-label { display: block; font-size: 9px; color: var(--muted); margin-top: 2px; line-height: 1.2; }
+/* Risk line sub-text color when safe (>3% above) */
+.risk-safe { color: var(--green); font-size: 10px; font-weight: 600; }
 .prob-good { color: var(--green); font-weight: 700; }
 .prob-mid  { color: var(--yellow); font-weight: 700; }
 .prob-low  { color: var(--red); font-weight: 700; }
@@ -179,15 +205,15 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
 </head><body>
 <header>
   <div class="header-left">
-    <h1>Market Dashboard — September 07, 2026 <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated 20:50 UTC-04:00 · v11</span></h1>
+    <h1>Market Dashboard — September 07, 2026 <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated 21:27 UTC-04:00 · v12</span></h1>
     <div class="subtitle">Daily Market & Sector Research · September 07, 2026 · Universe: 3 benchmarks + 11 sector ETFs + 28 sector-leader candidates</div>
   </div>
   <div class="header-right">
     <span class="header-badge live">RESEARCH</span>
-    <span class="last-updated">Updated Sep 07, 2026 · 20:50 UTC-04:00</span>
+    <span class="last-updated">Updated Sep 07, 2026 · 21:27 UTC-04:00</span>
   </div>
 </header>
-<div class="regime-banner"><strong>Cash market:</strong> CLOSED (US holiday) · <strong>Event-aware:</strong> news + institutional positioning + social sentiment active · <strong>Last build:</strong> 2026-09-07 20:50 UTC-04:00</div>
+<div class="regime-banner"><strong>Cash market:</strong> CLOSED (US holiday) · <strong>Event-aware:</strong> news + institutional positioning + social sentiment active · <strong>Last build:</strong> 2026-09-07 21:27 UTC-04:00</div>
 <div class="disclaimer">
   <strong>Research output only — NOT a recommendation to buy, sell, or hold any security.</strong>
   Sigma bands and 1w ranges are <strong>descriptive</strong> (spot ± N·σ·√(h/252)), not predictions or targets.
@@ -210,17 +236,17 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
     </div>
     <div class="kpi blue">
       <div class="kpi-label">ClawRank Research</div>
-      <div class="kpi-value">11</div>
+      <div class="kpi-value">13</div>
       <div class="kpi-sub">composite ≥ 70</div>
     </div>
     <div class="kpi" style="--y:var(--yellow)">
       <div class="kpi-label">Watchlist</div>
-      <div class="kpi-value" style="color:var(--yellow)">20</div>
+      <div class="kpi-value" style="color:var(--yellow)">21</div>
       <div class="kpi-sub">composite 30 – 70</div>
     </div>
     <div class="kpi red">
       <div class="kpi-label">ClawRank Avoid</div>
-      <div class="kpi-value">8</div>
+      <div class="kpi-value">10</div>
       <div class="kpi-sub">composite ≤ 30</div>
     </div>
     <div class="kpi" style="--y:var(--green)">
@@ -742,13 +768,13 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
   <div class="card">
     <div class="card-header">
       <div class="dot" style="background:var(--purple)"></div>
-      2.5) Options Watchlist — long-call butterfly candidates (6 tickers, sorted by rank) &mdash;
-      <span style="text-transform:none;font-weight:400;color:var(--gold)">curated set; live spot prices; intended for long-call butterfly entries at target within timing window</span>
+      2.5) Watchlist — tactical trade candidates (6 tickers, sorted by rank) &mdash;
+      <span style="text-transform:none;font-weight:400;color:var(--gold)">curated set with live spot prices, target window, and risk line. Default structure is a long-call butterfly at target; cash-secured puts / verticals use the same scoring framework.</span>
     </div>
     <div style="padding:0 16px 12px; color:var(--muted); font-size:11px;">
       Mike 2026-09-07 20:43 ET directive: "ultimately I may want to open a long call butterfly (when bullish) at a price target in a time period (1 month or 3 month, or others) so this section will help with that." Source: <code>config/options_watchlist.yaml</code>.
     </div>
-    <table class="dash">
+    <table class="dash watchlist-table">
       <thead>
         <tr>
           <th>#</th>
@@ -773,26 +799,26 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
           <td data-val="37.35" class="neg">$37.35<br><span style="font-size:10px;color:var(--muted)">+0.4% vs ref</span></td>
           <td data-val="37.20">$37.20</td>
           <td data-val="40.00">$40.00<br><span class="pos" style="font-size:10px">+7.1%</span></td>
-          <td class="prob-good">60%</td>
+          <td><span class="prob-badge prob-good">60%</span></td>
           <td>3-8 weeks; late September to October</td>
-          <td class="trigger-cell" title="Most attainable target on the list: $40 is close to the $39.17-$39.50 consensus area.">Most attainable target on the list: $40 is close to the $39.17-$39.50 consensus …</td>
-          <td data-val="35.50" class="">$35.50<br><span style="font-size:10px;color:var(--muted)">+5.2% above risk</span></td>
-          <td class="trigger-cell" title="This is beneath the lower area of published price-target ranges and turns the trade from a $40 push into a range-repair setup.">This is beneath the lower area of published price-target ran…</td>
-          <td>— <span style='color:var(--muted);font-size:10px'>(not in universe)</span></td>
+          <td class="trigger-cell" title="Most attainable target on the list: $40 is close to the $39.17-$39.50 consensus area.">Most attainable target on the list: $40 is close to the $39.17-$39.50 consensus area.</td>
+          <td data-val="35.50" class="">$35.50<br><span class="risk-safe" style="font-size:10px">✓ +5.2% above risk</span></td>
+          <td class="trigger-cell" title="This is beneath the lower area of published price-target ranges and turns the trade from a $40 push into a range-repair setup.">This is beneath the lower area of published price-target ranges and turns the trade from a $40 push into a range-repair setup.</td>
+          <td><span class='prob-badge prob-good'>100</span><span class='cr-label'>Research candidate</span></td>
           <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="36.7" width="72.0" height="-36.7" fill="#f8514922"/><rect x="108.0" y="30.2" width="72.0" height="-26.2" fill="#d2992233"/><rect x="108.0" y="23.6" width="72.0" height="-13.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,26.1 3.1,25.7 6.1,29.6 9.2,25.6 12.2,28.4 15.3,30.4 18.3,30.3 21.4,32.0 24.4,37.9 27.5,32.4 30.5,31.2 33.6,38.4 36.6,37.3 39.7,30.3 42.7,26.9 45.8,22.0 48.8,22.4 51.9,26.2 54.9,22.9 58.0,18.9 61.0,17.1 64.1,14.4 67.1,9.9 70.2,7.6 73.2,11.8 76.3,11.3 79.3,14.7 82.4,17.2 85.4,19.0 88.5,18.5 91.5,11.8 94.6,17.1 97.6,19.3 100.7,23.0 103.7,22.7 106.8,20.5 109.8,19.7 112.9,19.4 115.9,19.2 119.0,19.2 122.0,20.6 125.1,20.2 128.1,25.6 131.2,24.3 134.2,23.7 137.3,28.1 140.3,28.2 143.4,27.7 146.4,29.7 149.5,27.4 152.5,26.5 155.6,24.0 158.6,21.8 161.7,24.3 164.7,21.5 167.8,23.0 170.8,23.5 173.9,23.9 176.9,20.2 180.0,17.1"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.1" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
         </tr>
         <tr>
           <td class="rank-cell">2</td>
           <td class="ticker-cell">FCX</td>
-          <td data-val="72.73" class="pos">$72.73<br><span style="font-size:10px;color:var(--muted)">-0.0% vs ref</span></td>
+          <td data-val="72.73" class="pos">$72.73<br><span style="font-size:10px;color:var(--muted)">+0.0% vs ref</span></td>
           <td data-val="72.74">$72.74</td>
           <td data-val="80.00">$80.00<br><span class="pos" style="font-size:10px">+10.0%</span></td>
-          <td class="prob-good">55%</td>
+          <td><span class="prob-badge prob-good">55%</span></td>
           <td>4-10 weeks; October to mid-November</td>
-          <td class="trigger-cell" title="Copper remains firm and FCX continues to hold its uptrend; $80 is near the upper end of the published analyst range, so expect supply/profit-taking into that zone.">Copper remains firm and FCX continues to hold its uptrend; $80 is near the upper…</td>
-          <td data-val="70.00" class="">$70.00<br><span style="font-size:10px;color:var(--muted)">+3.9% above risk</span></td>
-          <td class="trigger-cell" title="Copper/momentum thesis is losing its near-term structure; $80 odds fall materially.">Copper/momentum thesis is losing its near-term structure; $8…</td>
-          <td>66 · Watchlist</td>
+          <td class="trigger-cell" title="Copper remains firm and FCX continues to hold its uptrend; $80 is near the upper end of the published analyst range, so expect supply/profit-taking into that zone.">Copper remains firm and FCX continues to hold its uptrend; $80 is near the upper end of the published analyst range, so expect supply/profit-taking into that zone.</td>
+          <td data-val="70.00" class="">$70.00<br><span class="risk-safe" style="font-size:10px">✓ +3.9% above risk</span></td>
+          <td class="trigger-cell" title="Copper/momentum thesis is losing its near-term structure; $80 odds fall materially.">Copper/momentum thesis is losing its near-term structure; $80 odds fall materially.</td>
+          <td><span class='prob-badge prob-mid'>66</span><span class='cr-label'>Watchlist</span></td>
           <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="43.3" width="72.0" height="-43.3" fill="#f8514922"/><rect x="108.0" y="34.7" width="72.0" height="-34.5" fill="#d2992233"/><rect x="108.0" y="26.1" width="72.0" height="-17.2" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,26.3 3.1,23.4 6.1,21.0 9.2,21.0 12.2,22.5 15.3,23.0 18.3,22.3 21.4,28.9 24.4,32.5 27.5,31.1 30.5,31.6 33.6,32.8 36.6,31.0 39.7,34.3 42.7,33.7 45.8,33.6 48.8,35.9 51.9,38.4 54.9,34.3 58.0,32.9 61.0,35.0 64.1,32.3 67.1,33.7 70.2,37.0 73.2,37.2 76.3,36.7 79.3,31.5 82.4,28.1 85.4,30.2 88.5,31.4 91.5,31.2 94.6,32.7 97.6,35.0 100.7,30.3 103.7,31.4 106.8,30.0 109.8,24.9 112.9,22.1 115.9,23.7 119.0,21.7 122.0,20.5 125.1,22.8 128.1,22.3 131.2,25.6 134.2,26.1 137.3,23.4 140.3,26.3 143.4,22.5 146.4,19.5 149.5,12.0 152.5,10.5 155.6,7.6 158.6,8.8 161.7,9.6 164.7,12.3 167.8,13.3 170.8,17.8 173.9,15.8 176.9,17.7 180.0,17.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="17.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
         </tr>
         <tr>
@@ -801,12 +827,12 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
           <td data-val="134.96" class="neg">$134.96<br><span style="font-size:10px;color:var(--muted)">+0.0% vs ref</span></td>
           <td data-val="134.91">$134.91</td>
           <td data-val="150.00">$150.00<br><span class="pos" style="font-size:10px">+11.1%</span></td>
-          <td class="prob-good">50%</td>
+          <td><span class="prob-badge prob-good">50%</span></td>
           <td>4-10 weeks; October to mid-November</td>
-          <td class="trigger-cell" title="$150 aligns closely with roughly $149.83 consensus; the key is recapturing and holding the mid-$140s before treating $150 as likely.">$150 aligns closely with roughly $149.83 consensus; the key is recapturing and h…</td>
-          <td data-val="130.00" class="">$130.00<br><span style="font-size:10px;color:var(--muted)">+3.8% above risk</span></td>
-          <td class="trigger-cell" title="Indicates the market is not accepting the recovery toward the $150 consensus zone.">Indicates the market is not accepting the recovery toward th…</td>
-          <td>— <span style='color:var(--muted);font-size:10px'>(not in universe)</span></td>
+          <td class="trigger-cell" title="$150 aligns closely with roughly $149.83 consensus; the key is recapturing and holding the mid-$140s before treating $150 as likely.">$150 aligns closely with roughly $149.83 consensus; the key is recapturing and holding the mid-$140s before treating $150 as likely.</td>
+          <td data-val="130.00" class="">$130.00<br><span class="risk-safe" style="font-size:10px">✓ +3.8% above risk</span></td>
+          <td class="trigger-cell" title="Indicates the market is not accepting the recovery toward the $150 consensus zone.">Indicates the market is not accepting the recovery toward the $150 consensus zone.</td>
+          <td><span class='prob-badge prob-low'>25</span><span class='cr-label'>Avoid</span></td>
           <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="46.0" width="72.0" height="-32.3" fill="#f8514922"/><rect x="108.0" y="46.0" width="72.0" height="-25.8" fill="#d2992233"/><rect x="108.0" y="39.8" width="72.0" height="-13.0" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,31.9 3.1,35.0 6.1,33.9 9.2,31.5 12.2,38.4 15.3,23.2 18.3,26.4 21.4,25.6 24.4,23.7 27.5,34.9 30.5,30.2 33.6,33.0 36.6,32.1 39.7,31.8 42.7,27.4 45.8,25.9 48.8,24.9 51.9,24.4 54.9,20.4 58.0,17.7 61.0,16.3 64.1,20.3 67.1,19.9 70.2,18.7 73.2,20.0 76.3,21.9 79.3,20.5 82.4,23.0 85.4,23.9 88.5,22.2 91.5,19.6 94.6,10.6 97.6,7.6 100.7,14.9 103.7,18.5 106.8,18.6 109.8,18.3 112.9,16.5 115.9,21.2 119.0,19.0 122.0,21.7 125.1,20.2 128.1,19.5 131.2,22.5 134.2,19.6 137.3,21.3 140.3,18.1 143.4,14.7 146.4,17.6 149.5,15.0 152.5,17.8 155.6,20.1 158.6,19.1 161.7,23.4 164.7,26.1 167.8,31.3 170.8,35.9 173.9,31.9 176.9,32.1 180.0,33.3"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="33.3" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
         </tr>
         <tr>
@@ -815,12 +841,12 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
           <td data-val="214.69" class="pos">$214.69<br><span style="font-size:10px;color:var(--muted)">-0.7% vs ref</span></td>
           <td data-val="216.14">$216.14</td>
           <td data-val="240.00">$240.00<br><span class="pos" style="font-size:10px">+11.8%</span></td>
-          <td class="prob-good">50%</td>
+          <td><span class="prob-badge prob-good">50%</span></td>
           <td>4-12 weeks; October to late November</td>
-          <td class="trigger-cell" title="Catalyst-led name: it has traded near $242 this year, so the level is proven, but release-calendar/news risk can create sharp reversals.">Catalyst-led name: it has traded near $242 this year, so the level is proven, bu…</td>
-          <td data-val="212.00" class="risk-near">$212.00<br><span style="font-size:10px;color:var(--muted)">⚠️ +1.3% above risk</span></td>
-          <td class="trigger-cell" title="Losing the recent early-September area weakens the case for a near-term return to $240.">Losing the recent early-September area weakens the case for …</td>
-          <td>— <span style='color:var(--muted);font-size:10px'>(not in universe)</span></td>
+          <td class="trigger-cell" title="Catalyst-led name: it has traded near $242 this year, so the level is proven, but release-calendar/news risk can create sharp reversals.">Catalyst-led name: it has traded near $242 this year, so the level is proven, but release-calendar/news risk can create sharp reversals.</td>
+          <td data-val="212.00" class="risk-near">$212.00<br><span class="risk-near" style="font-size:10px">⚠ +1.3% above risk</span></td>
+          <td class="trigger-cell" title="Losing the recent early-September area weakens the case for a near-term return to $240.">Losing the recent early-September area weakens the case for a near-term return to $240.</td>
+          <td><span class='prob-badge prob-low'>0</span><span class='cr-label'>Avoid</span></td>
           <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="46.0" width="72.0" height="-32.2" fill="#f8514922"/><rect x="108.0" y="46.0" width="72.0" height="-24.6" fill="#d2992233"/><rect x="108.0" y="44.1" width="72.0" height="-15.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,38.2 3.1,38.4 6.1,35.5 9.2,26.4 12.2,27.7 15.3,20.2 18.3,20.0 21.4,18.0 24.4,22.5 27.5,20.6 30.5,20.7 33.6,15.0 36.6,13.1 39.7,12.9 42.7,9.8 45.8,7.6 48.8,8.0 51.9,12.2 54.9,15.7 58.0,17.6 61.0,17.0 64.1,21.7 67.1,17.2 70.2,20.0 73.2,21.9 76.3,20.4 79.3,22.4 82.4,24.0 85.4,26.2 88.5,25.3 91.5,17.1 94.6,14.7 97.6,15.5 100.7,14.8 103.7,17.8 106.8,16.3 109.8,19.6 112.9,23.1 115.9,24.7 119.0,15.4 122.0,10.8 125.1,12.8 128.1,17.8 131.2,18.5 134.2,15.1 137.3,18.7 140.3,18.2 143.4,21.7 146.4,19.6 149.5,20.0 152.5,24.0 155.6,24.4 158.6,24.1 161.7,24.4 164.7,22.8 167.8,33.2 170.8,35.2 173.9,35.5 176.9,36.9 180.0,36.5"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="36.5" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
         </tr>
         <tr>
@@ -829,26 +855,26 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
           <td data-val="149.30" class="neg">$149.30<br><span style="font-size:10px;color:var(--muted)">+0.0% vs ref</span></td>
           <td data-val="149.30">$149.30</td>
           <td data-val="175.00">$175.00<br><span class="pos" style="font-size:10px">+17.2%</span></td>
-          <td class="prob-mid">45%</td>
+          <td><span class="prob-badge prob-mid">45%</span></td>
           <td>6-14 weeks; late October to December</td>
-          <td class="trigger-cell" title="$175 is well below the roughly $221-$231 median analyst-target area, but the stock needs to reclaim nearby short-term resistance before the recovery thesis is confirmed.">$175 is well below the roughly $221-$231 median analyst-target area, but the sto…</td>
-          <td data-val="140.50" class="">$140.50<br><span style="font-size:10px;color:var(--muted)">+6.3% above risk</span></td>
-          <td class="trigger-cell" title="This is near cited short-term support; a break makes $175 a later, lower-probability outcome.">This is near cited short-term support; a break makes $175 a …</td>
-          <td>— <span style='color:var(--muted);font-size:10px'>(not in universe)</span></td>
+          <td class="trigger-cell" title="$175 is well below the roughly $221-$231 median analyst-target area, but the stock needs to reclaim nearby short-term resistance before the recovery thesis is confirmed.">$175 is well below the roughly $221-$231 median analyst-target area, but the stock needs to reclaim nearby short-term resistance before the recovery thesis is confirmed.</td>
+          <td data-val="140.50" class="">$140.50<br><span class="risk-safe" style="font-size:10px">✓ +6.3% above risk</span></td>
+          <td class="trigger-cell" title="This is near cited short-term support; a break makes $175 a later, lower-probability outcome.">This is near cited short-term support; a break makes $175 a later, lower-probability outcome.</td>
+          <td><span class='prob-badge prob-good'>75</span><span class='cr-label'>Research candidate</span></td>
           <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="46.0" width="72.0" height="-45.9" fill="#f8514922"/><rect x="108.0" y="42.9" width="72.0" height="-34.3" fill="#d2992233"/><rect x="108.0" y="34.4" width="72.0" height="-17.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,28.5 3.1,27.0 6.1,21.9 9.2,17.2 12.2,17.0 15.3,12.4 18.3,9.2 21.4,13.7 24.4,13.2 27.5,8.7 30.5,12.6 33.6,13.7 36.6,17.2 39.7,22.2 42.7,24.2 45.8,18.5 48.8,19.8 51.9,20.7 54.9,17.8 58.0,16.9 61.0,17.6 64.1,17.3 67.1,15.7 70.2,22.8 73.2,20.1 76.3,17.7 79.3,13.7 82.4,9.6 85.4,7.6 88.5,12.7 91.5,18.6 94.6,26.4 97.6,31.8 100.7,26.4 103.7,26.8 106.8,19.6 109.8,31.4 112.9,33.9 115.9,33.1 119.0,33.9 122.0,31.8 125.1,29.9 128.1,28.2 131.2,28.5 134.2,26.9 137.3,28.8 140.3,33.9 143.4,31.9 146.4,35.4 149.5,37.9 152.5,38.4 155.6,35.3 158.6,34.4 161.7,34.6 164.7,37.1 167.8,36.9 170.8,36.2 173.9,31.2 176.9,30.5 180.0,25.8"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="25.8" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
         </tr>
         <tr>
           <td class="rank-cell">6</td>
           <td class="ticker-cell">LII</td>
-          <td data-val="390.53" class="pos">$390.53<br><span style="font-size:10px;color:var(--muted)">-0.0% vs ref</span></td>
+          <td data-val="390.53" class="pos">$390.53<br><span style="font-size:10px;color:var(--muted)">+0.0% vs ref</span></td>
           <td data-val="390.53">$390.53</td>
           <td data-val="460.00">$460.00<br><span class="pos" style="font-size:10px">+17.8%</span></td>
-          <td class="prob-mid">35%</td>
+          <td><span class="prob-badge prob-mid">35%</span></td>
           <td>2-5 months; November through February</td>
-          <td class="trigger-cell" title="A legitimate rebound objective, but it needs a trend reversal and likely a strong earnings/guidance or rate-sensitive industrial/HVAC tailwind; consensus near $511 makes $460 feasible, not imminent.">A legitimate rebound objective, but it needs a trend reversal and likely a stron…</td>
-          <td data-val="377.50" class="">$377.50<br><span style="font-size:10px;color:var(--muted)">+3.5% above risk</span></td>
-          <td class="trigger-cell" title="The rebound thesis weakens; wait for a base rather than financing a long recovery with short-dated premium.">The rebound thesis weakens; wait for a base rather than fina…</td>
-          <td>— <span style='color:var(--muted);font-size:10px'>(not in universe)</span></td>
+          <td class="trigger-cell" title="A legitimate rebound objective, but it needs a trend reversal and likely a strong earnings/guidance or rate-sensitive industrial/HVAC tailwind; consensus near $511 makes $460 feasible, not imminent.">A legitimate rebound objective, but it needs a trend reversal and likely a strong earnings/guidance or rate-sensitive industrial/HVAC tailwind; consensus near $511 makes $460 feasible, not imminent.</td>
+          <td data-val="377.50" class="">$377.50<br><span class="risk-safe" style="font-size:10px">✓ +3.5% above risk</span></td>
+          <td class="trigger-cell" title="The rebound thesis weakens; wait for a base rather than financing a long recovery with short-dated premium.">The rebound thesis weakens; wait for a base rather than financing a long recovery with short-dated premium.</td>
+          <td><span class='prob-badge prob-mid'>50</span><span class='cr-label'>Watchlist</span></td>
           <td class="spark-cell"><svg width="180" height="46" viewBox="0 0 180 46" style="display:block"><rect x="108.0" y="46.0" width="72.0" height="-35.7" fill="#f8514922"/><rect x="108.0" y="46.0" width="72.0" height="-27.2" fill="#d2992233"/><rect x="108.0" y="44.4" width="72.0" height="-17.1" fill="#58a6ff44"/><polyline fill="none" stroke="#d4a843" stroke-width="1.4" points="0.0,16.2 3.1,17.0 6.1,15.1 9.2,14.5 12.2,16.4 15.3,13.8 18.3,13.3 21.4,15.2 24.4,10.8 27.5,7.9 30.5,9.0 33.6,8.2 36.6,7.6 39.7,7.8 42.7,8.0 45.8,8.3 48.8,10.0 51.9,13.0 54.9,13.1 58.0,10.8 61.0,10.9 64.1,9.1 67.1,11.3 70.2,9.8 73.2,12.1 76.3,13.7 79.3,14.2 82.4,13.8 85.4,13.0 88.5,12.5 91.5,11.5 94.6,12.0 97.6,29.7 100.7,31.7 103.7,31.9 106.8,29.0 109.8,27.1 112.9,27.1 115.9,28.9 119.0,28.2 122.0,30.8 125.1,29.6 128.1,31.2 131.2,31.6 134.2,31.0 137.3,31.9 140.3,32.7 143.4,31.4 146.4,33.5 149.5,34.0 152.5,34.5 155.6,36.1 158.6,35.4 161.7,35.8 164.7,35.4 167.8,37.1 170.8,37.9 173.9,38.4 176.9,36.6 180.0,35.9"/><line x1="108.0" y1="0" x2="108.0" y2="46" stroke="#30363d" stroke-dasharray="2,2" stroke-width="0.8"/><circle cx="178.0" cy="35.9" r="3" fill="#d4a843" stroke="#0d1117" stroke-width="1"/></svg></td>
         </tr>
       </tbody>
@@ -901,7 +927,7 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
 </div>
 </main>
 <footer>
-  <div class="footer-text">Generated Sep 07, 2026 · 20:50 UTC-04:00 by <span>dependability-quant</span> · research only</div>
+  <div class="footer-text">Generated Sep 07, 2026 · 21:27 UTC-04:00 by <span>dependability-quant</span> · research only</div>
   <div class="footer-text">yfinance · chart_structure (lib) · <span>ClawRank-v0</span></div>
 </footer>
 
