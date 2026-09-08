@@ -38,7 +38,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v12"
+BUILD_VERSION = "v13"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -369,24 +369,24 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .pos {{ color: var(--green); }}
 .neg {{ color: var(--red); }}
 
-/* Watchlist (Section 2.5) — Mike 2026-09-07 21:03 ET: renamed from "Options Watchlist" */
+/* Watchlist (Section 2.5) — Mike 2026-09-07 21:03 ET: renamed from "Options Watchlist".
+   Mike 2026-09-07 21:44 ET: Ticker col 1, ClawScore col 2 — same as T1/T2.
+   Columns: Ticker | ClawScore | Spot | Ref | Target | Move% | Prob | Timing | Risk line | 3mo | Trigger | If risk breaks */
 .watchlist-table th, .watchlist-table td {{ font-variant-numeric: tabular-nums; }}
-.rank-cell {{ font-weight: 700; color: var(--muted); text-align: center; width: 30px; }}
 .trigger-cell {{ font-size: 11px; color: var(--text); line-height: 1.4;
                  white-space: normal; word-wrap: break-word; }}
-/* Watchlist column alignment: numeric right, badge center, text left */
-.watchlist-table th:nth-child(1), .watchlist-table td:nth-child(1) {{ text-align: center; width: 30px; }}
-.watchlist-table th:nth-child(2), .watchlist-table td:nth-child(2) {{ text-align: left; width: 50px; }}
+.watchlist-table th:nth-child(1), .watchlist-table td:nth-child(1) {{ text-align: left; width: 60px; }}
+.watchlist-table th:nth-child(2), .watchlist-table td:nth-child(2) {{ text-align: center; width: 75px; }}
 .watchlist-table th:nth-child(3), .watchlist-table td:nth-child(3) {{ text-align: right; width: 100px; }}
 .watchlist-table th:nth-child(4), .watchlist-table td:nth-child(4) {{ text-align: right; width: 70px; }}
 .watchlist-table th:nth-child(5), .watchlist-table td:nth-child(5) {{ text-align: right; width: 95px; }}
-.watchlist-table th:nth-child(6), .watchlist-table td:nth-child(6) {{ text-align: center; width: 60px; }}
-.watchlist-table th:nth-child(7), .watchlist-table td:nth-child(7) {{ text-align: left; width: 130px; font-size: 10.5px; white-space: normal; }}
-.watchlist-table th:nth-child(8), .watchlist-table td:nth-child(8) {{ text-align: left; max-width: 280px; }}
+.watchlist-table th:nth-child(6), .watchlist-table td:nth-child(6) {{ text-align: right; width: 75px; }}
+.watchlist-table th:nth-child(7), .watchlist-table td:nth-child(7) {{ text-align: center; width: 60px; }}
+.watchlist-table th:nth-child(8), .watchlist-table td:nth-child(8) {{ text-align: left; width: 130px; font-size: 10.5px; white-space: normal; }}
 .watchlist-table th:nth-child(9), .watchlist-table td:nth-child(9) {{ text-align: right; width: 100px; }}
-.watchlist-table th:nth-child(10), .watchlist-table td:nth-child(10) {{ text-align: left; max-width: 220px; }}
-.watchlist-table th:nth-child(11), .watchlist-table td:nth-child(11) {{ text-align: center; width: 70px; }}
-.watchlist-table th:nth-child(12), .watchlist-table td:nth-child(12) {{ text-align: right; width: 110px; padding: 4px 8px; }}
+.watchlist-table th:nth-child(10), .watchlist-table td:nth-child(10) {{ text-align: right; width: 110px; padding: 4px 8px; }}
+.watchlist-table th:nth-child(11), .watchlist-table td:nth-child(11) {{ text-align: left; max-width: 280px; }}
+.watchlist-table th:nth-child(12), .watchlist-table td:nth-child(12) {{ text-align: left; max-width: 220px; }}
 /* Probability badge — proper pill */
 .prob-badge {{ display: inline-block; min-width: 36px; padding: 2px 8px;
                border-radius: 10px; font-size: 11px; font-weight: 700;
@@ -715,8 +715,8 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
     scoped to long-call butterflies; renamed "Watchlist" on 21:03 ET per Mike
     since the same list can carry cash-secured puts, verticals, etc.
 
-    Columns:
-        # | Ticker | Spot | Ref | Target | Prob | Timing | Trigger | Risk line | Failure | ClawRank | 3mo
+    Columns (Mike 2026-09-07 21:44 ET: Ticker col 1, ClawScore col 2 — consistent with T1/T2):
+        Ticker | ClawScore | Spot | Ref | Target | Move% | Prob | Timing | Risk line | 3mo | Trigger | If risk breaks
 
     Color coding:
         - Spot vs ref: green if spot <= ref (room to run), red if spot > ref (chasing)
@@ -742,8 +742,6 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
         trigger = t["trigger"]
         risk_line = t["risk_line"]
         risk_meaning = t["risk_meaning"]
-        rank = t.get("rank", 99)
-        rank_reason = t.get("rank_reason", "")
 
         # Spot vs ref delta (where current price sits relative to the analysis reference)
         if spot is not None and ref is not None:
@@ -760,10 +758,11 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
 
         # Distance from spot to target (% upside remaining)
         if spot is not None and target is not None:
-            upside = ((target / spot) - 1.0) * 100
-            upside_text = f"+{upside:.1f}%"
-            upside_class = "pos" if upside > 0 else "neg"
+            upside_num = ((target / spot) - 1.0) * 100
+            upside_text = f"+{upside_num:.1f}%"
+            upside_class = "pos" if upside_num > 0 else "neg"
         else:
+            upside_num = move_pct
             upside_text = f"+{move_pct:.1f}%"  # fall back to ref-based move_pct
             upside_class = ""
 
@@ -817,18 +816,18 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
 
         rows_html.append(f"""
         <tr>
-          <td class="rank-cell">{rank}</td>
           <td class="ticker-cell">{sym}</td>
+          <td>{cr_text}</td>
           <td data-val="{spot or 0:.2f}" class="{spot_vs_ref_class}">{spot_text}<br><span style="font-size:10px;color:var(--muted)">{spot_vs_ref_text}</span></td>
           <td data-val="{ref:.2f}">${ref:,.2f}</td>
           <td data-val="{target:.2f}">${target:,.2f}<br><span class="{upside_class}" style="font-size:10px">{upside_text}</span></td>
+          <td class="{'pos' if upside_num > 0 else 'neg'}" data-val="{upside_num:.4f}">+{upside_num:.1f}%</td>
           <td><span class="prob-badge {prob_class}">{prob_badge}</span></td>
           <td>{timing}</td>
-          <td class="trigger-cell" title="{trigger}">{trigger}</td>
           <td data-val="{risk_line:.2f}" class="{risk_proximity_class}">${risk_line:,.2f}<br><span class="{risk_proximity_label_class}" style="font-size:10px">{risk_proximity_text}</span></td>
-          <td class="trigger-cell" title="{risk_meaning}">{risk_meaning}</td>
-          <td>{cr_text}</td>
           <td class="spark-cell">{spark}</td>
+          <td class="trigger-cell" title="{trigger}">{trigger}</td>
+          <td class="trigger-cell" title="{risk_meaning}">{risk_meaning}</td>
         </tr>""")
 
     rows_joined = "".join(rows_html)
@@ -837,27 +836,27 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
   <div class="card">
     <div class="card-header">
       <div class="dot" style="background:var(--purple)"></div>
-      2.5) Watchlist — tactical trade candidates ({count} tickers, sorted by rank) &mdash;
+      2.5) Watchlist — tactical trade candidates ({count} tickers) &mdash;
       <span style="text-transform:none;font-weight:400;color:var(--gold)">curated set with live spot prices, target window, and risk line. Default structure is a long-call butterfly at target; cash-secured puts / verticals use the same scoring framework.</span>
     </div>
     <div style="padding:0 16px 12px; color:var(--muted); font-size:11px;">
       Mike 2026-09-07 20:43 ET directive: "ultimately I may want to open a long call butterfly (when bullish) at a price target in a time period (1 month or 3 month, or others) so this section will help with that." Source: <code>config/options_watchlist.yaml</code>.
     </div>
-    <table class="dash watchlist-table">
+    <table id="watchlist" class="dash watchlist-table">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Ticker</th>
-          <th>Spot (live)</th>
-          <th>Ref</th>
-          <th>Target</th>
-          <th>Prob</th>
+          <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+          <th class="sortable" onclick="sortTable('watchlist',1,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
+          <th class="sortable" onclick="sortTable('watchlist',2,'num')">Spot (live)</th>
+          <th class="sortable" onclick="sortTable('watchlist',3,'num')">Ref</th>
+          <th class="sortable" onclick="sortTable('watchlist',4,'num')">Target</th>
+          <th class="sortable" onclick="sortTable('watchlist',5,'num')">Move%</th>
+          <th class="sortable" onclick="sortTable('watchlist',6,'num')">Prob</th>
           <th>Timing</th>
-          <th>Trigger / read-through</th>
-          <th>Risk line</th>
-          <th>If risk breaks</th>
-          <th>ClawRank</th>
+          <th class="sortable" onclick="sortTable('watchlist',8,'num')">Risk line</th>
           <th>3mo</th>
+          <th>Trigger / read-through</th>
+          <th>If risk breaks</th>
         </tr>
       </thead>
       <tbody>
@@ -898,27 +897,42 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
             regime_count[r] = regime_count.get(r, 0) + 1
     spy = by_ticker.get("SPY", {})
 
-    # Column index legend (kept consistent for chip filter + sort handlers):
-    # Table 1 (Market & Sectors) — 19 cols
-    #   0 = ClawRank Score (first col)
-    #   1 = Ticker
+    # Column index legend (Mike 2026-09-07 21:44 ET: Ticker is col 1, ClawScore is col 2 in all 3 tables).
+    # Table 1 (Market & Sectors) — 18 cols
+    #   0 = Ticker (col 1 — left-anchored)
+    #   1 = ClawScore (col 2 — for benchmarks, shows regime pill instead)
     #   2 = Group/Sector
-    #   3 = Price  (chip-filtered here? no — Trend is col 4 below)
-    #   4 = Trend  (chip filter target)
-    #   5..14 = Support, Resistance, %→S, %→R, 20D SD, Ann.Vol, ATR$, Rng%ile, RS v SPY, 60D spark
+    #   3 = Price
+    #   4 = Trend  (chip filter target — chip-group data-col="4")
+    #   5..12 = Support, Resistance, %→S, %→R, 20D SD, Ann.Vol, ATR$, Rng%ile
+    #   13 = RS v SPY
+    #   14 = 60D spark
     #   15, 16 = 1σ 1d, 1σ 1mo
     #   17 = Outlook
-    # Table 2 (Stock Shortlist) — 14 cols
-    #   0 = ClawRank Score (first col)
-    #   1 = Ticker
+    # Table 2 (Stock Shortlist / Sector Leaders) — 12 cols
+    #   0 = Ticker (col 1)
+    #   1 = ClawScore (col 2)
     #   2 = Sector
     #   3 = Price
-    #   4 = Trend
+    #   4 = Trend  (chip filter target — chip-group data-col="4")
     #   5 = Setup
     #   6, 7, 8 = RS v SPY, 20D SD, ADV
     #   9 = 60D spark
     #   10 = 1σ/2σ/3σ
     #   11 = Outlook
+    # Watchlist — 12 cols
+    #   0 = Ticker (col 1)
+    #   1 = ClawScore (col 2)
+    #   2 = Spot (live)
+    #   3 = Ref
+    #   4 = Target
+    #   5 = Move%
+    #   6 = Prob
+    #   7 = Timing
+    #   8 = Risk line
+    #   9 = 3mo spark
+    #   10 = Trigger / read-through
+    #   11 = If risk breaks
 
     # Section 1 — Market & Sectors
     t1 = []
@@ -952,8 +966,8 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
             score_td = score_cell_with_popover(cr_score, cr_label, factors, m["trend"], m["setup"], kr=kr)
         t1.append(f"""
         <tr>
-          {score_td}
           <td class="ticker-cell">{m['ticker']}</td>
+          {score_td}
           <td>{BENCH_GROUP.get(t, SECTOR_GROUP.get(t, ''))}</td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
           <td>{trend_badge(m['trend'])}</td>
@@ -1006,8 +1020,8 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
                          for t, s in pick.get("all_candidates", []) if t != sym)
         t2.append(f"""
         <tr>
-          {score_td}
           <td class="ticker-cell">{m['ticker']}</td>
+          {score_td}
           <td>{pick['sector_name']} <span style="color:var(--muted);font-size:10px">({pick['sector_etf']})</span></td>
           <td data-val="{m['spot']:.2f}">{fmt_money(m['spot'])}</td>
           <td>{trend_badge(m['trend'])}</td>
@@ -1156,8 +1170,8 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
   <div style="overflow-x:auto">
   <table id="t1">
     <thead><tr>
-      <th class="sortable" onclick="sortTable('t1',0,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
       <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+      <th class="sortable" onclick="sortTable('t1',1,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
       <th><a href="#glossary-group-sector" class="header-glossary-link">Group / Sector</a></th>
       <th class="sortable" onclick="sortTable('t1',3,'num')"><a href="#glossary-price" class="header-glossary-link">Price</a></th>
       <th><a href="#glossary-trend" class="header-glossary-link">Trend</a></th>
@@ -1193,8 +1207,8 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
   <div style="overflow-x:auto">
   <table id="t2">
     <thead><tr>
-      <th class="sortable" onclick="sortTable('t2',0,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
       <th><a href="#glossary-ticker" class="header-glossary-link">Ticker</a></th>
+      <th class="sortable" onclick="sortTable('t2',1,'num')"><a href="#glossary-label-rule" class="header-glossary-link" title="Click to read the ClawRank label rule glossary entry">ClawRank</a></th>
       <th><a href="#glossary-group-sector" class="header-glossary-link">Sector</a></th>
       <th class="sortable" onclick="sortTable('t2',3,'num')"><a href="#glossary-price" class="header-glossary-link">Price</a></th>
       <th><a href="#glossary-trend" class="header-glossary-link">Trend</a></th>
