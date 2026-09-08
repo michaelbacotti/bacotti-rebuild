@@ -48,6 +48,21 @@ import os
 import statistics
 import urllib.request
 import urllib.error
+
+# Optional FRED API key from .openclaw/tmp/fred.env (chmod 600, gitignored)
+# Used for higher rate limits via api.stlouisfed.org JSON endpoint.
+# CSV fallback below works without a key.
+def _load_fred_key() -> str | None:
+    env_path = Path(__file__).resolve().parents[2] / ".openclaw" / "tmp" / "fred.env"
+    if env_path.exists():
+        try:
+            for line in env_path.read_text().splitlines():
+                line = line.strip()
+                if line.startswith("FRED_API_KEY="):
+                    return line.split("=", 1)[1].strip()
+        except Exception:
+            pass
+    return os.environ.get("FRED_API_KEY")
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -132,6 +147,7 @@ def _trend_arrow(delta: float, scale: float) -> str:
 # ---------------------------------------------------------------------------
 
 FRED_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
+FRED_API_URL = "https://api.stlouisfed.org/fred/series/observations?series_id={series}&file_type=json&api_key={key}"
 FRED_HTTP_TIMEOUT = 12
 
 FRED_CACHE_DIR = Path(__file__).resolve().parents[1] / "data" / "fred_cache"
@@ -141,6 +157,8 @@ def fetch_fred_series(series: str, lookback_days: int = 365 * 5) -> list[dict]:
     """Returns a list of {date: 'YYYY-MM-DD', value: float} newest-first.
 
     Cache: data/fred_cache/<series>.json with 24h TTL.
+    Uses FRED API JSON endpoint when FRED_API_KEY is available (higher rate
+    limits); otherwise falls back to public CSV endpoint.
     """
     FRED_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     cache_path = FRED_CACHE_DIR / f"{series}.json"
@@ -153,13 +171,28 @@ def fetch_fred_series(series: str, lookback_days: int = 365 * 5) -> list[dict]:
         except (json.JSONDecodeError, KeyError, ValueError):
             pass
 
-    url = FRED_CSV_URL.format(series=series)
-    req = urllib.request.Request(url, headers={"User-Agent": "dependability-quant research@bacotti.com"})
-    try:
-        with urllib.request.urlopen(req, timeout=FRED_HTTP_TIMEOUT) as resp:
-            raw = resp.read().decode("utf-8", errors="replace")
-    except (urllib.error.URLError, TimeoutError, OSError) as exc:
-        raise RuntimeError(f"FRED fetch failed for {series}: {exc}") from exc
+    api_key = _load_fred_key()
+    raw = ""
+    if api_key:
+        url = FRED_API_URL.format(series=series, key=api_key)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "dependability-quant research@bacotti.com"})
+            with urllib.request.urlopen(req, timeout=FRED_HTTP_TIMEOUT) as resp:
+                payload = json.loads(resp.read().decode("utf-8", errors="replace"))
+            for obs in payload.get("observations", []):
+                raw += f"{obs.get('date','')},{obs.get('value','')}\n"
+            raw = "DATE," + series + "\n" + raw  # synthesize CSV header so the parser below works
+        except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError, KeyError):
+            raw = ""
+
+    if not raw:
+        url = FRED_CSV_URL.format(series=series)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "dependability-quant research@bacotti.com"})
+            with urllib.request.urlopen(req, timeout=FRED_HTTP_TIMEOUT) as resp:
+                raw = resp.read().decode("utf-8", errors="replace")
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            raise RuntimeError(f"FRED fetch failed for {series}: {exc}") from exc
 
     rows: list[dict] = []
     reader = csv.DictReader(io.StringIO(raw))
@@ -167,9 +200,9 @@ def fetch_fred_series(series: str, lookback_days: int = 365 * 5) -> list[dict]:
     for row in reader:
         try:
             # FRED CSV uses 'observation_date' as the date column header.
-            date_str = row.get("observation_date") or row.get("DATE") or ""
+            date_str = row.get("observation_date") or row.get("DATE") or row.get("date") or ""
             d = datetime.strptime(date_str, "%Y-%m-%d").date()
-            v = row.get(series) or row.get("VALUE") or ""
+            v = row.get(series) or row.get("VALUE") or row.get("value") or ""
             v = v.strip()
             if v in ("", ".", "NA"):
                 continue

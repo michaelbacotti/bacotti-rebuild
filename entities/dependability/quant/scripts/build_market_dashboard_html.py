@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """build_market_dashboard_html.py — Interactive single-file HTML market dashboard.
 
-v9 (2026-09-07): Benchmark decoupling (SPY/QQQ/IWM get regime, not ClawRank).
+v10 (2026-09-07): 10-factor multi-horizon ClawRank (P/E, fwdPE, valuation, quality, earnings, macro, seasonality).
 Event-aware Sentiment/Catalyst (news + institutional + social). Single canonical
 URL (`market-dashboard.html`) plus dated archive (`YYYY-MM-DD-market-dashboard.html`).
 v3 (2026-09-03): ClawRank score moved to first column. Hover the score to see
@@ -37,7 +37,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v9"
+BUILD_VERSION = "v10"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -582,7 +582,7 @@ FAVICON_HREF = "data:image/svg+xml;utf8," + _up.quote(FAVICON_SVG)
 
 
 def score_cell_with_popover(score, label, factors, trend, setup, kr=None):
-    """First-column cell: score + hover-popover with 5 factor bars + label rule."""
+    """First-column cell: score + hover-popover with 10 factor bars + label rule."""
     if score is None:
         return '<td class="score-cell" data-val="-1"><span class="unav">—</span></td>'
     # Determine label pill style + class
@@ -590,14 +590,20 @@ def score_cell_with_popover(score, label, factors, trend, setup, kr=None):
     if label == "Research candidate": short = "Rc"
     elif label == "Avoid": short = "Av"
     elif label == "Watchlist": short = "Wa"
-    # Build factor rows (5 of them)
+    # Build factor rows (10 of them in v10 — multi-horizon)
     f_rows = []
     factor_defs = [
-        ("Fundamental Health", factors.get("fundamental_health"), 25),
-        ("Technical Momentum", factors.get("technical_momentum"), 25),
-        ("Volatility Regime",   factors.get("volatility_regime"), 15),
-        ("Setup Quality",        factors.get("setup_quality"), 25),
-        ("Sentiment / Catalyst", factors.get("sentiment_catalyst"), 25),
+        ("Valuation",            factors.get("valuation"), 12),
+        ("Quality + Growth",     factors.get("quality_growth"), 12),
+        ("Technical Momentum",   factors.get("technical_momentum"), 11),
+        ("Earnings Catalyst",    factors.get("earnings_catalyst"), 10),
+        ("Analyst / Estimates",  factors.get("analyst_estimates"), 8),
+        ("Volatility Regime",    factors.get("volatility_regime"), 8),
+        ("Setup Quality",        factors.get("setup_quality"), 10),
+        ("Positioning",          factors.get("positioning"), 10),
+        ("Sentiment / Catalyst", factors.get("sentiment_catalyst"), 10),
+        ("Macro Regime",         factors.get("macro_regime"), 9),
+        ("Seasonality",          factors.get("seasonality"), 5),
     ]
     # Event/positioning/social sub-factors (Mike 2026-09-07 directive)
     sub_event_rows = []

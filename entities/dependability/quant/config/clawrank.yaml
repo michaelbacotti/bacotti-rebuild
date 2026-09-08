@@ -1,83 +1,187 @@
 # ClawRank-v0 — editable weights + sub-metric list
 # Edit this file to fine-tune; rebuild dashboard to see effect.
-# Last updated: 2026-09-07 (v8 — event-aware Sentiment/Catalyst: news + 8-K + institutional + social)
+#
+# Last updated: 2026-09-07 (v10 — 10-factor multi-horizon rebuild)
+#
+# Multi-horizon framework (Mike 2026-09-07 directive):
+#   short_term  — days/weeks: catalysts, sentiment, positioning, technicals, IV, earnings
+#   medium_term — weeks/months: trend, estimate revisions, sector rotation, macro regime
+#   long_term   — months/years: valuation, quality, growth durability, management
+#
+# Each factor is tagged with its primary horizon. Composite math is horizon-
+# aware via the clawrank.composite() function which can apply weight tilts
+# based on the current macro regime (see macro_context_modifier below).
+#
+# Free data sources only (yfinance .info, FRED CSV via macro_dashboard, no
+# paid APIs). Some factors skip for ETFs where fundamentals don't apply.
 
 # Cross-sectional normalization
 normalization:
-  z_clip: 2.0           # clip z-scores to ±2σ before percentile rank
-  z_method: "winsor"    # winsor | clip — winsor = clip + keep values
-  missing_policy: "renormalize"  # renormalize | fail | skip
-                              # renormalize: scale remaining sub-metrics to keep factor weight constant
-                              # fail: raise
-                              # skip: ticker gets factor score = neutral (50)
+  z_clip: 2.0
+  z_method: "winsor"
+  missing_policy: "renormalize"
 
 # Composite math
 composite:
-  final_score_method: "percentile_rank"  # percentile_rank | z_composite
+  final_score_method: "percentile_rank"
   label_thresholds:
-    research_candidate_min: 70   # top 30%
-    avoid_max: 30                # bottom 30%
-  # Overrides the implicit "uptrend + good setup" guard from the dashboard
-  # Score-only label rule (per Mike's 2026-09-03 directive): don't gate Research
-  # candidate on trend/setup — those factors are already baked into the score
-  # via Technical Momentum + Setup Quality.
-  require_trend_for_research: "any"   # uptrend | any
+    research_candidate_min: 70
+    avoid_max: 30
+  require_trend_for_research: "any"
   require_setup_for_research: []
+  # Macro context modifiers — adjust weights + thresholds by current regime
+  # regime_defensive = bear_risk_elevated / risk_off / fragile_risk_on
+  # regime_offensive = risk_on
+  macro_modifiers:
+    defensive:
+      tilt: { valuation: +0.05, quality_growth: +0.05, technical_momentum: -0.03, earnings_catalyst: +0.02, macro_regime: +0.05 }
+      avoid_max_delta: -10
+    offensive:
+      tilt: { technical_momentum: +0.03, earnings_catalyst: +0.02, valuation: -0.02 }
+      avoid_max_delta: 0
 
-# Factors
+# Factors — 10 in v10 (was 5 in v9.1)
 factors:
-  fundamental_health:
-    weight: 0.25
-    description: "Quality + valuation health. Inspired by Danelfin Fundamental subscore."
+
+  # =========================================================================
+  # LONG-TERM HORIZON (months–years)
+  # =========================================================================
+
+  valuation:
+    weight: 0.12
+    horizon: "long_term"
+    description: "Valuation multiples. Cheap stocks with healthy growth tend to outperform long-term. Sweet-spot logic, no absolute thresholds."
     sub_metrics:
-      earnings_yield:    { source: "yfinance_info", field: "trailingEps",     direction: "higher", weight: 0.20, fallback: "skip" }
-      revenue_growth:    { source: "yfinance_info", field: "revenueGrowth",   direction: "higher", weight: 0.20, fallback: "skip" }
-      operating_margin:  { source: "yfinance_info", field: "operatingMargins",direction: "higher", weight: 0.20, fallback: "skip" }
-      debt_to_equity:    { source: "yfinance_info", field: "debtToEquity",    direction: "lower",  weight: 0.20, fallback: "skip" }
-      fcf_yield:         { source: "yfinance_info", field: "fcf_yield", direction: "higher", weight: 0.20, fallback: "skip" }
+      trailing_pe:        { source: "yfinance_info", field: "trailing_pe",   direction: "sweet", weight: 0.20, sweet_low: 8, sweet_high: 22, penalty_above: 60, penalty_below: 3, fallback: "skip" }
+      forward_pe:         { source: "yfinance_info", field: "forward_pe",    direction: "sweet", weight: 0.20, sweet_low: 8, sweet_high: 20, penalty_above: 50, penalty_below: 3, fallback: "skip" }
+      peg_ratio:          { source: "yfinance_info", field: "peg_ratio",     direction: "sweet", weight: 0.15, sweet_low: 0.8, sweet_high: 2.0, penalty_above: 4.0, penalty_below: 0.3, fallback: "skip" }
+      price_to_book:      { source: "yfinance_info", field: "price_to_book", direction: "sweet", weight: 0.10, sweet_low: 1.0, sweet_high: 5.0, penalty_above: 15.0, penalty_below: 0.3, fallback: "skip" }
+      price_to_sales:     { source: "yfinance_info", field: "price_to_sales",direction: "sweet", weight: 0.10, sweet_low: 0.5, sweet_high: 4.0, penalty_above: 12.0, penalty_below: 0.2, fallback: "skip" }
+      ev_to_ebitda:       { source: "yfinance_info", field: "ev_to_ebitda",  direction: "sweet", weight: 0.15, sweet_low: 6, sweet_high: 16, penalty_above: 35, penalty_below: 2, fallback: "skip" }
+      earnings_yield:     { source: "yfinance_info", field: "earnings_yield",direction: "higher", weight: 0.05, fallback: "skip" }
+      fcf_yield:          { source: "yfinance_info", field: "fcf_yield",     direction: "higher", weight: 0.05, fallback: "skip" }
+
+  quality_growth:
+    weight: 0.12
+    horizon: "long_term"
+    description: "Quality + growth durability. Inspired by Danelfin Fundamental subscore + quality factor literature (ROIC > earnings, accruals, cash conversion)."
+    sub_metrics:
+      roe:                { source: "yfinance_info", field: "roe",           direction: "higher", weight: 0.15, fallback: "skip" }
+      roa:                { source: "yfinance_info", field: "roa",           direction: "higher", weight: 0.05, fallback: "skip" }
+      return_on_assets:   { source: "yfinance_info", field: "return_on_assets", direction: "higher", weight: 0.10, fallback: "skip" }
+      operating_margin:   { source: "yfinance_info", field: "operating_margin",direction: "higher", weight: 0.15, fallback: "skip" }
+      profit_margin:      { source: "yfinance_info", field: "profit_margin", direction: "higher", weight: 0.05, fallback: "skip" }
+      revenue_growth:     { source: "yfinance_info", field: "revenue_growth",direction: "higher", weight: 0.15, fallback: "skip" }
+      earnings_growth:    { source: "yfinance_info", field: "earnings_growth",direction: "higher",weight: 0.10, fallback: "skip" }
+      debt_to_equity:     { source: "yfinance_info", field: "debt_to_equity",direction: "lower",  weight: 0.10, fallback: "skip" }
+      cash_conversion:    { source: "computed",      field: "cash_conversion", direction: "higher", weight: 0.10, fallback: "skip" }
+      fcf_yield_q:        { source: "yfinance_info", field: "fcf_yield",     direction: "higher", weight: 0.05, fallback: "skip" }
+
+  # =========================================================================
+  # MEDIUM-TERM HORIZON (weeks–months)
+  # =========================================================================
 
   technical_momentum:
-    weight: 0.25
-    description: "Price + volume momentum. Inspired by Danelfin Technical subscore (RSI, MA distances, returns)."
+    weight: 0.11
+    horizon: "medium_term"
+    description: "Multi-timeframe price/volume momentum. 1M/3M/6M/12M returns vs SPY + sector, MA distances, RSI, slope. Inspired by AQR / MSCI momentum literature."
     sub_metrics:
-      rs_60d:            { source: "computed",      field: "rs_60d_vs_spy",   direction: "higher", weight: 0.20 }
-      rs_20d:            { source: "computed",      field: "rs_20d_vs_spy",   direction: "higher", weight: 0.20 }
-      dist_50d_ma_pct:   { source: "computed",      field: "dist_50d_ma_pct", direction: "higher", weight: 0.20 }
-      dist_200d_ma_pct:  { source: "computed",      field: "dist_200d_ma_pct",direction: "higher", weight: 0.10, fallback: "skip" }
-      rsi_14:            { source: "computed",      field: "rsi_14",          direction: "sweet", weight: 0.15, sweet_low: 50, sweet_high: 70, penalty_above: 80, penalty_below: 30 }
-      trend_slope:       { source: "computed",      field: "trend_slope_50d", direction: "higher", weight: 0.15 }
+      rs_1m_vs_spy:       { source: "computed",      field: "rs_1m_vs_spy",    direction: "higher", weight: 0.10 }
+      rs_3m_vs_spy:       { source: "computed",      field: "rs_3m_vs_spy",    direction: "higher", weight: 0.18 }
+      rs_6m_vs_spy:       { source: "computed",      field: "rs_6m_vs_spy",    direction: "higher", weight: 0.18 }
+      rs_12m_vs_spy:      { source: "computed",      field: "rs_12m_vs_spy",   direction: "higher", weight: 0.10, fallback: "skip" }
+      dist_50d_ma_pct:    { source: "computed",      field: "dist_50d_ma_pct", direction: "higher", weight: 0.10 }
+      dist_200d_ma_pct:   { source: "computed",      field: "dist_200d_ma_pct",direction: "higher", weight: 0.10, fallback: "skip" }
+      rsi_14:             { source: "computed",      field: "rsi_14",          direction: "sweet", weight: 0.10, sweet_low: 50, sweet_high: 70, penalty_above: 80, penalty_below: 30 }
+      trend_slope_50d:    { source: "computed",      field: "trend_slope_50d", direction: "higher", weight: 0.07 }
+      macd_histogram:     { source: "computed",      field: "macd_histogram",  direction: "higher", weight: 0.07 }
+
+  earnings_catalyst:
+    weight: 0.10
+    horizon: "short_medium_term"
+    description: "Earnings proximity + pre/post window drift. Imminent earnings → vol expansion; positive drift after print → momentum continuation."
+    sub_metrics:
+      days_to_next_earnings: { source: "computed",   field: "days_to_next_earnings", direction: "sweet", weight: 0.30, sweet_low: 14, sweet_high: 45, penalty_above: 90, penalty_below: 1, fallback: "skip" }
+      earnings_window_drift: { source: "computed",   field: "earnings_window_drift",direction: "higher", weight: 0.30, fallback: "skip" }
+      recent_surprise_pct:   { source: "computed",   field: "recent_surprise_pct",  direction: "higher", weight: 0.20, fallback: "skip" }
+      earnings_growth:       { source: "yfinance_info", field: "earnings_growth", direction: "higher", weight: 0.20, fallback: "skip" }
+
+  analyst_estimates:
+    weight: 0.08
+    horizon: "medium_term"
+    description: "Sell-side analyst coverage: rating, target upside, recent revision direction. Estimate revisions are one of the most-predictive single factors in academic literature."
+    sub_metrics:
+      target_upside_pct: { source: "yfinance_info", field: "target_upside_pct",direction: "higher", weight: 0.30, fallback: "skip" }
+      analyst_rating:    { source: "yfinance_info", field: "analyst_rating",   direction: "lower",  weight: 0.30, fallback: "skip" }
+      analyst_coverage:  { source: "yfinance_info", field: "analyst_coverage", direction: "higher", weight: 0.10, fallback: "skip" }
+      recent_revisions:  { source: "computed",      field: "recent_revisions", direction: "higher", weight: 0.30, fallback: "skip" }
+
+  # =========================================================================
+  # SHORT-TERM HORIZON (days–weeks)
+  # =========================================================================
 
   volatility_regime:
-    weight: 0.15
-    description: "Vol regime suitability — rewards stable, low-vol setups (fits short-premium bias)."
+    weight: 0.08
+    horizon: "short_term"
+    description: "Vol regime suitability — stable, low-vol setups outperform short-term; high-vol often mean-reverts."
     sub_metrics:
-      vol_ratio:         { source: "computed",      field: "vol_20d_over_252d", direction: "lower", weight: 0.40 }
-      atr_pct_vs_spy:    { source: "computed",      field: "atr_pct_minus_spy", direction: "lower", weight: 0.30 }
-      max_dd_60d:        { source: "computed",      field: "max_dd_60d",       direction: "lower", weight: 0.30 }
+      vol_ratio:         { source: "computed",      field: "vol_20d_over_252d", direction: "lower", weight: 0.30 }
+      atr_pct_vs_spy:    { source: "computed",      field: "atr_pct_minus_spy", direction: "lower", weight: 0.25 }
+      max_dd_60d:        { source: "computed",      field: "max_dd_60d",       direction: "lower", weight: 0.20 }
+      iv_percentile:     { source: "computed",      field: "iv_percentile",    direction: "lower", weight: 0.25, fallback: "skip" }
 
   setup_quality:
-    weight: 0.25
-    description: "What makes a Research candidate — setup type + range position + proximity to key levels."
+    weight: 0.10
+    horizon: "short_term"
+    description: "Chart setup + range position + proximity to key levels. High-probability setups for near-term entries."
     sub_metrics:
       setup_type:        { source: "computed",      field: "setup",           weight: 0.40, lookup: { breakout: 100, pullback_retest: 95, continuation: 70, reversal: 50, range_approach: 50, mean_reversion: 30, unavailable: 40 } }
-      range_percentile:  { source: "computed",      field: "range_pctile",    weight: 0.25, optimal_min: 30, optimal_max: 70, penalty_above: 90, penalty_below: 10 }
+      range_percentile:  { source: "computed",      field: "range_pctile",    weight: 0.20, optimal_min: 30, optimal_max: 70, penalty_above: 90, penalty_below: 10 }
       dist_50d_atr:      { source: "computed",      field: "dist_to_50d_atr", weight: 0.15, optimal_low: 0, optimal_high: 2, penalty_above: 5 }
-      room_to_resist:    { source: "computed",      field: "room_to_resist_atr", weight: 0.20, optimal_low: 1, optimal_high: 5 }
+      room_to_resist:    { source: "computed",      field: "room_to_resist_atr", weight: 0.15, optimal_low: 1, optimal_high: 5 }
+      volume_profile_pos: { source: "computed",     field: "volume_profile_pos", direction: "sweet", weight: 0.10, sweet_low: 0.3, sweet_high: 0.7, fallback: "skip" }
+
+  positioning:
+    weight: 0.10
+    horizon: "short_term"
+    description: "How smart money is positioned: short interest, institutional ownership, days-to-cover, insider holdings. Crowded shorts → squeeze potential; crowded longs → fade risk."
+    sub_metrics:
+      short_interest_chg:    { source: "computed", field: "short_interest_change_pct", direction: "lower",  weight: 0.25, fallback: "skip" }
+      short_interest_pct:    { source: "computed", field: "short_interest_pct_float", direction: "sweet",  weight: 0.20, sweet_low: 0.02, sweet_high: 0.15, penalty_above: 0.30, fallback: "skip" }
+      days_to_cover:         { source: "computed", field: "days_to_cover",  direction: "sweet", weight: 0.15, sweet_low: 1, sweet_high: 5, penalty_above: 10, fallback: "skip" }
+      institutional_pct:     { source: "computed", field: "institutional_pct",direction: "sweet", weight: 0.20, sweet_low: 0.30, sweet_high: 0.85, fallback: "skip" }
+      insider_pct:            { source: "computed", field: "insider_pct",    direction: "higher", weight: 0.10, fallback: "skip" }
+      net_flow_signal:        { source: "computed", field: "net_flow_signal", direction: "higher", weight: 0.10, fallback: "skip" }
 
   sentiment_catalyst:
-    weight: 0.25
-    description: "Real-time event awareness (Mike 2026-09-07 directive): news + institutional positioning + social sentiment + price/volume liquidity. Captures 'what's happening now,' not just price action."
+    weight: 0.10
+    horizon: "short_term"
+    description: "Real-time event awareness: news flow, sentiment, social. Captures 'what's happening now.'"
     sub_metrics:
-      # --- Price/volume liquidity (kept from previous stub) ---
       adv_usd_m:         { source: "computed",      field: "adv_usd_m",       direction: "higher", weight: 0.15, floor: 50 }
       volume_ratio:      { source: "computed",      field: "vol_5d_over_20d", direction: "sweet", weight: 0.10, sweet_low: 0.9, sweet_high: 1.5 }
-      # --- News (real-time event awareness) ---
       news_count_7d:     { source: "computed",      field: "news_count_7d",   direction: "higher", weight: 0.10, fallback: "skip" }
       news_sentiment:    { source: "computed",      field: "news_sentiment_avg", direction: "higher", weight: 0.20, fallback: "skip" }
-      # --- Institutional positioning (13F + ETF flows + short interest) ---
-      short_interest_chg: { source: "computed",     field: "short_interest_change_pct", direction: "lower", weight: 0.15, fallback: "skip" }
-      institutional_pct: { source: "computed",      field: "institutional_pct",direction: "sweet", weight: 0.10, sweet_low: 0.30, sweet_high: 0.85, fallback: "skip" }
-      # --- Social sentiment ---
       stocktwits_bullish: { source: "computed",     field: "stocktwits_bullish_pct", direction: "sweet", weight: 0.10, sweet_low: 0.20, sweet_high: 0.50, fallback: "skip" }
-      # --- Analyst target (legacy, kept) ---
+      stocktwits_volume:  { source: "computed",     field: "stocktwits_n",    direction: "sweet", weight: 0.05, sweet_low: 50, sweet_high: 500, penalty_above: 2000, fallback: "skip" }
       analyst_upside:    { source: "yfinance_info", field: "target_upside_pct",direction: "higher", weight: 0.10, fallback: "skip" }
+      event_window:      { source: "computed",      field: "event_window_score",direction: "higher", weight: 0.10, fallback: "skip" }
+
+  macro_regime:
+    weight: 0.09
+    horizon: "medium_term"
+    description: "Macro context (FRED-fed): regime classifier + bear-risk + sector fit. Differential weighting by sector beta: defensives rewarded in risk-off, cyclicals penalized."
+    sub_metrics:
+      macro_regime_score: { source: "computed",     field: "macro_regime_score", direction: "higher", weight: 0.25 }
+      bear_risk_score:    { source: "computed",     field: "bear_risk_score",    direction: "lower",  weight: 0.20 }
+      regime_confidence:  { source: "computed",     field: "regime_confidence",  direction: "higher", weight: 0.10 }
+      sector_fit:         { source: "computed",     field: "macro_sector_fit",   direction: "higher", weight: 0.30 }
+      credit_stress:      { source: "computed",     field: "credit_stress",      direction: "lower",  weight: 0.15 }
+
+  seasonality:
+    weight: 0.05
+    horizon: "short_term"
+    description: "Calendar effects — month-of-year drift, day-of-week drift, earnings-window drift. Modest weight; biases toward stocks that historically run in this calendar window."
+    sub_metrics:
+      month_of_year_drift: { source: "computed",   field: "month_of_year_drift", direction: "higher", weight: 0.50, fallback: "skip" }
+      earnings_window_drift: { source: "computed", field: "earnings_window_drift",direction: "higher", weight: 0.50, fallback: "skip" }

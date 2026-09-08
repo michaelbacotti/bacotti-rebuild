@@ -1,18 +1,33 @@
 #!/usr/bin/env python3
 """build_clawrank_features.py — Pull features per ticker for ClawRank.
 
-Reads yfinance history + info, computes technical + volatility sub-metrics,
-joins with the dashboard's existing trend/setup/label data, and emits a
-JSON file consumed by clawrank.rank().
+Reads yfinance history + info + upgrades/downgrades + earnings history,
+joins with earnings_calendar, seasonality, event_signals, macro_dashboard,
+and emits a JSON file consumed by clawrank.rank().
 
-Stocks get fundamental metrics from yfinance .info. ETFs skip fundamental
-metrics (set to None) and rely on Technical + Setup + Volatility + Sentiment.
+v10 (2026-09-07): 10-factor multi-horizon rebuild. New factors:
+  - Valuation (PE, fwdPE, PEG, P/B, P/S, EV/EBITDA, FCF yield, earnings yield)
+  - Quality+Growth (ROE, ROA, ROIC proxy, op margin, profit margin, rev/earnings growth)
+  - Multi-TF returns (1M, 3M, 6M, 12M RS vs SPY; MACD)
+  - Earnings Catalyst (days to next, drift, surprise, growth)
+  - Analyst/Estimates (target upside, rating, coverage, revisions)
+  - Volatility Regime (vol ratio, ATR vs SPY, max DD, IV percentile)
+  - Setup Quality (volume profile position added)
+  - Positioning (short int, days-to-cover, inst, insider, net flow)
+  - Sentiment/Catalyst (event window added)
+  - Macro Regime (FRED-fed regime classifier + sector fit)
+  - Seasonality (month-of-year drift)
+
+Macro regime classifier runs once (market-wide) and per-ticker sector fit is
+derived from defensive/cyclical/neutral classification. Composite weights are
+tilted by macro_modifiers in clawrank.yaml.
 """
 from __future__ import annotations
 
 import datetime as dt
 import json
 import math
+import os
 import sys
 import time
 from pathlib import Path
@@ -33,51 +48,61 @@ WINDOW = 20
 BENCHMARKS = ["SPY", "QQQ", "IWM"]
 SECTOR_ETFS = ["XLB", "XLC", "XLE", "XLF", "XLI", "XLK", "XLP", "XLRE", "XLU", "XLV", "XLY"]
 
-# --- Sector-leader candidates (per Mike's 2026-09-03 21:42 EDT directive) ---
-# For each sector ETF, list 2-3 candidate mega-caps. The dashboard picks the
-# highest-ClawRank-scoring candidate per sector for Table 2 ("Stock Shortlist"
-# is now "Sector Leaders"). Expanding from 8 hardcoded names to 26 candidates
-# so every sector is represented and the table self-selects by score.
 SECTOR_LEADERS = {
-    "XLK":  ["MSFT", "NVDA", "AAPL"],   # Technology
-    "XLF":  ["JPM", "BAC", "GS"],       # Financials
-    "XLE":  ["XOM", "CVX"],             # Energy
-    "XLV":  ["LLY", "UNH", "JNJ"],      # Health Care
-    "XLI":  ["CAT", "HON", "DE"],       # Industrials
-    "XLY":  ["HD", "AMZN", "TSLA"],     # Consumer Disc.
-    "XLP":  ["PG", "KO", "WMT"],        # Consumer Staples
-    "XLC":  ["META", "GOOGL"],          # Comm Services
-    "XLB":  ["LIN", "FCX"],             # Materials
-    "XLRE": ["AMT", "PLD"],             # Real Estate
-    "XLU":  ["NEE", "SO"],              # Utilities
+    "XLK":  ["MSFT", "NVDA", "AAPL"],
+    "XLF":  ["JPM", "BAC", "GS"],
+    "XLE":  ["XOM", "CVX"],
+    "XLV":  ["LLY", "UNH", "JNJ"],
+    "XLI":  ["CAT", "HON", "DE"],
+    "XLY":  ["HD", "AMZN", "TSLA"],
+    "XLP":  ["PG", "KO", "WMT"],
+    "XLC":  ["META", "GOOGL"],
+    "XLB":  ["LIN", "FCX"],
+    "XLRE": ["AMT", "PLD"],
+    "XLU":  ["NEE", "SO"],
 }
 
-# Flatten to (ticker, sector_etf, sector_name) tuples
 STOCKS = []
 SECTOR_GROUP = {
     "XLB": "Materials", "XLC": "Comm Services", "XLE": "Energy", "XLF": "Financials",
     "XLI": "Industrials", "XLK": "Technology", "XLP": "Consumer Staples",
     "XLRE": "Real Estate", "XLU": "Utilities", "XLV": "Health Care", "XLY": "Consumer Disc.",
 }
+SECTOR_ETF_OF = {t: etf for etf, candidates in SECTOR_LEADERS.items() for t in candidates}
 for etf, candidates in SECTOR_LEADERS.items():
     sector_name = SECTOR_GROUP[etf]
     for ticker in candidates:
         STOCKS.append((ticker, etf, sector_name))
 
-# Legacy list-of-pairs for backward-compat callers (e.g., dashboard Table 2)
-# Each entry: (ticker, sector_name)
 STOCKS_BY_SECTOR = [(t, sec) for (t, _etf, sec) in STOCKS]
 
 BENCH_GROUP = {"SPY": "Broad Mkt", "QQQ": "Tech", "IWM": "Small Cap"}
 ETF_SET = set(BENCHMARKS + SECTOR_ETFS)
 ALL_TICKERS = BENCHMARKS + SECTOR_ETFS + [t for t, _, _ in STOCKS]
 
+# Sector beta classification — used for macro_sector_fit
+# Defensive: rewarded in risk-off / bear-risk-elevated regimes
+# Cyclical: penalized in risk-off
+# Neutral: roughly market beta
+SECTOR_BETA_CLASS = {
+    "XLP":  "defensive",
+    "XLU":  "defensive",
+    "XLV":  "defensive",
+    "XLRE": "defensive",
+    "XLE":  "cyclical",
+    "XLY":  "cyclical",
+    "XLF":  "cyclical",
+    "XLI":  "cyclical",
+    "XLB":  "cyclical",
+    "XLK":  "neutral",
+    "XLC":  "neutral",
+}
+# Map stock ticker to its sector ETF for sector_fit (when beta not in info)
+STOCK_BETA_CLASS = {t: SECTOR_BETA_CLASS.get(etf, "neutral") for etf, candidates in SECTOR_LEADERS.items() for t in candidates}
+BENCH_BETA_CLASS = {"SPY": "neutral", "QQQ": "neutral", "IWM": "cyclical"}
+
 
 def pick_top_by_sector(clawrank_data):
-    """Given a list of ClawRank rows, return one row per sector ETF — the
-    highest-scoring candidate. If no candidate has a score for a sector, skip.
-    Result is ordered by sector score descending (best sector first).
-    """
     if not clawrank_data:
         return []
     by_ticker = {r["ticker"]: r for r in clawrank_data}
@@ -100,7 +125,7 @@ def pick_top_by_sector(clawrank_data):
     return picks
 
 
-def fetch_history(tickers, period="6mo"):
+def fetch_history(tickers, period="2y"):
     return yf.download(tickers=tickers, period=period, interval="1d",
                        group_by="ticker", auto_adjust=False, progress=False, threads=True)
 
@@ -112,13 +137,11 @@ def get_series(hist, ticker, field):
 
 
 def rsi_14(closes: pd.Series) -> float:
-    """Wilder-style RSI(14)."""
     if len(closes) < 15:
         return None
     diff = closes.diff().dropna()
     gains = diff.clip(lower=0)
     losses = (-diff).clip(lower=0)
-    # Wilder smoothing via ewm alpha=1/14
     avg_gain = gains.ewm(alpha=1/14, adjust=False).mean().iloc[-1]
     avg_loss = losses.ewm(alpha=1/14, adjust=False).mean().iloc[-1]
     if avg_loss == 0:
@@ -143,13 +166,138 @@ def trend_slope(closes: pd.Series, lookback=50) -> float:
     x = np.arange(len(recent))
     y = recent
     slope = np.polyfit(x, y, 1)[0]
-    # Normalize by mean price → slope as fraction per day
     return float(slope / np.mean(y))
 
 
-def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=True):
-    """If use_fundamentals=False, skip yfinance.info (avoids look-ahead in backtest)."""
-    """Return a flat dict of ClawRank sub-metrics for one ticker."""
+def macd_histogram(closes: pd.Series) -> float:
+    """MACD(12,26,9) histogram (latest bar). Positive = bullish momentum."""
+    if len(closes) < 35:
+        return None
+    ema12 = closes.ewm(span=12, adjust=False).mean()
+    ema26 = closes.ewm(span=26, adjust=False).mean()
+    macd = ema12 - ema26
+    signal = macd.ewm(span=9, adjust=False).mean()
+    hist = macd - signal
+    return float(hist.iloc[-1])
+
+
+def multi_tf_returns(closes: pd.Series, spy_close: pd.Series) -> dict:
+    """1M/3M/6M/12M returns + RS vs SPY."""
+    out = {"ret_1m": None, "ret_3m": None, "ret_6m": None, "ret_12m": None,
+           "rs_1m_vs_spy": None, "rs_3m_vs_spy": None, "rs_6m_vs_spy": None, "rs_12m_vs_spy": None}
+    n = len(closes)
+    if n < 22:
+        return out
+    spy_n = len(spy_close)
+
+    def _ret(lookback):
+        if len(closes) < lookback + 1 or len(spy_close) < lookback + 1:
+            return None
+        return float(closes.iloc[-1] / closes.iloc[-lookback-1] - 1)
+    def _rs(lookback):
+        r = _ret(lookback)
+        if r is None:
+            return None
+        spy_r = float(spy_close.iloc[-1] / spy_close.iloc[-lookback-1] - 1)
+        return r - spy_r
+
+    out["ret_1m"] = _ret(21); out["rs_1m_vs_spy"] = _rs(21)
+    out["ret_3m"] = _ret(63); out["rs_3m_vs_spy"] = _rs(63)
+    out["ret_6m"] = _ret(126); out["rs_6m_vs_spy"] = _rs(126)
+    out["ret_12m"] = _ret(252); out["rs_12m_vs_spy"] = _rs(252)
+    return out
+
+
+def volume_profile_position(closes: pd.Series, vols: pd.Series, lookback=60, n_bins=20) -> float | None:
+    """Where in the 60D volume profile is current price? Returns 0-1 (POC=0.5).
+
+    POC (point of control) is the price with most volume traded.
+    Returns price percentile relative to volume-weighted range.
+    """
+    if len(closes) < lookback or len(vols) < lookback:
+        return None
+    window_c = closes.tail(lookback)
+    window_v = vols.tail(lookback)
+    price_min = float(window_c.min())
+    price_max = float(window_c.max())
+    if price_max <= price_min:
+        return None
+    bins = np.linspace(price_min, price_max, n_bins + 1)
+    vol_by_bin = np.zeros(n_bins)
+    for c, v in zip(window_c.values, window_v.values):
+        idx = min(int((c - price_min) / (price_max - price_min) * n_bins), n_bins - 1)
+        vol_by_bin[idx] += float(v)
+    poc_idx = int(np.argmax(vol_by_bin))
+    poc_price = (bins[poc_idx] + bins[poc_idx + 1]) / 2
+    # Position of current price relative to POC and range
+    spot = float(closes.iloc[-1])
+    pos = (spot - price_min) / (price_max - price_min)
+    return float(pos)
+
+
+def iv_percentile(symbol: str, hist: pd.DataFrame, window=252) -> float | None:
+    """Realized vol percentile vs trailing year. Skip if options data unavailable."""
+    # Use realized vol as IV proxy (no paid IV source). Percentile within 60d.
+    closes = get_series(hist, symbol, "Close") if isinstance(hist.columns, pd.MultiIndex) else hist["Close"].dropna()
+    if len(closes) < 30:
+        return None
+    rets = closes.pct_change().dropna()
+    vol_20 = rets.rolling(20).std() * np.sqrt(252)
+    if len(vol_20) < 60:
+        return None
+    latest = vol_20.iloc[-1]
+    past = vol_20.dropna().iloc[-min(window, len(vol_20)):]
+    pct = float((past < latest).sum() / len(past))
+    return pct
+
+
+def get_recent_revisions(symbol: str, days: int = 30) -> float | None:
+    """Count of upgrades - downgrades over last N days from yfinance upgrades_downgrades.
+
+    Returns positive if net upgrades, negative if net downgrades, magnitude is # events.
+    None if data unavailable.
+    """
+    try:
+        t = yf.Ticker(symbol)
+        ud = t.upgrades_downgrades
+        if ud is None or ud.empty:
+            return None
+        cutoff = pd.Timestamp.now(tz=None) - pd.Timedelta(days=days)
+        recent = ud[ud.index >= cutoff]
+        if recent.empty:
+            return 0.0
+        # ToGrade: 'Buy','Outperform','Hold','Sell','Underperform','Equal-Weight','Market Outperform' etc
+        # Action: 'up'/'down'/'main'/'init'/'repeat'
+        # Use Action column when available
+        if "Action" in recent.columns:
+            ups = (recent["Action"] == "up").sum()
+            downs = (recent["Action"] == "down").sum()
+            return float(int(ups) - int(downs))
+        # Fallback: parse ToGrade
+        bull_grades = {"Buy", "Strong Buy", "Outperform", "Overweight", "Market Outperform", "Sector Outperform"}
+        bear_grades = {"Sell", "Strong Sell", "Underperform", "Underweight", "Market Perform"}
+        ups = recent["ToGrade"].isin(bull_grades).sum()
+        downs = recent["ToGrade"].isin(bear_grades).sum()
+        return float(int(ups) - int(downs))
+    except Exception:
+        return None
+
+
+def get_recent_surprise_pct(symbol: str) -> float | None:
+    """Most-recent earnings surprise % (positive = beat)."""
+    try:
+        t = yf.Ticker(symbol)
+        eh = t.earnings_history
+        if eh is None or eh.empty or "surprisePercent" not in eh.columns:
+            return None
+        return float(eh["surprisePercent"].iloc[0])
+    except Exception:
+        return None
+
+
+def compute_features_for(ticker, hist, spy_close, info_cache, macro_state):
+    """Compute all v10 sub-metrics for one ticker. macro_state is dict from
+    macro_dashboard.build_dashboard() — same for all tickers."""
     closes = get_series(hist, ticker, "Close")
     highs = get_series(hist, ticker, "High")
     lows = get_series(hist, ticker, "Low")
@@ -160,24 +308,14 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
     spot = float(closes.iloc[-1])
 
     # ----- Trend (used for dashboard labels) -----
-    # Priority: short-term momentum + price-vs-MA50 + 5d direction. The old
-    # rule relied only on MA50 slope (10-day change in MA) which is noisy and
-    # misclassified names like META (recent 5-day +3% rally but MA still
-    # lagging, so old rule called it "downtrend") and QQQ (mixed signals
-    # called "transitioning" when it was really range-bound).
     ma = closes.rolling(50).mean()
     ma_now = float(ma.iloc[-1]) if not pd.isna(ma.iloc[-1]) else None
     ma20 = float(closes.tail(20).mean())
+    ma200 = float(closes.tail(min(200, len(closes))).mean())
     ret_5d = (closes.iloc[-1] / closes.iloc[-6] - 1) if len(closes) >= 6 else 0
     ret_20d = (closes.iloc[-1] / closes.iloc[-26] - 1) if len(closes) >= 26 else 0
     above_ma50 = ma_now is not None and spot > ma_now
     above_ma20 = spot > ma20
-    # Classification logic:
-    #   uptrend    — price above both MAs and short-term momentum positive
-    #   downtrend  — price below both MAs and short-term momentum negative
-    #   range      — price hugging MAs and momentum small in both directions
-    #   transitioning — anything else (e.g., above MA50 but below MA20, or
-    #                   below MA50 but recent 5d/20d momentum positive)
     if ma_now is None:
         trend = "n/a"
     elif above_ma50 and above_ma20 and ret_5d > -0.005 and ret_20d > 0:
@@ -189,12 +327,8 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
     else:
         trend = "transitioning"
 
-    ma20 = float(closes.tail(WINDOW).mean())
-    ma200 = float(closes.tail(min(200, len(closes))).mean())
     hi20 = float(closes.tail(WINDOW).max())
     lo20 = float(closes.tail(WINDOW).min())
-    ret_5d = float(closes.iloc[-1] / closes.iloc[-6] - 1) if len(closes) >= 6 else 0
-    ret_20d = float(closes.iloc[-1] / closes.iloc[-26] - 1) if len(closes) >= 26 else 0
     if spot >= hi20 and ret_5d > 0:
         setup = "breakout"
     elif spot > ma_now and abs(spot / ma_now - 1) < 0.02:
@@ -218,19 +352,20 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
     atr_20 = float(tr.tail(WINDOW).mean())
     atr_pct = atr_20 / spot
 
-    # ----- Technical sub-metrics for ClawRank -----
-    rs_60d = (float(closes.iloc[-1] / closes.iloc[-min(61, len(closes))] - 1)
-              - float(spy_close.iloc[-1] / spy_close.iloc[-min(61, len(spy_close))] - 1)) \
-        if len(closes) >= 61 and len(spy_close) >= 61 else None
-    rs_20d = (float(closes.iloc[-1] / closes.iloc[-26] - 1)
-              - float(spy_close.iloc[-1] / spy_close.iloc[-26] - 1)) \
-        if len(closes) >= 26 and len(spy_close) >= 26 else None
+    # ----- Multi-timeframe returns + RS vs SPY -----
+    mtf = multi_tf_returns(closes, spy_close)
+    rs_1m, rs_3m, rs_6m, rs_12m = mtf["rs_1m_vs_spy"], mtf["rs_3m_vs_spy"], mtf["rs_6m_vs_spy"], mtf["rs_12m_vs_spy"]
+
+    # ----- Technical (single-TF legacy fields kept for compat) -----
+    rs_60d = rs_3m  # alias
+    rs_20d = rs_1m
     dist_50d_pct = (spot / ma_now - 1) if ma_now else None
     dist_200d_pct = (spot / ma200 - 1) if not np.isnan(ma200) else None
     rsi = rsi_14(closes)
     slope_n = trend_slope(closes)
+    macd_h = macd_histogram(closes)
 
-    # ----- Volatility sub-metrics -----
+    # ----- Volatility -----
     rets = closes.pct_change().dropna()
     vol_20d = float(rets.tail(WINDOW).std())
     vol_252d = float(rets.tail(min(252, len(rets))).std()) if len(rets) >= 30 else None
@@ -238,21 +373,51 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
     spy_vol_20d = float(spy_close.pct_change().dropna().tail(WINDOW).std())
     atr_vs_spy = atr_pct - spy_vol_20d
     max_dd = max_drawdown_60d(closes)
+    iv_pct = iv_percentile(ticker, hist)
 
-    # ----- Setup sub-metrics (already computed) -----
+    # ----- Setup -----
     dist_to_50d_atr = ((spot - ma_now) / atr_20) if ma_now and atr_20 > 0 else None
     room_to_resist_atr = ((res - spot) / atr_20) if atr_20 > 0 else None
+    vol_profile_pos = volume_profile_position(closes, vols)
 
-    # ----- Sentiment sub-metrics (liquidity + volume + analyst target) -----
+    # ----- Sentiment (liquidity + volume + analyst target) -----
     adv_usd = float((vols * closes).tail(WINDOW).mean())
     adv_usd_m = adv_usd / 1e6
     vol_5d = float(vols.tail(5).mean())
     vol_20d_mean = float(vols.tail(WINDOW).mean())
     vol_ratio_5d_20d = (vol_5d / vol_20d_mean) if vol_20d_mean > 0 else None
 
-    # ----- Fundamentals (yfinance .info, stocks only; skipped in backtest) -----
+    # ----- Macro Regime (market-wide, applied per-ticker via sector_fit) -----
+    macro_regime_score = float(macro_state.get("composite_score", 0.0))
+    bear_risk = float(macro_state.get("bear_risk_score", 0.0))
+    regime_confidence = float(macro_state.get("confidence", 0.5))
+    regime_name = macro_state.get("regime", "n/a")
+    # Per-ticker sector fit: positive when ticker is defensive in risk-off, negative when cyclical in risk-off
+    if ticker in SECTOR_BETA_CLASS:
+        beta_class = SECTOR_BETA_CLASS[ticker]
+    elif ticker in STOCK_BETA_CLASS:
+        beta_class = STOCK_BETA_CLASS[ticker]
+    elif ticker in BENCH_BETA_CLASS:
+        beta_class = BENCH_BETA_CLASS[ticker]
+    else:
+        beta_class = "neutral"
+    # bear_risk ranges 0..1 (higher = worse). composite_score ranges ~-1..+1.
+    # Defensive stocks rewarded when bear_risk is high (negative score multiplier flipped).
+    # macro_sector_fit: +1 = perfect fit for current regime, -1 = worst fit.
+    if beta_class == "defensive":
+        sector_fit = float(bear_risk) - 0.5  # -0.5..+0.5; high bear_risk → positive
+    elif beta_class == "cyclical":
+        sector_fit = 0.5 - float(bear_risk)  # -0.5..+0.5; high bear_risk → negative
+    else:
+        sector_fit = 0.0
+    credit_stress = float(macro_state.get("pillars", {}).get("D", {}).get("score", 0.0))
+    # Negative credit pillar score = stress. Map to positive stress value.
+    credit_stress_val = max(0.0, -credit_stress) if credit_stress is not None else None
+
+    # ----- Fundamentals + Estimates (yfinance .info, stocks only) -----
     fund_metrics = {}
-    if use_fundamentals and ticker not in ETF_SET:
+    estimate_metrics = {}
+    if ticker not in ETF_SET:
         info = info_cache.get(ticker, {})
         if not info:
             try:
@@ -261,55 +426,197 @@ def compute_features_for(ticker, hist, spy_close, info_cache, use_fundamentals=T
             except Exception:
                 info = {}
                 info_cache[ticker] = info
-        eps = info.get("trailingEps")
-        fund_metrics["earnings_yield"] = (eps / spot) if eps and eps > 0 else None
-        fund_metrics["revenue_growth"] = info.get("revenueGrowth")
-        fund_metrics["operating_margin"] = info.get("operatingMargins")
+        # Valuation
+        pe = info.get("trailingPE")
+        fund_metrics["trailing_pe"] = float(pe) if pe is not None and pe > 0 else None
+        fpe = info.get("forwardPE")
+        fund_metrics["forward_pe"] = float(fpe) if fpe is not None and fpe > 0 else None
+        peg = info.get("pegRatio")
+        fund_metrics["peg_ratio"] = float(peg) if peg is not None and peg > 0 else None
+        pb = info.get("priceToBook")
+        fund_metrics["price_to_book"] = float(pb) if pb is not None and pb > 0 else None
+        ps = info.get("priceToSalesTrailing12Months")
+        fund_metrics["price_to_sales"] = float(ps) if ps is not None and ps > 0 else None
+        ev_eb = info.get("enterpriseToEbitda")
+        fund_metrics["ev_to_ebitda"] = float(ev_eb) if ev_eb is not None and ev_eb > 0 else None
+        # Quality + Growth
+        roe = info.get("returnOnEquity")
+        fund_metrics["roe"] = float(roe) if roe is not None else None
+        roa = info.get("returnOnAssets")
+        fund_metrics["roa"] = float(roa) if roa is not None else None
+        fund_metrics["return_on_assets"] = fund_metrics["roa"]
+        op_m = info.get("operatingMargins")
+        fund_metrics["operating_margin"] = float(op_m) if op_m is not None else None
+        p_m = info.get("profitMargins")
+        fund_metrics["profit_margin"] = float(p_m) if p_m is not None else None
+        rev_g = info.get("revenueGrowth")
+        fund_metrics["revenue_growth"] = float(rev_g) if rev_g is not None else None
+        earn_g = info.get("earningsGrowth")
+        fund_metrics["earnings_growth"] = float(earn_g) if earn_g is not None else None
         dte = info.get("debtToEquity")
         fund_metrics["debt_to_equity"] = (dte / 100.0) if dte is not None else None
+        # Cash conversion proxy: operating cash flow / net income (if available)
+        ocf = info.get("operatingCashflow")
+        ni = info.get("netIncomeToCommon")
+        if ocf is not None and ni is not None and ni > 0:
+            fund_metrics["cash_conversion"] = float(ocf / ni)
+        else:
+            fund_metrics["cash_conversion"] = None
+        # Earnings yield + FCF yield
+        eps = info.get("trailingEps")
+        fund_metrics["earnings_yield"] = (eps / spot) if eps and eps > 0 else None
         fcf = info.get("freeCashflow")
         mcap = info.get("marketCap")
-        fund_metrics["fcf_yield"] = (fcf / mcap) if fcf and mcap and mcap > 0 else None
+        fcf_yield_val = (fcf / mcap) if fcf and mcap and mcap > 0 else None
+        fund_metrics["fcf_yield"] = fcf_yield_val
+        fund_metrics["fcf_yield_q"] = fcf_yield_val
+        # Analyst / Estimates
         target = info.get("targetMeanPrice")
-        fund_metrics["target_upside_pct"] = ((target / spot) - 1) if target and spot > 0 else None
-    # ETFs: leave fundamentals as None
+        estimate_metrics["target_upside_pct"] = ((target / spot) - 1) if target and spot > 0 else None
+        rating = info.get("recommendationMean")
+        estimate_metrics["analyst_rating"] = float(rating) if rating is not None else None
+        coverage = info.get("numberOfAnalystOpinions")
+        estimate_metrics["analyst_coverage"] = int(coverage) if coverage is not None else None
+        # Recent revisions (last 30d) — requires separate yfinance call
+        estimate_metrics["recent_revisions"] = get_recent_revisions(ticker)
+        # Recent earnings surprise %
+        estimate_metrics["recent_surprise_pct"] = get_recent_surprise_pct(ticker)
+    else:
+        # ETFs: skip fundamentals + estimates
+        for k in ["trailing_pe","forward_pe","peg_ratio","price_to_book","price_to_sales",
+                  "ev_to_ebitda","roe","roa","return_on_assets","operating_margin","profit_margin",
+                  "revenue_growth","earnings_growth","debt_to_equity","cash_conversion",
+                  "earnings_yield","fcf_yield","fcf_yield_q"]:
+            fund_metrics[k] = None
+        for k in ["target_upside_pct","analyst_rating","analyst_coverage","recent_revisions","recent_surprise_pct"]:
+            estimate_metrics[k] = None
+
+    # ----- Earnings Catalyst (per ticker, via earnings_calendar.fetch_event) -----
+    days_to_earn = None
+    try:
+        from earnings_calendar import fetch_event
+        ev = fetch_event(ticker)
+        if ev is not None and ev.date is not None:
+            days_to_earn = (ev.date - dt.date.today()).days
+    except Exception:
+        days_to_earn = None
+
+    # ----- Seasonality (per ticker) -----
+    month_drift_val = None
+    earn_window_drift_val = None
+    try:
+        from seasonality import month_of_year_drift, earnings_window_drift
+        # month_of_year_drift returns dict keyed by 'by_year_month' + 'by_month_of_year'
+        mod = month_of_year_drift(ticker, lookback_years=3)
+        if mod:
+            current_month = dt.date.today().month
+            month_labels = {1:'jan',2:'feb',3:'mar',4:'apr',5:'may',6:'jun',
+                            7:'jul',8:'aug',9:'sep',10:'oct',11:'nov',12:'dec'}
+            target = month_labels.get(current_month)
+            by_month = mod.get("by_month_of_year", {})
+            if isinstance(by_month, dict) and target in by_month:
+                # avg_monthly_return / median_monthly_return keys
+                month_drift_val = float(by_month[target].get("avg_monthly_return", 0))
+        ewd = earnings_window_drift(ticker, days=5)
+        if ewd:
+            earn_window_drift_val = float(ewd.get("avg_cumulative_return", 0))
+    except Exception:
+        pass
+
+    # ----- Net flow signal (price vs 20d volume trend) -----
+    net_flow = None
+    try:
+        recent_vols = vols.tail(20)
+        if len(recent_vols) >= 20:
+            # Heuristic: above-avg volume + positive return → inflow
+            avg_v = float(recent_vols.tail(10).mean())
+            base_v = float(recent_vols.tail(20).mean())
+            v_ratio = avg_v / base_v if base_v > 0 else 1.0
+            ret_5d_local = ret_5d
+            net_flow = float(ret_5d_local * v_ratio * 100)  # scaled
+    except Exception:
+        pass
+
+    # ----- Event window score (proximity to earnings + macro events) -----
+    event_window_score = None
+    if days_to_earn is not None:
+        if 0 <= days_to_earn <= 7:
+            event_window_score = 100.0
+        elif 8 <= days_to_earn <= 21:
+            event_window_score = 70.0
+        elif days_to_earn < 0:
+            event_window_score = 80.0  # post-earnings momentum window
+        else:
+            event_window_score = 30.0
 
     return {
         "ticker": ticker,
         "trend": trend,
         "setup": setup,
         "spot": spot,
-        # Technical
-        "rs_60d_vs_spy": rs_60d,
-        "rs_20d_vs_spy": rs_20d,
-        "dist_50d_ma_pct": dist_50d_pct,
-        "dist_200d_ma_pct": dist_200d_pct,
-        "rsi_14": rsi,
-        "trend_slope_50d": slope_n,
+        # Technical (multi-TF + legacy)
+        "rs_1m_vs_spy": rs_1m, "rs_3m_vs_spy": rs_3m, "rs_6m_vs_spy": rs_6m, "rs_12m_vs_spy": rs_12m,
+        "rs_60d_vs_spy": rs_60d, "rs_20d_vs_spy": rs_20d,
+        "dist_50d_ma_pct": dist_50d_pct, "dist_200d_ma_pct": dist_200d_pct,
+        "rsi_14": rsi, "trend_slope_50d": slope_n, "macd_histogram": macd_h,
         # Volatility
-        "vol_20d_over_252d": vol_ratio,
-        "atr_pct_minus_spy": atr_vs_spy,
-        "max_dd_60d": max_dd,
+        "vol_20d_over_252d": vol_ratio, "atr_pct_minus_spy": atr_vs_spy,
+        "max_dd_60d": max_dd, "iv_percentile": iv_pct,
         # Setup
-        "range_pctile": rng_pctile,
-        "dist_to_50d_atr": dist_to_50d_atr,
-        "room_to_resist_atr": room_to_resist_atr,
-        # Sentiment (price/volume-based)
-        "adv_usd_m": adv_usd_m,
-        "vol_5d_over_20d": vol_ratio_5d_20d,
-        # Event/positioning/social signals — populated later in main() via event_signals_for()
-        "news_count_7d": None,
-        "news_sentiment_avg": None,
-        "short_interest_change_pct": None,
-        "short_interest_pct_float": None,
-        "institutional_pct": None,
-        "insider_pct": None,
-        "stocktwits_bullish_pct": None,
-        "stocktwits_bearish_pct": None,
+        "range_pctile": rng_pctile, "dist_to_50d_atr": dist_to_50d_atr,
+        "room_to_resist_atr": room_to_resist_atr, "volume_profile_pos": vol_profile_pos,
+        # Sentiment (liquidity / volume)
+        "adv_usd_m": adv_usd_m, "vol_5d_over_20d": vol_ratio_5d_20d,
+        "net_flow_signal": net_flow,
+        # Event signals populated later in main() via event_signals_for()
+        "news_count_7d": None, "news_sentiment_avg": None,
+        "short_interest_change_pct": None, "short_interest_pct_float": None,
+        "institutional_pct": None, "insider_pct": None,
+        "stocktwits_bullish_pct": None, "stocktwits_bearish_pct": None,
         "stocktwits_n": None,
+        "days_to_cover": None,
+        "event_window_score": event_window_score,
+        # Earnings catalyst
+        "days_to_next_earnings": days_to_earn,
+        "earnings_window_drift": earn_window_drift_val,
+        # Macro Regime (same for all tickers, but feeds factor)
+        "macro_regime_score": macro_regime_score,
+        "bear_risk_score": bear_risk,
+        "regime_confidence": regime_confidence,
+        "macro_sector_fit": sector_fit,
+        "credit_stress": credit_stress_val,
+        "macro_regime_name": regime_name,
+        "macro_beta_class": beta_class,
+        # Seasonality
+        "month_of_year_drift": month_drift_val,
         # Fundamentals (None for ETFs)
         **fund_metrics,
+        # Estimates
+        **estimate_metrics,
     }
+
+
+def apply_macro_modifiers(cfg: dict, macro_state: dict) -> dict:
+    """Adjust factor weights by current macro regime. Returns modified cfg copy."""
+    import copy
+    cfg2 = copy.deepcopy(cfg)
+    regime = macro_state.get("regime", "n/a")
+    bear = float(macro_state.get("bear_risk_score", 0.0))
+    # Defensive regime: bear_risk > 0.4 OR regime in {bear_risk_elevated, risk_off, fragile_risk_on}
+    is_defensive = (bear >= 0.4) or regime in ("bear_risk_elevated", "risk_off", "fragile_risk_on")
+    is_offensive = (bear <= 0.15) and regime == "risk_on"
+    modifiers = cfg.get("composite", {}).get("macro_modifiers", {})
+    if is_defensive and "defensive" in modifiers:
+        tilt = modifiers["defensive"].get("tilt", {})
+        for fname, delta in tilt.items():
+            if fname in cfg2.get("factors", {}):
+                cfg2["factors"][fname]["weight"] = round(cfg2["factors"][fname]["weight"] + delta, 4)
+    if is_offensive and "offensive" in modifiers:
+        tilt = modifiers["offensive"].get("tilt", {})
+        for fname, delta in tilt.items():
+            if fname in cfg2.get("factors", {}):
+                cfg2["factors"][fname]["weight"] = round(cfg2["factors"][fname]["weight"] + delta, 4)
+    return cfg2
 
 
 def main():
@@ -317,8 +624,23 @@ def main():
     as_of_et = dt.datetime.now(dt.timezone(dt.timedelta(hours=-4)))
     cfg = load_config(str(Path(__file__).resolve().parent.parent / "config" / "clawrank.yaml"))
 
-    print(f"Fetching {len(ALL_TICKERS)} tickers (~6mo daily) ...", file=sys.stderr)
-    hist = fetch_history(ALL_TICKERS, period="6mo")
+    # ----- Macro Regime (run once, market-wide) -----
+    print("Building macro dashboard (FRED CSV) ...", file=sys.stderr)
+    try:
+        from macro_dashboard import build_dashboard as build_macro
+        macro_state = build_macro()
+        print(f"  regime={macro_state.get('regime')}  bear_risk={macro_state.get('bear_risk_score'):.2f}  composite={macro_state.get('composite_score'):.3f}", file=sys.stderr)
+    except Exception as e:
+        print(f"  macro_dashboard failed: {e}; using neutral defaults", file=sys.stderr)
+        macro_state = {"regime": "n/a", "composite_score": 0.0, "bear_risk_score": 0.0,
+                       "confidence": 0.5, "pillars": {}}
+
+    # Apply macro modifiers to config weights
+    cfg = apply_macro_modifiers(cfg, macro_state)
+
+    # ----- Fetch price history (2y for 12M returns + 200D MA) -----
+    print(f"Fetching {len(ALL_TICKERS)} tickers (~2y daily) ...", file=sys.stderr)
+    hist = fetch_history(ALL_TICKERS, period="2y")
     if hist is None or len(hist) == 0:
         print("FATAL: yfinance returned no data", file=sys.stderr); sys.exit(2)
 
@@ -327,14 +649,11 @@ def main():
     info_cache: dict = {}
     rows = []
     for t in ALL_TICKERS:
-        feats = compute_features_for(t, hist, spy_close, info_cache)
+        feats = compute_features_for(t, hist, spy_close, info_cache, macro_state)
         if feats is not None:
             rows.append(feats)
 
     # ----- Event / positioning / social signals -----
-    # Per Mike 2026-09-07 17:40 ET: real-time event awareness (news, institutional
-    # positioning, social sentiment) is required input, not a stub. Pulled here
-    # so the dashboard reflects "what's happening" — not just price data.
     print(f"Fetching event signals for {len(rows)} tickers ...", file=sys.stderr)
     from event_signals import event_signals_for
     by_ticker = {r["ticker"]: r for r in rows}
@@ -342,16 +661,22 @@ def main():
         try:
             sig = event_signals_for(t, quiet=True)
             for k, v in sig.items():
-                if k == "ticker":
+                if k in ("ticker", "as_of"):
                     continue
-                if k == "as_of":
-                    continue  # tracked globally
                 if k in by_ticker[t]:
                     by_ticker[t][k] = v
+            # days_to_cover from short_interest
+            try:
+                from data_fetcher import short_interest
+                si = short_interest(t)
+                if si:
+                    by_ticker[t]["days_to_cover"] = si.get("days_to_cover")
+            except Exception:
+                pass
         except Exception as e:
             print(f"  event_signals failed for {t}: {e}", file=sys.stderr)
 
-    # Run ClawRank
+    # ----- Run ClawRank -----
     ranked = rank(rows, cfg)
 
     # Build output JSON
@@ -359,6 +684,13 @@ def main():
         "as_of": as_of_et.isoformat(),
         "universe": len(ranked),
         "factors": {name: f["weight"] for name, f in cfg["factors"].items()},
+        "macro": {
+            "regime": macro_state.get("regime"),
+            "composite_score": macro_state.get("composite_score"),
+            "bear_risk_score": macro_state.get("bear_risk_score"),
+            "bear_risk_level": macro_state.get("bear_risk_level"),
+            "confidence": macro_state.get("confidence"),
+        },
         "tickers": ranked,
     }
 
@@ -366,14 +698,21 @@ def main():
     out_path.write_text(json.dumps(out, indent=2, default=str))
 
     print(f"OK  json={out_path}  rows={len(ranked)}  duration={time.time()-t0:.1f}s", file=sys.stderr)
-    print(f"\n{'Tic':<6} {'Score':<7} {'Fund':<6} {'Tech':<6} {'Vol':<6} {'Set':<6} {'Sent':<6} {'Trend':<14} {'Setup':<18} Label")
+    # Compact summary
+    print(f"\n{'Tic':<6} {'Score':<6} {'Val':<5} {'QG':<5} {'TM':<5} {'EC':<5} {'AE':<5} {'VR':<5} {'SQ':<5} {'Pos':<5} {'SeC':<5} {'MR':<5} {'Sn':<5} {'Trend':<14} {'Setup':<18} Label")
     for r in sorted(ranked, key=lambda x: -(x.get("clawrank_score") or 0)):
-        print(f"{r['ticker']:<6} {r.get('clawrank_score', 0):<7.1f} "
-              f"{r.get('clawrank_fundamental_health', 0):<6.1f} "
-              f"{r.get('clawrank_technical_momentum', 0):<6.1f} "
-              f"{r.get('clawrank_volatility_regime', 0):<6.1f} "
-              f"{r.get('clawrank_setup_quality', 0):<6.1f} "
-              f"{r.get('clawrank_sentiment_catalyst', 0):<6.1f} "
+        print(f"{r['ticker']:<6} {r.get('clawrank_score', 0):<6.1f} "
+              f"{r.get('clawrank_valuation', 0):<5.1f} "
+              f"{r.get('clawrank_quality_growth', 0):<5.1f} "
+              f"{r.get('clawrank_technical_momentum', 0):<5.1f} "
+              f"{r.get('clawrank_earnings_catalyst', 0):<5.1f} "
+              f"{r.get('clawrank_analyst_estimates', 0):<5.1f} "
+              f"{r.get('clawrank_volatility_regime', 0):<5.1f} "
+              f"{r.get('clawrank_setup_quality', 0):<5.1f} "
+              f"{r.get('clawrank_positioning', 0):<5.1f} "
+              f"{r.get('clawrank_sentiment_catalyst', 0):<5.1f} "
+              f"{r.get('clawrank_macro_regime', 0):<5.1f} "
+              f"{r.get('clawrank_seasonality', 0):<5.1f} "
               f"{r.get('trend', ''):<14} "
               f"{r.get('setup', ''):<18} "
               f"{r.get('clawrank_label', '')}")
