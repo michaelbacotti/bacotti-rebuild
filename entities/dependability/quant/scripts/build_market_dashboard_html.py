@@ -38,7 +38,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v13"
+BUILD_VERSION = "v14"
 
 PAL = {
     "bg":     "#0d1117", "surface":  "#161b22", "surface2": "#21262d",
@@ -802,17 +802,20 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
         # ClawRank score (always available now — v12 scores watchlist tickers too)
         cr_score = clawrank_by_ticker.get(sym, {}).get("clawrank_score")
         cr_label = clawrank_by_ticker.get(sym, {}).get("clawrank_label", "")
+        cr_trend = clawrank_by_ticker.get(sym, {}).get("trend") or "n/a"
+        cr_setup = clawrank_by_ticker.get(sym, {}).get("setup") or "n/a"
         if cr_score is not None:
-            # Label color by tier
-            if cr_label == "Research candidate":
-                cr_pill_class = "prob-good"
-            elif cr_label == "Watchlist":
-                cr_pill_class = "prob-mid"
-            else:  # "Avoid"
-                cr_pill_class = "prob-low"
-            cr_text = f"<span class='prob-badge {cr_pill_class}'>{cr_score:.0f}</span><span class='cr-label'>{cr_label}</span>"
+            # Build factors dict from clawrank_by_ticker (rank() emits per-factor 0-100 scores)
+            factors = {k.replace("clawrank_", ""): clawrank_by_ticker[sym].get(k) for k in (
+                "clawrank_valuation", "clawrank_quality_growth",
+                "clawrank_technical_momentum", "clawrank_earnings_catalyst",
+                "clawrank_analyst_estimates", "clawrank_volatility_regime",
+                "clawrank_setup_quality", "clawrank_positioning",
+                "clawrank_sentiment_catalyst", "clawrank_macro_regime",
+                "clawrank_seasonality")}
+            cr_text = score_cell_with_popover(cr_score, cr_label, factors, cr_trend, cr_setup, kr=clawrank_by_ticker[sym])
         else:
-            cr_text = "<span style='color:var(--muted)'>—</span>"
+            cr_text = '<span style="color:var(--muted)">—</span>'
 
         rows_html.append(f"""
         <tr>
