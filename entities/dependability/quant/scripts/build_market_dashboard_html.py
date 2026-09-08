@@ -821,7 +821,7 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
         rows_html.append(f"""
         <tr>
           <td class="ticker-cell">{sym}</td>
-          <td>{cr_text}</td>
+          {cr_text}
           <td data-val="{spot or 0:.2f}" class="{spot_vs_ref_class}">{spot_text}<br><span style="font-size:10px;color:var(--muted)">{spot_vs_ref_text}</span></td>
           <td data-val="{ref:.2f}">${ref:,.2f}</td>
           <td data-val="{target:.2f}">${target:,.2f}<br><span class="{upside_class}" style="font-size:10px">{upside_text}</span></td>

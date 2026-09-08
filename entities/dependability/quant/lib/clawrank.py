@@ -160,8 +160,10 @@ def score_submetric(values: List[Any], spec: Dict[str, Any]) -> List[Optional[fl
                                      penalty_below=spec.get("penalty_below"),
                                      penalty_above=spec.get("penalty_above")) for v in values]
     if spec.get("direction") == "higher" or spec.get("direction") == "lower":
-        # Raw cross-section values; convert to 0-100 via percentile rank
-        return [float(v) if v is not None else None for v in values]
+        # Convert raw cross-section values to 0-100 via percentile rank so the
+        # weighted average inside compute_factor() is on a uniform scale.
+        # (Without this step we'd be averaging PE ratios with RS deltas etc.)
+        return _percentile_rank([float(v) if v is not None else 0.0 for v in values])
     return list(values)
 
 
@@ -196,8 +198,11 @@ def compute_factor(submetric_scores: Dict[str, List[Optional[float]]],
         else:
             factor_scores.append(score_total / w_total)
 
-    # Cross-section: convert factor scores to 0-100 via percentile rank
-    return _percentile_rank(factor_scores)
+    # Note: factor_scores are the weighted average of sub-metric 0-100 scores
+    # on a true 0-100 scale (no percentile-rank cross-section normalization here).
+    # This is what the dashboard reports as `clawrank_<factor>` and what
+    # composite() weighted-averages below to produce the final score.
+    return factor_scores
 
 
 # ----------------------------- composite -----------------------------
@@ -216,7 +221,11 @@ def composite(factor_scores: Dict[str, List[float]],
             raw.append(50.0)
         else:
             raw.append(sum(factor_weights.get(name, 0.0) * factor_scores[name][i] for name in names) / total_w)
-    return _percentile_rank(raw)
+    # Note: raw is the weighted average of factor 0-100 scores on a true 0-100
+    # scale. No percentile-rank cross-section normalization — that would mask
+    # a poorly-balanced stock behind a top-of-cross-section rank. The dashboard
+    # surfaces this directly as `clawrank_score`.
+    return raw
 
 
 def label_from(final_scores: List[float], trends: List[str], setups: List[str],

@@ -237,3 +237,71 @@ Report back to Mike with:
   `build_market_dashboard_html.py` now writes both `reports/YYYY-MM-DD-market-dashboard.html`
   (archive) and `reports/market-dashboard.html` (always-latest canonical). Title
   includes `(vN)` version badge; `BUILD_VERSION` constant in build script.
+
+- 2026-09-08 v4 — universe expansion 42 → 518 (Mike directive "Are you only
+  considering 42 stocks??"). Dynamic universe via `scripts/universe_loader.py`
+  + `config/universe.json` (503 SP500 + 93 NASDAQ-100 + 10 VTWO proxy).
+  Sector Leaders now returns top 3 per sector (was top 1 — caused NEE-as-XLU-leader
+  artifact when only 2 candidates). Caching layers: parquet price (1d),
+  sector map (30d), yfinance .info (7d).
+
+- 2026-09-08 v5 — **scoring methodology fix (Mike directive)**.
+  Bug: `lib/clawrank.py` percentile-ranked factor scores and final composite,
+  so score=100 just meant rank #1 of cross-section (e.g. MU score=100 with
+  Val=18.6). Fix: `score_submetric` now converts raw cross-section values to
+  0-100 via percentile rank BEFORE the weighted average. `compute_factor`
+  and `composite` no longer percentile-rank the result — score is now the
+  true weighted average of sub-metric 0-100 scores. New score range is
+  roughly 33-71 (was 0-100). MU 100 → 71.3. AB 100 → 49.
+
+- 2026-09-08 v5.1 — **watchlist HTML column bug fix**.
+  `build_market_dashboard_html.py:824` wrapped `cr_text` (which already
+  contains a complete `<td class="score-cell" ...>`) in another `<td>...</td>`,
+  creating nested `<td>` tags. Fixed: row now uses `{cr_text}` directly.
+  Verified: `grep -c '<td><td class="score-cell"' reports/market-dashboard.html`
+  = 0 after rebuild (was 6).
+
+## Deploy procedure (v5.1+)
+
+**Canonical path** (use this for both content-only refreshes and full deploys):
+
+```bash
+cd /Users/mike/.openclaw/workspace-bacottibot/entities/dependability/quant/projects/market-dashboard
+source /Users/mike/.openclaw/workspace-bacottibot/.openclaw/tmp/cf-token.env
+export CLOUDFLARE_ACCOUNT_ID="56d1b3ebac9ac0438cab8077a1e9a993"
+wrangler pages deploy ./public --project-name=dependability-dashboard
+```
+
+**Token source** — `~/.openclaw/tmp/cf-token.env` contains a Pages-deploy-scoped
+CF API token. **Always check this file before asking Mike for a fresh token.**
+If the file is missing or the token has been rotated, ask Mike to drop a new
+one there. The PIN.txt token (`5dae85fed...`) is REJECTED by the Pages API
+(code 6111 "Invalid format for Authorization header") — do NOT use it.
+
+**Common deploy failure modes** (Mike 2026-09-08 lesson):
+- `Authentication failed (status: 400) [code: 9106]` → token rejected.
+  Either the token is missing, rotated, or you forgot to `source cf-token.env`.
+- `Invalid format for Authorization header` (code 6111) → you're using the
+  PIN.txt token instead of cf-token.env.
+- HTTP 403 from `dashboard.dependability.us` even after successful deploy →
+  Cloudflare Bot Fight Mode in the parent zone is blocking requests with
+  non-browser User-Agent. This token has Pages scope but NOT zone scope, so
+  the bot-management settings live in a different CF account. Mike must
+  disable Bot Fight Mode in that account's dashboard.
+
+**Pre-deploy sanity checks** (avoid the recurring bugs that wasted time):
+```bash
+# 1. Scoring methodology sanity (catches the percentile-rank regression):
+#    top score should be ~50-75, never 100.0 with non-100 components.
+python3 -c "
+import json
+d = json.load(open('reports/2026-09-08-clawrank.json'))
+top = sorted(d['tickers'], key=lambda x: -(x.get('clawrank_score') or 0))[0]
+print(f'top={top[\"ticker\"]} score={top[\"clawrank_score\"]:.1f}')
+assert top['clawrank_score'] < 90, 'BUG: top score is suspiciously high'
+"
+
+# 2. Watchlist column sanity (catches the nested-<td> regression):
+grep -c '<td><td class="score-cell"' reports/market-dashboard.html
+# Must be 0. If >0, watchlist rows are misaligned.
+```
