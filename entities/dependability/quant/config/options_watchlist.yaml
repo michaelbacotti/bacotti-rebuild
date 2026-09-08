@@ -39,6 +39,7 @@ tickers:
     rank_reason: "Strongest underlying macro trend, though the recent 44% year-to-date run means $80 is more suitable as a take-profit/decision zone than a fresh chase level."
     risk_line: 70.00
     risk_meaning: "Copper/momentum thesis is losing its near-term structure; $80 odds fall materially."
+    sector_etf: "XLB"
 
   - ticker: AB
     ref_price: 37.20
@@ -53,6 +54,7 @@ tickers:
     rank_reason: "Your $40 objective is closest to prevailing analyst expectations, with the smallest required move among the upside targets."
     risk_line: 35.50
     risk_meaning: "This is beneath the lower area of published price-target ranges and turns the trade from a $40 push into a range-repair setup."
+    sector_etf: "XLF"
 
   - ticker: LII
     ref_price: 390.53
@@ -67,6 +69,7 @@ tickers:
     rank_reason: "Potentially the largest quality rebound, but $460 requires time and confirmation; it is better suited to a longer-dated, defined-risk position than a short-dated Tuesday trade."
     risk_line: 377.50
     risk_meaning: "The rebound thesis weakens; wait for a base rather than financing a long recovery with short-dated premium."
+    sector_etf: "XLI"
 
   - ticker: MTN
     ref_price: 134.91
@@ -81,6 +84,7 @@ tickers:
     rank_reason: "A clean mean-reversion objective: $150 essentially matches current consensus, making it a practical swing target."
     risk_line: 130.00
     risk_meaning: "Indicates the market is not accepting the recovery toward the $150 consensus zone."
+    sector_etf: "XLY"
 
   - ticker: TTWO
     ref_price: 216.14
@@ -95,6 +99,7 @@ tickers:
     rank_reason: "$240 is technically plausible and previously tested, but path dependency around company catalysts reduces reliability."
     risk_line: 212.00
     risk_meaning: "Losing the recent early-September area weakens the case for a near-term return to $240."
+    sector_etf: "XLC"
 
   - ticker: VST
     ref_price: 149.30
@@ -109,6 +114,7 @@ tickers:
     rank_reason: "Attractive potential reward because $175 remains far below consensus targets, but it carries higher sector and sentiment volatility."
     risk_line: 140.50
     risk_meaning: "This is near cited short-term support; a break makes $175 a later, lower-probability outcome."
+    sector_etf: "XLU"
 
   - ticker: INSM
     ref_price: 145.00
@@ -123,3 +129,708 @@ tickers:
     rank_reason: "Healthcare name with durable device-revenue thesis; $175 sits below consensus and gives a defined intermediate objective without requiring a full re-rating."
     risk_line: 132.00
     risk_meaning: "Breaks the recent basing structure; new-product/regulatory concerns would be a read-through to back off the position."
+    sector_etf: "XLV"
+  - ticker: AAOI
+    ref_price: 115.89
+    target: 127.48
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Communication Equipment). Mike to detail the read-through."
+    rank: 8
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 106.62
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: AEHR
+    ref_price: 92.11
+    target: 101.32
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Semiconductor Equipment & Materials). Mike to detail the read-through."
+    rank: 9
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 84.74
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: AMZN
+    ref_price: 257.0
+    target: 282.7
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLY — Internet Retail). Mike to detail the read-through."
+    rank: 10
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 236.44
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLY"  # used for color coding in dashboard
+
+  - ticker: AVGO
+    ref_price: 371.825
+    target: 409.01
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Semiconductors). Mike to detail the read-through."
+    rank: 11
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 342.08
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: BE
+    ref_price: 274.25
+    target: 301.68
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Electrical Equipment & Parts). Mike to detail the read-through."
+    rank: 12
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 252.31
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: BRK/B
+    ref_price: 504.56
+    target: 555.02
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLF — Insurance). Mike to detail the read-through."
+    rank: 13
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 464.2
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLF"  # used for color coding in dashboard
+
+  - ticker: BULL
+    ref_price: 9.595
+    target: 10.55
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — Software - Application). Mike to detail the read-through."
+    rank: 14
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 8.83
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: CAT
+    ref_price: 827.445
+    target: 910.19
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Farm & Heavy Construction Machinery). Mike to detail the read-through."
+    rank: 15
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 761.25
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: DRAM
+    ref_price: 61.7076
+    target: 67.88
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 16
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 56.77
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: DRNZ
+    ref_price: 21.365
+    target: 23.5
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 17
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 19.66
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: EME
+    ref_price: 770.935
+    target: 848.03
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Engineering & Construction). Mike to detail the read-through."
+    rank: 18
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 709.26
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: GEV
+    ref_price: 964.585
+    target: 1061.04
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Specialty Industrial Machinery). Mike to detail the read-through."
+    rank: 19
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 887.42
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: GLD
+    ref_price: 404.18
+    target: 444.6
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 20
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 371.85
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: GLW
+    ref_price: 167.7
+    target: 184.47
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Electronic Components). Mike to detail the read-through."
+    rank: 21
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 154.28
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: GNRC
+    ref_price: 189.46
+    target: 208.41
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Specialty Industrial Machinery). Mike to detail the read-through."
+    rank: 22
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 174.3
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: GOOGL
+    ref_price: 338.1973
+    target: 372.02
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLC — Internet Content & Information). Mike to detail the read-through."
+    rank: 23
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 311.14
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLC"  # used for color coding in dashboard
+
+  - ticker: INTC
+    ref_price: 103.9304
+    target: 114.32
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Semiconductors). Mike to detail the read-through."
+    rank: 24
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 95.62
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: IONQ
+    ref_price: 42.98
+    target: 47.28
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Computer Hardware). Mike to detail the read-through."
+    rank: 25
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 39.54
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: JEDI
+    ref_price: 26.53
+    target: 29.18
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 26
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 24.41
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: META
+    ref_price: 617.38
+    target: 679.12
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLC — Internet Content & Information). Mike to detail the read-through."
+    rank: 27
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 567.99
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLC"  # used for color coding in dashboard
+
+  - ticker: NASA
+    ref_price: 24.09
+    target: 26.5
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 28
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 22.16
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: NBIS
+    ref_price: 246.084
+    target: 270.69
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLC — Internet Content & Information). Mike to detail the read-through."
+    rank: 29
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 226.4
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLC"  # used for color coding in dashboard
+
+  - ticker: NNE
+    ref_price: 19.26
+    target: 21.19
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Specialty Industrial Machinery). Mike to detail the read-through."
+    rank: 30
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 17.72
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: NVDA
+    ref_price: 227.5
+    target: 250.25
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Semiconductors). Mike to detail the read-through."
+    rank: 31
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 209.3
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: OKLO
+    ref_price: 44.03
+    target: 48.43
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLU — Utilities - Independent Power Producers). Mike to detail the read-through."
+    rank: 32
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 40.51
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLU"  # used for color coding in dashboard
+
+  - ticker: ONDS
+    ref_price: 7.7902
+    target: 8.57
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Communication Equipment). Mike to detail the read-through."
+    rank: 33
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 7.17
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: ORBS
+    ref_price: 1.115
+    target: 1.23
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLY — Packaging & Containers). Mike to detail the read-through."
+    rank: 34
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 1.03
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLY"  # used for color coding in dashboard
+
+  - ticker: PLTR
+    ref_price: 171.99
+    target: 189.19
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Software - Infrastructure). Mike to detail the read-through."
+    rank: 35
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 158.23
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: PURR
+    ref_price: 12.125
+    target: 13.34
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLF — Capital Markets). Mike to detail the read-through."
+    rank: 36
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 11.16
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLF"  # used for color coding in dashboard
+
+  - ticker: QUBT
+    ref_price: 8.485
+    target: 9.33
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Computer Hardware). Mike to detail the read-through."
+    rank: 37
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 7.81
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: RACE
+    ref_price: 406.07
+    target: 446.68
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLY — Auto Manufacturers). Mike to detail the read-through."
+    rank: 38
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 373.58
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLY"  # used for color coding in dashboard
+
+  - ticker: RSP
+    ref_price: 217.56
+    target: 239.32
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 39
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 200.16
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: SKHY
+    ref_price: 189.215
+    target: 208.14
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Semiconductors). Mike to detail the read-through."
+    rank: 40
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 174.08
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: SLV
+    ref_price: 60.045
+    target: 66.05
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 41
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 55.24
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: SOFI
+    ref_price: 18.1086
+    target: 19.92
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLF — Credit Services). Mike to detail the read-through."
+    rank: 42
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 16.66
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLF"  # used for color coding in dashboard
+
+  - ticker: SOXL
+    ref_price: 126.7214
+    target: 139.39
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 43
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 116.58
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: SPCX
+    ref_price: 149.13
+    target: 164.04
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLI — Aerospace & Defense). Mike to detail the read-through."
+    rank: 44
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 137.2
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLI"  # used for color coding in dashboard
+
+  - ticker: SPMO
+    ref_price: 151.27
+    target: 166.4
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 45
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 139.17
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: TLT
+    ref_price: 82.275
+    target: 90.5
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 46
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 75.69
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: TTAN
+    ref_price: 84.34
+    target: 92.77
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Software - Application). Mike to detail the read-through."
+    rank: 47
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 77.59
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: UMAC
+    ref_price: 25.46
+    target: 28.01
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Computer Hardware). Mike to detail the read-through."
+    rank: 48
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 23.42
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: UNG
+    ref_price: 10.3602
+    target: 11.4
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 49
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 9.53
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: URA
+    ref_price: 48.07
+    target: 52.88
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (ETF — n/a). Mike to detail the read-through."
+    rank: 50
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 44.22
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "ETF"  # used for color coding in dashboard
+
+  - ticker: USAR
+    ref_price: 18.1372
+    target: 19.95
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLB — Other Industrial Metals & Mining). Mike to detail the read-through."
+    rank: 51
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 16.69
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLB"  # used for color coding in dashboard
+
+  - ticker: WMT
+    ref_price: 105.8629
+    target: 116.45
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLP — Discount Stores). Mike to detail the read-through."
+    rank: 52
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 97.39
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLP"  # used for color coding in dashboard
+
+  - ticker: WYFI
+    ref_price: 20.61
+    target: 22.67
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLK — Information Technology Services). Mike to detail the read-through."
+    rank: 53
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 18.96
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLK"  # used for color coding in dashboard
+
+  - ticker: ZTS
+    ref_price: 74.485
+    target: 81.93
+    move_pct: 10.0
+    probability: 50
+    timing: "8-16 weeks; October through January"
+    timing_min_weeks: 8
+    timing_max_weeks: 16
+    trigger: "Tracking candidate (XLV — Drug Manufacturers - Specialty & Generic). Mike to detail the read-through."
+    rank: 54
+    rank_reason: "Added to watchlist on 2026-09-08 (Mike directive). To be prioritized and detailed by Mike."
+    risk_line: 68.53
+    risk_meaning: "Generic tracking stop (-8% vs ref). Mike to set a thesis-specific invalidation."
+    sector_etf: "XLV"  # used for color coding in dashboard

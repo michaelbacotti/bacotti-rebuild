@@ -305,3 +305,23 @@ assert top['clawrank_score'] < 90, 'BUG: top score is suspiciously high'
 grep -c '<td><td class="score-cell"' reports/market-dashboard.html
 # Must be 0. If >0, watchlist rows are misaligned.
 ```
+
+- 2026-09-08 v6 (v18 build) — watchlist expansion 7 → 54 tickers + watchlist
+  color coding (Mike 2026-09-08 11:15 ET directive).
+  - 46 new tickers added to `config/options_watchlist.yaml` with sensible
+    defaults (ref_price=live spot, target=+10%, prob=50%, timing=8-16w,
+    risk_line=-8%). Mike to detail triggers/risk_meanings per ticker.
+  - Sector ETF mapped from yfinance `sector` field via GICS lookup;
+    ETF-bucket tickers (commodity/bond/leveraged) get generic purple.
+  - Schema v2 addition: `sector_etf` field in YAML drives the color coding.
+  - Watchlist ticker cell now has 3px left border in sector color (same
+    scheme as sections 1 and 2).
+  - Watchlist sector distribution: 14 XLK, 13 ETF (commodity/bond),
+    8 XLI, 4 each XLY/XLF/XLC, 2 each XLV/XLU/XLB, 1 each XLRE/XLP.
+
+- 2026-09-08 v5 (v17 build) — sector color coding (Mike 2026-09-08 08:52 ET
+  directive). 14-color sector palette (SPY=#94a3b8 slate, QQQ=#60a5fa sky,
+  IWM=#fbbf24 amber, XL* as detailed in the dashboard). Ticker cell gets
+  3px left border, sector name cell gets colored text. Section 1 uses the
+  ETF's own key, Section 2 uses the stock's parent sector ETF. INSM
+  added to watchlist (rank 7).

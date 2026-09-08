@@ -39,7 +39,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v17"
+BUILD_VERSION = "v18"
 
 # Sector color scheme (Mike 2026-09-08 08:52 ET directive):
 #   Each sector + benchmark gets a unique color so the user can identify a
@@ -371,6 +371,7 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .ticker-cell.sector-XLU  {{ border-left-color: #14b8a6; }}
 .ticker-cell.sector-XLV  {{ border-left-color: #84cc16; }}
 .ticker-cell.sector-XLY  {{ border-left-color: #eab308; }}
+.ticker-cell.sector-ETF {{ border-left-color: #a371f7; }}  /* commodity/bond/leveraged ETFs — generic purple */
 .sector-name {{ font-weight: 600; }}
 .sector-name.sector-SPY  {{ color: #94a3b8; }}
 .sector-name.sector-QQQ  {{ color: #60a5fa; }}
@@ -386,6 +387,7 @@ tr:hover {{ background: rgba(212,168,67,0.04); }}
 .sector-name.sector-XLU  {{ color: #14b8a6; }}
 .sector-name.sector-XLV  {{ color: #84cc16; }}
 .sector-name.sector-XLY  {{ color: #eab308; }}
+.sector-name.sector-ETF {{ color: #a371f7; }}
 .trend-pill {{ display: inline-block; padding: 2px 8px; border-radius: 10px;
                font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }}
 .label-Rc {{ color: var(--blue); font-weight: 700; }}
@@ -798,6 +800,9 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
     for t in tickers:
         sym = t["ticker"]
         spot = live_prices.get(sym)
+        # Sector ETF for color coding (Mike 2026-09-08 11:15 ET directive).
+        # Falls back to ETF (purple) if not specified.
+        sector_etf = t.get("sector_etf") or "ETF"
         ref = t["ref_price"]
         target = t["target"]
         prob = t["probability"]
@@ -883,7 +888,7 @@ def render_options_watchlist(watchlist_data, clawrank_by_ticker):
 
         rows_html.append(f"""
         <tr>
-          <td class="ticker-cell">{sym}</td>
+          <td class="ticker-cell sector-{sector_etf}">{sym}</td>
           {cr_text}
           <td data-val="{spot or 0:.2f}" class="{spot_vs_ref_class}">{spot_text}<br><span style="font-size:10px;color:var(--muted)">{spot_vs_ref_text}</span></td>
           <td data-val="{ref:.2f}">${ref:,.2f}</td>
