@@ -338,3 +338,15 @@ grep -c '<td><td class="score-cell"' reports/market-dashboard.html
   so below-risk tickers showed "above risk" with negative number — reordered
   to check `< 0` first (broken), then `< 3` (near), else safe. New ticker:
   LITE (Lumentum Holdings, XLK). All 55 watchlist tickers now have scores.
+
+- 2026-09-08 v8 (v20 build) — dashboard top cleanup (Mike 2026-09-08 19:48 ET
+  directive: "a little too much going on, certain comments can be removed
+  without harming the purpose"). Removed: subtitle line, regime banner,
+  entire Snapshot KPI card (6 KPIs), Data-Quality Note card. Replaced:
+  disclaimer backtest reference (stale — was from 2026-09-03 pre-v15
+  universe + pre-v16 scoring fix) with the actual methodology sentence
+  ("sub-metrics percentile-ranked to 0–100, then weighted-averaged").
+  Same replacement in Section 3's "Honest read" block, now a one-line
+  "transparency / drill-down layer" note. Top of page now goes header →
+  disclaimer → Section 1 directly. v20 build verified via removal-marker
+  grep (all 6 marker strings absent).

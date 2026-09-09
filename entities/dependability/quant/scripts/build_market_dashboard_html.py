@@ -39,7 +39,7 @@ WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v18"
+BUILD_VERSION = "v20"
 
 # Sector color scheme (Mike 2026-09-08 08:52 ET directive):
 #   Each sector + benchmark gets a unique color so the user can identify a
@@ -1130,32 +1130,9 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
     # rebinds the module-level name. Without this, the subtitle shows "0 scored stocks".
     import build_clawrank_features as _bcf_render
     _render_stocks = _bcf_render.STOCKS
-    subtitle = f"Daily Market & Sector Research · {as_of.strftime('%B %d, %Y')} · Universe: {len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(_render_stocks)} scored stocks (S&P 500 + NASDAQ-100 + VTWO proxy)"
-
-    # ----- Market regime note (Mike 2026-09-07 directive: real-time event awareness) -----
-    # Detect US market holidays + cash market open/closed status. Display a banner
-    # so the dashboard reflects "what's happening now," not just price action.
-    US_FED_HOLIDAYS_2026 = {
-        "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
-        "2026-06-19", "2026-07-03", "2026-09-07", "2026-11-26", "2026-12-25",
-    }
-    as_of_date_str = as_of.strftime("%Y-%m-%d")
-    wd = as_of.weekday()
-    if wd >= 5:
-        cash_status = "CLOSED (weekend)"
-    elif as_of_date_str in US_FED_HOLIDAYS_2026:
-        cash_status = "CLOSED (US holiday)"
-    elif 9 * 60 + 30 <= as_of.hour * 60 + as_of.minute <= 16 * 60:
-        cash_status = "OPEN"
-    else:
-        cash_status = "CLOSED (after hours)"
-    regime_html = (
-        '<div class="regime-banner">'
-        f'<strong>Cash market:</strong> {cash_status} · '
-        f'<strong>Event-aware:</strong> news + institutional positioning + social sentiment active · '
-        f'<strong>Last build:</strong> {as_of_date_str} {as_of.strftime("%H:%M %Z").strip()}'
-        '</div>'
-    )
+    # Mike 2026-09-08 19:48 ET directive: dropped subtitle ("Daily Market & Sector
+    # Research …" line) and the regime banner ("Cash market: OPEN …") — too much
+    # going on at the top. Kept only the version stamp in the H1.
 
     # ClawRank factor table
     factor_table_rows = []
@@ -1188,57 +1165,18 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
 <header>
   <div class="header-left">
     <h1>Market Dashboard — {as_of.strftime('%B %d, %Y')} <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated {as_of.strftime('%H:%M %Z').strip()} · {BUILD_VERSION}</span></h1>
-    <div class="subtitle">{subtitle}</div>
   </div>
   <div class="header-right">
     <span class="header-badge live">RESEARCH</span>
     <span class="last-updated">Updated {last_updated}</span>
   </div>
 </header>
-{regime_html}
 <div class="disclaimer">
   <strong>Research output only — NOT a recommendation to buy, sell, or hold any security.</strong>
   Sigma bands and 1w ranges are <strong>descriptive</strong> (spot ± N·σ·√(h/252)), not predictions or targets.
-  ClawRank is a transparent scoring layer — <strong>backtest shows no statistically significant 20D predictive edge in this universe &amp; window</strong> (see `2026-09-03-clawrank-backtest.md`).
+  ClawRank is a transparent scoring layer — sub-metrics are percentile-ranked to 0–100, then weighted-averaged; final score is the cross-sectional composite.
 </div>
 <main>
-
-<div class="card">
-  <div class="card-header"><div class="dot" style="background:var(--gold)"></div> Snapshot — {len(rows)} instruments ({len(BENCHMARKS)} benchmarks + {len(SECTOR_ETFS)} sector ETFs + {len(_render_stocks)} scored stocks)</div>
-  <div class="kpi-row">
-    <div class="kpi gold">
-      <div class="kpi-label">SPY Spot</div>
-      <div class="kpi-value">{fmt_money(spy.get('spot', None)) if 'spot' in spy else '—'}</div>
-      <div class="kpi-sub">RS baseline</div>
-    </div>
-    <div class="kpi {'green' if uptrend > downtrend else 'red'}">
-      <div class="kpi-label">Uptrend / Downtrend</div>
-      <div class="kpi-value">{uptrend} <span style="color:var(--muted);font-size:11px">/</span> {downtrend}</div>
-      <div class="kpi-sub">{transitions} transitioning{', ' + str(sum(1 for r in rows if r['trend']=='range')) + ' range' if any(r['trend']=='range' for r in rows) else ''}</div>
-    </div>
-    <div class="kpi blue">
-      <div class="kpi-label">ClawRank Research</div>
-      <div class="kpi-value">{research}</div>
-      <div class="kpi-sub">composite ≥ 70</div>
-    </div>
-    <div class="kpi" style="--y:var(--yellow)">
-      <div class="kpi-label">Watchlist</div>
-      <div class="kpi-value" style="color:var(--yellow)">{watchlist}</div>
-      <div class="kpi-sub">composite 30 – 70</div>
-    </div>
-    <div class="kpi red">
-      <div class="kpi-label">ClawRank Avoid</div>
-      <div class="kpi-value">{avoid}</div>
-      <div class="kpi-sub">composite ≤ 30</div>
-    </div>
-    <div class="kpi" style="--y:var(--green)">
-      <div class="kpi-label">Benchmark Regime</div>
-      <div class="kpi-value" style="color:var(--green)">{regime_count["risk-on"]} on <span style="color:var(--muted);font-size:11px">/</span> {regime_count["neutral"]} n <span style="color:var(--muted);font-size:11px">/</span> {regime_count["risk-off"]} off</div>
-      <div class="kpi-sub">SPY / QQQ / IWM</div>
-    </div>
-  </div>
-</div>
-
 <div class="card">
   <div class="card-header"><div class="dot" style="background:var(--blue)"></div> 1) Market & Sectors (3 benchmarks + 11 sector ETFs)</div>
   <div class="controls chip-group" data-table="t1" data-col="4">
@@ -1336,21 +1274,8 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
   </table>
   </div>
   <div class="composite">
-    <strong>Honest read on the backtest (2026-09-03):</strong>
-    IC = −0.011 (t-stat −0.31) over 85 rebalance periods × 22 tickers × 2y window. <strong>No statistically significant 20D forward-return edge.</strong>
-    ClawRank is shipped as a <strong>transparency / drill-down layer</strong>, not a trade signal. See <code>reports/2026-09-03-clawrank-backtest.md</code>.
+    <strong>ClawRank:</strong> sub-metrics are percentile-ranked to 0–100, then weighted-averaged; final score is the cross-sectional composite. <strong>Shipped as a transparency / drill-down layer</strong>.
   </div>
-</div>
-
-<div class="dq">
-  <h3>Data-Quality Note</h3>
-  <p><strong>Danelfin (per your 2026-09-03 directive):</strong> Removed from the live dashboard. ClawRank replaces it.
-  Danelfin remains available as a side-by-side sanity check via the API at <code>apirest.danelfin.com</code>
-  (Free tier: 500 calls/month, 10/min — fix the secret's host allow-list to enable). Not pulled automatically today.</p>
-  <p><strong>Sigma bands:</strong> descriptive only (spot ± N·σ·√(h/252)); not predictions or targets.
-  <strong>Support / Resistance:</strong> 20D high/low. <strong>Fundamentals (Factor 1):</strong> yfinance .info, stocks only —
-  ETFs correctly skip this factor. <strong>Sample sizes:</strong> 20-session rolling windows on ~6mo yfinance daily bars.</p>
-  <p><strong>No trade placement</strong>, no broker access, no position sizing, no scheduling, no universe expansion.</p>
 </div>
 </main>
 <footer>
