@@ -35,11 +35,51 @@ from build_clawrank_features import (  # noqa: E402
 )
 from clawrank import rank, load_config  # noqa: E402
 
+# Load clawrank.yaml once at module init — drives Section 3 factor table.
+# Mike 2026-09-08 20:23 ET directive: table was showing a stale 5-factor list
+# (v10). ClawRank has 11 factors since v15. Pull labels/weights/horizons from
+# the YAML source of truth so the table stays in sync with future edits.
+_CLAWRANK_CFG = load_config(str(Path(__file__).resolve().parent.parent / "config" / "clawrank.yaml"))
+_CLAWRANK_FACTORS = _CLAWRANK_CFG.get("factors", {})
+
+def _factor_table_meta():
+    """Build per-factor metadata for Section 3 factor table."""
+    meta = {}
+    for name, spec in _CLAWRANK_FACTORS.items():
+        desc = spec.get("description", "")
+        summary = desc.split(".")[0] + "." if desc else ""
+        sources = sorted({sm_spec.get("source", "?") for sm_spec in spec.get("sub_metrics", {}).values()})
+        if sources == ["yfinance_info"]:
+            inputs = "yfinance .info (fundamentals only; ETFs skip)"
+        elif sources == ["computed"]:
+            inputs = "Computed from price/volume + dashboard inputs"
+        else:
+            inputs = "yfinance .info + computed price/volume features"
+        w = spec.get("weight", 0)
+        weight_str = f"{int(round(w*100))}%" if w >= 0.1 else f"{w*100:.0f}%"
+        meta[name] = {
+            "label": name.replace("_", " ").title(),
+            "weight": weight_str,
+            "horizon": spec.get("horizon", "?").replace("_", " ").title(),
+            "summary": summary,
+            "inputs": inputs,
+        }
+    return meta
+
+# All 11 current factors get a glossary anchor — entries for the 6 new
+# factors (added in this commit) live below in the Glossary section.
+_GLOSSARY_ANCHORED_FACTORS = {
+    "valuation", "quality_growth", "technical_momentum", "earnings_catalyst",
+    "analyst_estimates", "volatility_regime", "setup_quality", "positioning",
+    "sentiment_catalyst", "macro_regime", "seasonality",
+}
+
+
 WINDOW = 20
 TRADING_DAYS = 252
 # Bump on every shipped dashboard methodology change.
 # Surfaced in <title>, <h1>, and HTTP cache header. Last 5 versions in wiki.
-BUILD_VERSION = "v20"
+BUILD_VERSION = "v21"
 
 # Sector color scheme (Mike 2026-09-08 08:52 ET directive):
 #   Each sector + benchmark gets a unique color so the user can identify a
@@ -1134,23 +1174,24 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
     # Research …" line) and the regime banner ("Cash market: OPEN …") — too much
     # going on at the top. Kept only the version stamp in the H1.
 
-    # ClawRank factor table
+    # ClawRank factor table — Mike 2026-09-08 20:23 ET directive:
+    # was showing the stale v10 5-factor list. ClawRank has 11 factors since v15.
+    # Pull labels/weights/horizons from clawrank.yaml (source of truth) so the
+    # table stays in sync with future YAML edits.
     factor_table_rows = []
-    factor_names = ["fundamental_health", "technical_momentum", "volatility_regime", "setup_quality", "sentiment_catalyst"]
-    factor_labels = {"fundamental_health": "Fundamental Health",
-                     "technical_momentum": "Technical Momentum",
-                     "volatility_regime": "Volatility Regime",
-                     "setup_quality": "Setup Quality",
-                     "sentiment_catalyst": "Sentiment / Catalyst"}
-    factor_weights = {"fundamental_health": "25%", "technical_momentum": "25%",
-                      "volatility_regime": "15%", "setup_quality": "25%", "sentiment_catalyst": "25%"}
-    for fn in factor_names:
+    factor_meta = _factor_table_meta()
+    for fn, m in factor_meta.items():
+        anchor = f"glossary-{fn.replace('_', '-')}"
+        if fn in _GLOSSARY_ANCHORED_FACTORS:
+            label_cell = f'<a href="#{anchor}" class="glossary-link">{m["label"]}</a>'
+        else:
+            label_cell = m["label"]
         factor_table_rows.append(f"""
         <tr>
-          <td>{factor_labels[fn]}</td>
-          <td>{'yfinance .info (EPS, margin, growth, D/E, FCF, analyst target)' if fn in ['fundamental_health', 'sentiment_catalyst'] else 'Computed from price/volume + dashboard inputs'}</td>
-          <td style="text-align:right"><span class="badge-gold">{factor_weights[fn]}</span></td>
-          <td style="text-align:right">{factor_table_rows_count(fn)}</td>
+          <td>{label_cell}</td>
+          <td>{m['inputs']}</td>
+          <td><span style="color:var(--muted);font-size:10px">{m['horizon']}</span></td>
+          <td style="text-align:right"><span class="badge-gold">{m['weight']}</span></td>
         </tr>""")
 
     html = f"""<!DOCTYPE html>
@@ -1256,13 +1297,9 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
   <div class="card-header"><div class="dot" style="background:var(--purple)"></div> 3) ClawRank Composite (transparent, editable in YAML)</div>
   <div class="card-body" style="padding:0">
   <table>
-    <thead><tr><th>Factor</th><th>Source</th><th style="text-align:right">Weight</th><th style="text-align:right">Cap</th></tr></thead>
+    <thead><tr><th>Factor</th><th>Source</th><th>Horizon</th><th style="text-align:right">Weight</th></tr></thead>
     <tbody>
-      <tr><td><a href="#glossary-fundamental-health" class="glossary-link">Fundamental Health</a></td><td>yfinance .info — earnings yield, revenue growth, op margin, D/E, FCF yield (stocks only; ETFs skip)</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-technical-momentum" class="glossary-link">Technical Momentum</a></td><td>RS vs SPY (20D/60D), MA distances, RSI(14), trend slope</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-volatility-regime" class="glossary-link">Volatility Regime</a></td><td>20D/252D vol ratio, ATR% vs SPY, 60D max drawdown</td><td style="text-align:right"><span class="badge-gold">15%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a></td><td>Setup type (breakout / pullback / continuation / range / reversal) + range percentile + proximity to MA/resistance</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-sentiment-catalyst" class="glossary-link">Sentiment / Catalyst</a></td><td>ADV, 5D/20D volume ratio, analyst-target upside (stocks only)</td><td style="text-align:right"><span class="badge-gold">10%</span></td><td style="text-align:right">—</td></tr>
+      {factor_table_rows}
       <tr><td colspan="4" style="font-size:10.5px;color:var(--muted);padding-top:14px">
         <strong>Label rules:</strong>
         <span class="badge-gold">Research candidate</span> = composite ≥ 70
@@ -1349,6 +1386,50 @@ def render_html(rows, as_of, sparkline_data, clawrank_data=None, watchlist_data=
       <p><strong>What a high score means:</strong> Heavy trading activity relative to peers, accelerating
       volume (institutions piling in or distributing), and analyst targets implying upside from current
       price.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-valuation">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Valuation (Factor, 12%)</h3>
+      <p><strong>What it measures:</strong> Valuation multiples — sweet-spot logic, no absolute thresholds. Cheap stocks with healthy growth tend to outperform long-term.</p>
+      <p><strong>Inputs:</strong> From <code>yfinance .info</code>: trailing P/E, forward P/E, PEG ratio, price/book, price/sales, EV/EBITDA, earnings yield, FCF yield.</p>
+      <p><strong>Who gets scored:</strong> Individual stocks only. ETFs (sector, benchmark) skip this factor because they don't have company-level fundamentals.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-quality-growth">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Quality + Growth (Factor, 12%)</h3>
+      <p><strong>What it measures:</strong> Quality + growth durability — ROIC &gt; earnings, accruals, cash conversion. Inspired by Danelfin Fundamental subscore + quality factor literature.</p>
+      <p><strong>Inputs:</strong> From <code>yfinance .info</code>: ROE, ROA, operating margin, profit margin, revenue growth, earnings growth, debt/equity, FCF yield. Plus computed cash-conversion.</p>
+      <p><strong>Who gets scored:</strong> Individual stocks only; ETFs skip.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-earnings-catalyst">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Earnings Catalyst (Factor, 10%)</h3>
+      <p><strong>What it measures:</strong> Earnings proximity + pre/post window drift. Stocks approaching an earnings date with positive drift get rewarded; post-earnings drift (positive or negative) gets measured for momentum continuation.</p>
+      <p><strong>Inputs:</strong> <code>yfinance .info</code> earnings-date calendar + computed pre/post-event-window price drift.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-analyst-estimates">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Analyst / Estimates (Factor, 8%)</h3>
+      <p><strong>What it measures:</strong> Sell-side analyst coverage: rating, target upside, recent revision direction.</p>
+      <p><strong>Inputs:</strong> <code>yfinance .info</code> analyst rating, target price, recommendation mean + computed recent-revision direction (upgrades vs downgrades last 30d).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-positioning">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Positioning (Factor, 10%)</h3>
+      <p><strong>What it measures:</strong> How smart money is positioned: short interest, institutional ownership, days-to-cover, insider holdings.</p>
+      <p><strong>Inputs:</strong> Computed from <code>yfinance .info</code> shortPercentOfFloat, sharesShort, heldPercentInstitution, heldPercentInsiders, plus days-to-cover derived from short interest / avg daily volume.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-macro-regime">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Macro Regime (Factor, 9%)</h3>
+      <p><strong>What it measures:</strong> Macro context (FRED-fed): regime classifier (risk-on / risk-off / defensive) + bear-risk score + sector fit modifier that rewards defensive sectors in risk-off regimes and penalizes cyclicals.</p>
+      <p><strong>Inputs:</strong> Built in <code>lib/macro_dashboard.py</code> from FRED CSV pulls (rates, inflation, credit spreads, yield curve). Composite + per-pillar scores applied per-ticker via the SECTOR_BETA_CLASS map.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-seasonality">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Seasonality (Factor, 5%)</h3>
+      <p><strong>What it measures:</strong> Calendar effects — month-of-year drift, day-of-week drift, earnings-window drift. Captures structural seasonality (e.g., "sell in May", year-end window dressing, Q4 strength).</p>
+      <p><strong>Inputs:</strong> Computed from historical 2-year price series bucketed by month-of-year and day-of-week.</p>
     </div>
 
     <div class="glossary-entry" id="glossary-trend">

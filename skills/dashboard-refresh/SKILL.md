@@ -350,3 +350,16 @@ grep -c '<td><td class="score-cell"' reports/market-dashboard.html
   "transparency / drill-down layer" note. Top of page now goes header →
   disclaimer → Section 1 directly. v20 build verified via removal-marker
   grep (all 6 marker strings absent).
+
+- 2026-09-08 v9 (v21 build) — Section 3 factor table fix (Mike 2026-09-08 20:23
+  ET directive: "I only see 5 factors listed there"). ClawRank has 11 factors
+  since v15; the table was showing the stale v10 5-factor list. Two bugs:
+  (1) loop had hardcoded 5-factor dict instead of loading from clawrank.yaml;
+  (2) HTML template had hardcoded `<tbody>` with old rows instead of
+  `{' '.join(factor_table_rows)}`. Fix: added module-level
+  `_CLAWRANK_FACTORS` loader + `_factor_table_meta()` helper that derives
+  label/weight/horizon/inputs per factor from the YAML source of truth;
+  replaced template `<tbody>` with dynamic join. Added new "Horizon" column
+  (4 horizons across 11 factors); dropped obsolete "# Tickers scored" /
+  "Cap" columns. Added 6 new glossary entries for the factors that lacked
+  one. v21 build verified via Section-3 row count = 11 (was 5).

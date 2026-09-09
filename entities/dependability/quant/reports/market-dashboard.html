@@ -2,8 +2,8 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Market Dashboard — 2026-09-08 (v20)</title>
-<meta name="dashboard-version" content="v20">
+<title>Market Dashboard — 2026-09-08 (v21)</title>
+<meta name="dashboard-version" content="v21">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2064%2064%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27bg%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23161b22%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230d1117%27/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%27cg%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23e6c25a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23b88f33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2764%27%20height%3D%2764%27%20rx%3D%2712%27%20fill%3D%27url%28%23bg%29%27%20stroke%3D%27%23d4a843%27%20stroke-width%3D%271.5%27/%3E%3Cpath%20d%3D%27M%2050%2022%20Q%2038%2010%2024%2016%20Q%208%2022%208%2034%20Q%208%2046%2022%2050%20Q%2038%2054%2050%2042%27%20stroke%3D%27url%28%23cg%29%27%20stroke-width%3D%277%27%20fill%3D%27none%27%20stroke-linecap%3D%27round%27/%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2722%27%20r%3D%273.5%27%20fill%3D%27%233fb950%27/%3E%3C/svg%3E">
 <style>
 :root {
@@ -242,11 +242,11 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
 </head><body>
 <header>
   <div class="header-left">
-    <h1>Market Dashboard — September 08, 2026 <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated 20:05 UTC-04:00 · v20</span></h1>
+    <h1>Market Dashboard — September 08, 2026 <span style="font-size:14px;color:var(--muted);font-weight:400;letter-spacing:0">· updated 20:27 UTC-04:00 · v21</span></h1>
   </div>
   <div class="header-right">
     <span class="header-badge live">RESEARCH</span>
-    <span class="last-updated">Updated Sep 08, 2026 · 20:05 UTC-04:00</span>
+    <span class="last-updated">Updated Sep 08, 2026 · 20:27 UTC-04:00</span>
   </div>
 </header>
 <div class="disclaimer">
@@ -1883,13 +1883,9 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
   <div class="card-header"><div class="dot" style="background:var(--purple)"></div> 3) ClawRank Composite (transparent, editable in YAML)</div>
   <div class="card-body" style="padding:0">
   <table>
-    <thead><tr><th>Factor</th><th>Source</th><th style="text-align:right">Weight</th><th style="text-align:right">Cap</th></tr></thead>
+    <thead><tr><th>Factor</th><th>Source</th><th>Horizon</th><th style="text-align:right">Weight</th></tr></thead>
     <tbody>
-      <tr><td><a href="#glossary-fundamental-health" class="glossary-link">Fundamental Health</a></td><td>yfinance .info — earnings yield, revenue growth, op margin, D/E, FCF yield (stocks only; ETFs skip)</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-technical-momentum" class="glossary-link">Technical Momentum</a></td><td>RS vs SPY (20D/60D), MA distances, RSI(14), trend slope</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-volatility-regime" class="glossary-link">Volatility Regime</a></td><td>20D/252D vol ratio, ATR% vs SPY, 60D max drawdown</td><td style="text-align:right"><span class="badge-gold">15%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a></td><td>Setup type (breakout / pullback / continuation / range / reversal) + range percentile + proximity to MA/resistance</td><td style="text-align:right"><span class="badge-gold">25%</span></td><td style="text-align:right">—</td></tr>
-      <tr><td><a href="#glossary-sentiment-catalyst" class="glossary-link">Sentiment / Catalyst</a></td><td>ADV, 5D/20D volume ratio, analyst-target upside (stocks only)</td><td style="text-align:right"><span class="badge-gold">10%</span></td><td style="text-align:right">—</td></tr>
+      ['\n        <tr>\n          <td><a href="#glossary-valuation" class="glossary-link">Valuation</a></td>\n          <td>yfinance .info (fundamentals only; ETFs skip)</td>\n          <td><span style="color:var(--muted);font-size:10px">Long Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">12%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-quality-growth" class="glossary-link">Quality Growth</a></td>\n          <td>yfinance .info + computed price/volume features</td>\n          <td><span style="color:var(--muted);font-size:10px">Long Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">12%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-technical-momentum" class="glossary-link">Technical Momentum</a></td>\n          <td>Computed from price/volume + dashboard inputs</td>\n          <td><span style="color:var(--muted);font-size:10px">Medium Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">11%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-earnings-catalyst" class="glossary-link">Earnings Catalyst</a></td>\n          <td>yfinance .info + computed price/volume features</td>\n          <td><span style="color:var(--muted);font-size:10px">Short Medium Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">10%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-analyst-estimates" class="glossary-link">Analyst Estimates</a></td>\n          <td>yfinance .info + computed price/volume features</td>\n          <td><span style="color:var(--muted);font-size:10px">Medium Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">8%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-volatility-regime" class="glossary-link">Volatility Regime</a></td>\n          <td>Computed from price/volume + dashboard inputs</td>\n          <td><span style="color:var(--muted);font-size:10px">Short Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">8%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-setup-quality" class="glossary-link">Setup Quality</a></td>\n          <td>Computed from price/volume + dashboard inputs</td>\n          <td><span style="color:var(--muted);font-size:10px">Short Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">10%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-positioning" class="glossary-link">Positioning</a></td>\n          <td>Computed from price/volume + dashboard inputs</td>\n          <td><span style="color:var(--muted);font-size:10px">Short Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">10%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-sentiment-catalyst" class="glossary-link">Sentiment Catalyst</a></td>\n          <td>yfinance .info + computed price/volume features</td>\n          <td><span style="color:var(--muted);font-size:10px">Short Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">10%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-macro-regime" class="glossary-link">Macro Regime</a></td>\n          <td>Computed from price/volume + dashboard inputs</td>\n          <td><span style="color:var(--muted);font-size:10px">Medium Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">9%</span></td>\n        </tr>', '\n        <tr>\n          <td><a href="#glossary-seasonality" class="glossary-link">Seasonality</a></td>\n          <td>Computed from price/volume + dashboard inputs</td>\n          <td><span style="color:var(--muted);font-size:10px">Short Term</span></td>\n          <td style="text-align:right"><span class="badge-gold">5%</span></td>\n        </tr>']
       <tr><td colspan="4" style="font-size:10.5px;color:var(--muted);padding-top:14px">
         <strong>Label rules:</strong>
         <span class="badge-gold">Research candidate</span> = composite ≥ 70
@@ -1906,7 +1902,7 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
 </div>
 </main>
 <footer>
-  <div class="footer-text">Generated Sep 08, 2026 · 20:05 UTC-04:00 by <span>dependability-quant</span> · research only</div>
+  <div class="footer-text">Generated Sep 08, 2026 · 20:27 UTC-04:00 by <span>dependability-quant</span> · research only</div>
   <div class="footer-text">yfinance · chart_structure (lib) · <span>ClawRank-v0</span></div>
 </footer>
 
@@ -1976,6 +1972,50 @@ footer { max-width: 1700px; margin: 0 auto; padding: 14px 24px 20px;
       <p><strong>What a high score means:</strong> Heavy trading activity relative to peers, accelerating
       volume (institutions piling in or distributing), and analyst targets implying upside from current
       price.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-valuation">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Valuation (Factor, 12%)</h3>
+      <p><strong>What it measures:</strong> Valuation multiples — sweet-spot logic, no absolute thresholds. Cheap stocks with healthy growth tend to outperform long-term.</p>
+      <p><strong>Inputs:</strong> From <code>yfinance .info</code>: trailing P/E, forward P/E, PEG ratio, price/book, price/sales, EV/EBITDA, earnings yield, FCF yield.</p>
+      <p><strong>Who gets scored:</strong> Individual stocks only. ETFs (sector, benchmark) skip this factor because they don't have company-level fundamentals.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-quality-growth">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Quality + Growth (Factor, 12%)</h3>
+      <p><strong>What it measures:</strong> Quality + growth durability — ROIC &gt; earnings, accruals, cash conversion. Inspired by Danelfin Fundamental subscore + quality factor literature.</p>
+      <p><strong>Inputs:</strong> From <code>yfinance .info</code>: ROE, ROA, operating margin, profit margin, revenue growth, earnings growth, debt/equity, FCF yield. Plus computed cash-conversion.</p>
+      <p><strong>Who gets scored:</strong> Individual stocks only; ETFs skip.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-earnings-catalyst">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Earnings Catalyst (Factor, 10%)</h3>
+      <p><strong>What it measures:</strong> Earnings proximity + pre/post window drift. Stocks approaching an earnings date with positive drift get rewarded; post-earnings drift (positive or negative) gets measured for momentum continuation.</p>
+      <p><strong>Inputs:</strong> <code>yfinance .info</code> earnings-date calendar + computed pre/post-event-window price drift.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-analyst-estimates">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Analyst / Estimates (Factor, 8%)</h3>
+      <p><strong>What it measures:</strong> Sell-side analyst coverage: rating, target upside, recent revision direction.</p>
+      <p><strong>Inputs:</strong> <code>yfinance .info</code> analyst rating, target price, recommendation mean + computed recent-revision direction (upgrades vs downgrades last 30d).</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-positioning">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Positioning (Factor, 10%)</h3>
+      <p><strong>What it measures:</strong> How smart money is positioned: short interest, institutional ownership, days-to-cover, insider holdings.</p>
+      <p><strong>Inputs:</strong> Computed from <code>yfinance .info</code> shortPercentOfFloat, sharesShort, heldPercentInstitution, heldPercentInsiders, plus days-to-cover derived from short interest / avg daily volume.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-macro-regime">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Macro Regime (Factor, 9%)</h3>
+      <p><strong>What it measures:</strong> Macro context (FRED-fed): regime classifier (risk-on / risk-off / defensive) + bear-risk score + sector fit modifier that rewards defensive sectors in risk-off regimes and penalizes cyclicals.</p>
+      <p><strong>Inputs:</strong> Built in <code>lib/macro_dashboard.py</code> from FRED CSV pulls (rates, inflation, credit spreads, yield curve). Composite + per-pillar scores applied per-ticker via the SECTOR_BETA_CLASS map.</p>
+    </div>
+
+    <div class="glossary-entry" id="glossary-seasonality">
+      <h3><a href="#" class="back-link" title="Back to top">↑</a> Seasonality (Factor, 5%)</h3>
+      <p><strong>What it measures:</strong> Calendar effects — month-of-year drift, day-of-week drift, earnings-window drift. Captures structural seasonality (e.g., "sell in May", year-end window dressing, Q4 strength).</p>
+      <p><strong>Inputs:</strong> Computed from historical 2-year price series bucketed by month-of-year and day-of-week.</p>
     </div>
 
     <div class="glossary-entry" id="glossary-trend">
